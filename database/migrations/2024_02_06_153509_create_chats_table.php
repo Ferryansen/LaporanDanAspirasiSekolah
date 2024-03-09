@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('chats', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('report_id')->nullable()->references('id')->on('reports')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('aspiration_id')->nullable()->references('id')->on('aspirations')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('reportId')->nullable()->references('id')->on('reports')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('aspirationId')->nullable()->references('id')->on('aspirations')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('staff')->references('id')->on('users');
-            $table->string('staff_message', 255);
+            $table->string('staffMessage', 255);
             $table->foreignId('student')->references('id')->on('users');
-            $table->string('student_message', 255);
+            $table->string('studentMessage', 255);
             $table->timestamps();
             $table->softDeletes();
         });

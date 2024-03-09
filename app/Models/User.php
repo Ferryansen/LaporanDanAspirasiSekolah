@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -18,11 +17,18 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'userNo',
+        'staffTypeId',
         'name',
         'email',
         'password',
+        'phoneNumber',
+        'gender',
+        'birthDate',
+        'role',
+        'isSuspended',
+        'suspendReason',
     ];
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -40,6 +46,34 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
     ];
+
+    public function staffType() {
+        return $this->belongsTo(StaffType::class);
+    }
+
+    public function aspirations() {
+        return $this->hasMany(Aspiration::class);
+    }
+
+    public function reports() {
+        return $this->hasMany(Report::class);
+    }
+    
+    public function user_upvote_aspirations() {
+        return $this->hasMany(UserUpvoteAspiration::class);
+    }
+
+    public function aspirations_upvote() {
+        return $this->belongsToMany(Aspiration::class, 'userUpvotesAspiration', 'userId', 'aspirationId');
+    }
+
+    public function user_report_aspirations() {
+        return $this->hasMany(UserReportAspiration::class);
+    }
+  
+    public function reportedAspirations()
+    {
+        return $this->belongsToMany(Aspiration::class, 'userReportAspirations', 'userId', 'aspirationId')->withPivot('reportReason');
+    }
 }

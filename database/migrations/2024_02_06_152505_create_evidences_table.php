@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('evidences', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('report_id')->references('id')->on('reports')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('reportId')->references('id')->on('reports')->onUpdate('cascade')->onDelete('cascade');
             $table->string('image')->nullable();
             $table->string('video')->nullable();
             $table->string('name', 255);

@@ -13,19 +13,20 @@ return new class extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->string('report_no', 20);
-            $table->foreignId('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('category_id')->nullable()->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
+            $table->string('reportNo', 20);
+            $table->foreignId('userId')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('categoryId')->nullable()->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
             $table->string('name', 255);
             $table->string('description', 255);
-            $table->boolean('is_urgent');
-            $table->boolean('is_chat_opened');
-            $table->dateTime('process_date')->nullable();
-            $table->dateTime('process_estimation_date')->nullable();
-            $table->string('processed_by', 255)->nullable();
+            $table->boolean('isUrgent');
+            $table->boolean('isChatOpened');
+            $table->dateTime('processDate')->nullable();
+            $table->dateTime('processEstimationDate')->nullable();
+            $table->string('approvalBy', 255)->nullable();
+            $table->string('lastUpdatedBy', 255)->nullable();
             $table->string('status', 20);
-            $table->string('deleted_by', 255)->nullable();
-            $table->string('delete_reason', 255)->nullable();
+            $table->string('deletedBy', 255)->nullable();
+            $table->string('deleteReason', 255)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

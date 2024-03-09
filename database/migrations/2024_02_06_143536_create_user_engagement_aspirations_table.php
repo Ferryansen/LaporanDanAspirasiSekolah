@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('user_engagement_aspirations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('aspiration_id')->references('id')->on('aspirations')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('userId')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('aspirationId')->references('id')->on('aspirations')->onUpdate('cascade')->onDelete('cascade');
             $table->string('type', 10);
             $table->timestamps();
             $table->softDeletes();
