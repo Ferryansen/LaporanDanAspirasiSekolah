@@ -8,4 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'staffTypeId',
+        'name'
+    ];
+    
+    public function aspirations() {
+        return $this->hasMany(Aspiration::class);
+    }
+
+    public function reports() {
+        return $this->hasMany(Report::class);
+    }
+
+    public function staffType() {
+        return $this->belongsTo(StaffType::class);
+    }
 }

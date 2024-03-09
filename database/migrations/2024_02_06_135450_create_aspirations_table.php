@@ -13,21 +13,21 @@ return new class extends Migration
     {
         Schema::create('aspirations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->string('aspiration_no', 20);
-            $table->foreignId('category_id')->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('userId')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->string('aspirationNo', 20);
+            $table->foreignId('categoryId')->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
             $table->string('name', 255);
             $table->string('description', 255);
-            $table->boolean('is_pinned');
-            $table->boolean('is_chat_opened');
-            $table->dateTime('process_date')->nullable();
+            $table->boolean('isPinned');
+            $table->boolean('isChatOpened');
+            $table->dateTime('processDate')->nullable();
             $table->string('processedBy', 255)->nullable();
             $table->string('status', 20);
-            $table->integer('like_count')->nullable();
-            $table->integer('dislike_count')->nullable();
-            $table->integer('problematic_aspiration_count')->nullable();
-            $table->string('deleted_by', 255)->nullable();
-            $table->string('delete_reason', 255)->nullable();
+            $table->integer('likeCount')->nullable();
+            $table->integer('dislikeCount')->nullable();
+            $table->integer('problematicAspirationCount')->nullable();
+            $table->string('deletedBy', 255)->nullable();
+            $table->string('deleteReason', 255)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

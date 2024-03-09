@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('user_report_aspirations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('aspiration_id')->references('id')->on('aspirations')->onUpdate('cascade')->onDelete('cascade');
-            $table->string('report_reason', 255);
+            $table->foreignId('userId')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('aspirationId')->references('id')->on('aspirations')->onUpdate('cascade')->onDelete('cascade');
+            $table->string('reportReason', 255);
             $table->timestamps();
         });
     }
