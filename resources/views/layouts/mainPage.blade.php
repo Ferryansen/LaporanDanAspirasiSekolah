@@ -121,7 +121,7 @@
             </li>
           @else
             <li>
-              <a href="{{ route('admin.manageReport') }}">
+              <a href="{{ route('report.adminHeadmasterStaff.manageReport') }}">
                 <i class="bi bi-circle"></i><span>Manage Report</span>
               </a>
             </li>

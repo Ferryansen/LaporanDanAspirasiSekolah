@@ -55,8 +55,8 @@ Route::middleware(['isschool'])->group(function () {
 
 Route::middleware(['isheadandstaff'])->group(function () {
     Route::prefix('/aspirations')->group(function(){
-        Route::get('/pdf/convert', [PDFController::class, 'pdfGenerationAllAspirations'])->name('aspirations.pdf.convertAspiration');
-        Route::get('/pdf/convert/{categoryId}', [PDFController::class, 'pdfGenerationAspirationsByCategory'])->name('aspirations.pdf.convertCategoryAspiration');
+        // Route::get('/pdf/convert', [PDFController::class, 'pdfGenerationAllAspirations'])->name('aspirations.pdf.convertAspiration');
+        // Route::get('/pdf/convert/{categoryId}', [PDFController::class, 'pdfGenerationAspirationsByCategory'])->name('aspirations.pdf.convertCategoryAspiration');
         Route::patch('/requestApproval/{id}', [AspirationController::class, 'requestApprovalAspiration'])->name('staff.requestApprovalAspiration');
         Route::patch('/staffReject/{id}', [AspirationController::class, 'rejectAspiration'])->name('staff.rejectAspiration');
         Route::patch('/headApprove/{id}', [AspirationController::class, 'approveAspiration'])->name('headmaster.approveAspiration');
@@ -80,8 +80,8 @@ Route::middleware(['isheadandstaff'])->group(function () {
         Route::patch('/report/process/{id}', [ReportController::class, 'onProgReport'])->name('processReport');
         Route::patch('/report/monitoring/{id}', [ReportController::class, 'monitoringReport'])->name('monitoringReport');
         Route::patch('/report/finish/{id}', [ReportController::class, 'finishReport'])->name('finishReport');
-        Route::get('/report/pdf/convert', [PDFController::class, 'pdfGenerationAllReports'])->name('convertReport');
-        Route::get('/report/pdf/convert/{categoryId}', [PDFController::class, 'pdfGenerationReportsByCategory'])->name('convertCategoryReport');
+        // Route::get('/report/pdf/convert', [PDFController::class, 'pdfGenerationAllReports'])->name('convertReport');
+        // Route::get('/report/pdf/convert/{categoryId}', [PDFController::class, 'pdfGenerationReportsByCategory'])->name('convertCategoryReport');
     });
 
     Route::get('/dashboard', [UserController::class, 'getDashboard'])->name('dashboard');
