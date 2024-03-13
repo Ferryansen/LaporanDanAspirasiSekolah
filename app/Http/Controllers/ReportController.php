@@ -14,7 +14,7 @@ class ReportController extends Controller
     public function myReport()
     {
         $currUser = Auth::user();
-        $reports = $currUser->reports()->paginate(10)->withQueryString();
+        $reports = $currUser->reports()->with('user')->paginate(10)->withQueryString();
         // $reports = Report::all();
         // dd($reports);
 
@@ -33,14 +33,14 @@ class ReportController extends Controller
             $reports = Report::paginate(10)->withQueryString();
         }
         else{
-            // Get the staffTypeId of the current user
-            $staffTypeId = $currUser->staffTypeId;
+            // Get the staffType_id of the current user
+            $staffType_id = $currUser->staffType_id;
     
-            // Use whereHas to filter categories based on staffTypeId
-            $categoriesFilter = Category::where('staffTypeId', $staffTypeId)->pluck('id');
+            // Use whereHas to filter categories based on staffType_id
+            $categoriesFilter = Category::where('staffType_id', $staffType_id)->pluck('id');
     
-            // Use whereIn to filter reports by categoryId
-            $reports = Report::whereIn('categoryId', $categoriesFilter)->paginate(10)->withQueryString();
+            // Use whereIn to filter reports by category_id
+            $reports = Report::whereIn('category_id', $categoriesFilter)->paginate(10)->withQueryString();
         }
 
         $categories = Category::all();
@@ -49,10 +49,10 @@ class ReportController extends Controller
         return view('report.adminHeadmasterStaff.manageReport', compact('reports', 'categories', 'filterTitle'));
     }
 
-    public function manageReportFilterCategory($categoryId)
+    public function manageReportFilterCategory($category_id)
     {
-        $category = Category::findOrFail($categoryId);
-        $reports = Report::where("categoryId", "like", $categoryId)->paginate(10)->withQueryString();
+        $category = Category::findOrFail($category_id);
+        $reports = Report::where("category_id", "like", $category_id)->paginate(10)->withQueryString();
         $categories = Category::all();
 
         $data = [
@@ -74,11 +74,11 @@ class ReportController extends Controller
             $reports = Report::where("status", "like", $status)->paginate(10)->withQueryString();
         }
         else{
-            $staffTypeId = $currUser->staffTypeId;
-            $categoryIds = Category::where('staffTypeId', $staffTypeId)->pluck('id');
+            $staffType_id = $currUser->staffType_id;
+            $category_ids = Category::where('staffType_id', $staffType_id)->pluck('id');
     
             // Use whereIn to filter aspirations by category_id and status
-            $reports = Report::whereIn('categoryId', $categoryIds)
+            $reports = Report::whereIn('category_id', $category_ids)
                 ->where('status', $status)
                 ->paginate(10)
                 ->withQueryString();
@@ -107,34 +107,15 @@ class ReportController extends Controller
             'reportName' => 'required',
             'reportDescription' => 'required|max:200',
             'reportCategory' => 'required',
-            'reportEvidences.*' => 'required|file|mimes:png,jpg,jpeg,webp,mp4,avi,quicktime|max:204800', // Adjust validation rules for evidence files
+            'reportEvidences.*' => 'file|mimes:png,jpg,jpeg,webp',
+            'reportEvidenceVideo.*' => 'file|mimes:mp4,avi,quicktime|max:40960',
             'reportEvidences' => [
                 'required',
                 'array',
-                'file',
-                'mimes:png,jpg,jpeg,webp,mp4,avi,quicktime',
-                'max:204800',
-                function ($filesArray, $fail) {
-                    // Check if there are more than 5 image files or more than 1 video file
-                    $imageCount = 0;
-                    $videoCount = 0;
-                    foreach ($filesArray as $file) {
-                        if ($file->getMimeType() == 'video/mp4') {
-                            $videoCount++;
-                        } else {
-                            $imageCount++;
-                        }
-                    }
-                    if ($imageCount > 5) {
-                        $fail('The maximum number of image files allowed is 5.');
-                    }
-                    if ($videoCount > 1) {
-                        $fail('Only one video file is allowed.');
-                    }
-                },
+                'max:5'
             ],
         ]);
-    
+        
         // Create report
         $currentYear = now()->year;
         $reportCount = Report::whereYear('created_at', $currentYear)->count() + 1;
@@ -142,9 +123,9 @@ class ReportController extends Controller
     
         $report = Report::create([
             'reportNo' => $report_no,
-            'userId' => $currUser->id,
+            'user_id' => $currUser->id,
             'name' => $request->reportName,
-            'categoryId' => $request->reportCategory,
+            'category_id' => $request->reportCategory,
             'description' => $request->reportDescription,
             'isUrgent' => false,
             'isChatOpened' => false,
@@ -162,25 +143,50 @@ class ReportController extends Controller
             foreach ($request->file('reportEvidences') as $file) {
                 $name = $file->getClientOriginalName();
                 $filename = now()->timestamp . '_' . $name;
-    
+
                 // Determine whether the file is an image or a video
-                if ($file->getMimeType() == 'video/mp4' || $file->getMimeType() == 'video/avi' || $file->getMimeType() == 'video/quicktime') {
-                    $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $file, $filename);
-                    // Create evidence and associate it with the report
-                    $report->evidences()->create([
-                        'video' => $videoUrl,
-                        'name' => $name
-                    ]);
-                } else {
+                // if ($file->getMimeType() == 'video/mp4' || $file->getMimeType() == 'video/avi' || $file->getMimeType() == 'video/quicktime') {
+                //     $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $file, $filename);
+                //     // Create evidence and associate it with the report
+                //     $report->evidences()->create([
+                //         'video' => $videoUrl,
+                //         'name' => $name
+                //     ]);
+                // } else {
                     $imageUrl = Storage::disk('public')->putFileAs('ListImage', $file, $filename);
                     // Create evidence and associate it with the report
                     $report->evidences()->create([
                         'image' => $imageUrl,
                         'name' => $name
                     ]);
-                }
+                // }
             }
         }
+
+        if ($request->hasFile('reportEvidenceVideo')) {
+            // foreach ($request->file('reportEvidenc') as $file) {
+                $name = $request->file('reportEvidenceVideo')->getClientOriginalName();
+                $filename = now()->timestamp . '_' . $name;
+
+                // Determine whether the file is an image or a video
+                // if ($file->getMimeType() == 'video/mp4' || $file->getMimeType() == 'video/avi' || $file->getMimeType() == 'video/quicktime') {
+                //     $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $file, $filename);
+                //     // Create evidence and associate it with the report
+                //     $report->evidences()->create([
+                //         'video' => $videoUrl,
+                //         'name' => $name
+                //     ]);
+                // } else {
+                    $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $request->file('reportEvidenceVideo'), $filename);
+                    // Create evidence and associate it with the report
+                    $report->evidences()->create([
+                        'video' => $videoUrl,
+                        'name' => $name
+                    ]);
+                // }
+            // }
+        }
+
     
         return redirect()->route('report.student.myReport');
     }
@@ -230,7 +236,7 @@ class ReportController extends Controller
         // $report->update([
         //     'name' => $request->reportName,
         //     'description' => $request->reportDescription,
-        //     'categoryID' => $request->reportCategory,
+        //     'category_id' => $request->reportCategory,
             // 'evidence' => $imageUrl,
     //     ]);
 
@@ -246,46 +252,46 @@ class ReportController extends Controller
         return redirect()->route('report.student.myReport');
     }
 
-    public function rejectReport(Request $request, $userId){
+    public function rejectReport(Request $request){
         $report = Report::find($request->id);
-        $user = User::findOrFail($userId);
+        $currUser = Auth::user();
 
         $report->update([
             'status' => "Rejected",
-            'approvalBy' => $user->name
+            'approvalBy' => $currUser->name
         ]);
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 
-    public function inReviewStaffReport(Request $request, $userId){
+    public function inReviewStaffReport(Request $request){
         $report = Report::find($request->id);
-        $user = User::findOrFail($userId);
+        $currUser = Auth::user();
 
         $report->update([
             'status' => "In review by staff",
-            'lastUpdatedBy' => $user->name
+            'lastUpdatedBy' => $currUser->name
         ]);
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
     
-    public function inReviewHeadmasterReport(Request $request, $userId){
+    public function inReviewHeadmasterReport(Request $request){
         $report = Report::find($request->id);
-        $user = User::findOrFail($userId);
+        $currUser = Auth::user();
 
         $report->update([
-            'status' => "In review by headmaster",
-            'lastUpdatedBy' => $user->name
+            'status' => "In review to headmaster",
+            'lastUpdatedBy' => $currUser->name
         ]);
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 
-    public function approveReport(Request $request, $userId){
+    public function approveReport(Request $request){
         $report = Report::find($request->id);
-        $user = User::findOrFail($userId);
+        $currUser = Auth::user();
 
         $report->update([
             'status' => "Approved",
-            'approvalBy' => $user->name
+            'approvalBy' => $currUser->name
         ]);
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
@@ -299,35 +305,35 @@ class ReportController extends Controller
     //     return redirect()->route('admin.manageReport');
     // }
 
-    public function onProgReport(Request $request, $userId){
+    public function onProgReport(Request $request){
         $report = Report::find($request->id);
-        $user = User::findOrFail($userId);
+        $currUser = Auth::user();
 
         $report->update([
             'status' => "In Progress",
-            'lastUpdatedBy' => $user->name
+            'lastUpdatedBy' => $currUser->name
         ]);
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 
-    public function monitoringReport(Request $request, $userId){
+    public function monitoringReport(Request $request){
         $report = Report::find($request->id);
-        $user = User::findOrFail($userId);
+        $currUser = Auth::user();
 
         $report->update([
             'status' => "Monitoring process",
-            'lastUpdatedBy' => $user->name
+            'lastUpdatedBy' => $currUser->name
         ]);
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 
-    public function finishReport(Request $request, $userId){
+    public function finishReport(Request $request){
         $report = Report::find($request->id);
-        $user = User::findOrFail($userId);
+        $currUser = Auth::user();
 
         $report->update([
             'status' => "Completed",
-            'lastUpdatedBy' => $user->name
+            'lastUpdatedBy' => $currUser->name
         ]);
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
@@ -335,8 +341,18 @@ class ReportController extends Controller
 
     public function deleteReportAdmin(Request $request){
         $report = Report::find($request->id);
-        // $evidence_path = public_path().'\storage/'.$report->evidence;
-        // unlink($evidence_path);
+        
+        foreach ($report->evidences as $evidence){
+            if (strpos($evidence->image, 'ListImage') === 0){
+                $evidence_path = public_path().'\storage/'.$evidence->image;
+                unlink($evidence_path);
+            }
+            else if (strpos($evidence->video, 'ListVideo') === 0){
+                $evidence_path = public_path().'\storage/'.$evidence->video;
+                unlink($evidence_path);
+            }
+        }
+
         $report->delete();
        
         return redirect()->route('report.adminHeadmasterStaff.manageReport');

@@ -18,6 +18,6 @@ class StaffType extends Model
     }
 
     public function users() {
-        return $this->hasMany(User::class, 'staffTypeId');
+        return $this->hasMany(User::class, 'staffType_id');
     }
 }

@@ -223,8 +223,8 @@ class UserController extends Controller
         return view('user.myProfileView');
     }
 
-    public function suspend(Request $request, $userId) {
-        $user = User::findOrFail($userId);
+    public function suspend(Request $request, $user_id) {
+        $user = User::findOrFail($user_id);
         $message = null;
 
         if ($user->isSuspended == true) {
@@ -290,8 +290,8 @@ class UserController extends Controller
         return redirect()->back()->with('successMessage', 'Password berhasil diperbarui');
     }
 
-    public function resetPassword($userId) {
-        $currUser = User::findOrFail($userId);
+    public function resetPassword($user_id) {
+        $currUser = User::findOrFail($user_id);
 
         $formattedDate = date('Ymd', strtotime($currUser->birthDate));
         $freshPassword = "D3f@ult" . $formattedDate;
@@ -307,12 +307,12 @@ class UserController extends Controller
         return view('user.admin.manageUsersView', compact('users'));
     }
 
-    public function getUserDetail($userId) {
-        $currUser = User::findOrFail($userId);
+    public function getUserDetail($user_id) {
+        $currUser = User::findOrFail($user_id);
 
         if ($currUser->role == "student") {
             $problematicAspirations = $currUser->aspirations()->whereHas('reportedByUsers', function ($query) use ($currUser) {
-                $query->where('userId', '<>', $currUser->id);
+                $query->where('user_id', '<>', $currUser->id);
             })->count();
 
             return view('admin.userDetailView', compact('currUser', 'problematicAspirations'));
@@ -321,15 +321,15 @@ class UserController extends Controller
         return view('user.admin.userDetailView', compact('currUser'));
     }
 
-    public function updateUserForm($userId) {
+    public function updateUserForm($user_id) {
         $staffTypes = StaffType::all();
-        $currUser = User::findOrFail($userId);
+        $currUser = User::findOrFail($user_id);
 
         return view('admin.updateUserView', compact('staffTypes', 'currUser'));
     }
 
-    public function updateUser(Request $request, $userId) {
-        $currUser = User::findOrFail($userId);
+    public function updateUser(Request $request, $user_id) {
+        $currUser = User::findOrFail($user_id);
 
 
         $rules = [
@@ -397,9 +397,9 @@ class UserController extends Controller
         }
 
         if ($request->has('staffType')) {
-            $credentials['staffTypeId'] = $request->staffType;
+            $credentials['staffType_id'] = $request->staffType;
         } else {
-            $credentials['staffTypeId'] = null;
+            $credentials['staffType_id'] = null;
         }
 
         if ($request->role == 1) {
@@ -414,8 +414,8 @@ class UserController extends Controller
         return redirect()->route('manage.users.seeall')->with('successMessage', 'Pengguna berhasil diperbarui');
     }
 
-    public function removeUser($userId) {
-        $user = User::findOrFail($userId);
+    public function removeUser($user_id) {
+        $user = User::findOrFail($user_id);
         $user->delete();
 
         return redirect()->route('manage.users.seeall')->with('successMessage', 'Pengguna berhasil dihapus');
@@ -515,9 +515,9 @@ class UserController extends Controller
         ];
 
         if ($request->has('staffType')) {
-            $credentials['staffTypeId'] = $request->staffType;
+            $credentials['staffType_id'] = $request->staffType;
         } else {
-            $credentials['staffTypeId'] = null;
+            $credentials['staffType_id'] = null;
         }
 
         if ($request->role == 1) {

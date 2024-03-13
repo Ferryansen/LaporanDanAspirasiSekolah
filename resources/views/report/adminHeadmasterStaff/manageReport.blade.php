@@ -9,7 +9,7 @@
   <h1>Manage Laporan</h1>
   <nav>
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ route('admin.manageReport') }}">Laporan</a></li>
+      <li class="breadcrumb-item"><a href="{{ route('report.adminHeadmasterStaff.manageReport') }}">Laporan</a></li>
       <li class="breadcrumb-item active">Manage Laporan</li>
     </ol>
   </nav>
@@ -32,7 +32,7 @@
                   <option selected disabled value>Pilih Status</option>
                     <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Freshly submitted']) }}">Freshly submitted</option>
                     <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'In review by staff']) }}">In review by staff</option>
-                    <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'In review by headmaster']) }}">In review by headmaster</option>
+                    <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'In review to headmaster']) }}">In review to headmaster</option>
                     <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Approved']) }}">Approved</option>
                     <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Rejected']) }}">Rejected</option>
                     <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Cancelled']) }}">Cancelled</option>
@@ -55,7 +55,7 @@
                 <select class="form-select" aria-label="Default select example" name="categoryStaffType" required onchange="window.location.href=this.value;">
                   <option selected disabled value>Pilih Kategori</option>
                   @foreach ($categories as $category)
-                    <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterCategory', ['categoryId' => $category->id]) }}">{{ $category->name }}</option>
+                    <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterCategory', ['category_id' => $category->id]) }}">{{ $category->name }}</option>
                   @endforeach
                 </select>
               </div>
@@ -93,7 +93,7 @@
                       <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
                       @if ($report->status == "Approved" || $report->status == "Rejected")
                         <td>{{ $report->status }} by {{ $report->approvalBy }}</td>
-                      @elseif ($report->status == "Cancelled")
+                      @elseif ($report->status == "Cancelled" || $report->status == "Freshly submitted")
                         <td>{{ $report->status }}</td>
                       @else
                         <td>{{ $report->status }} by {{ $report->lastUpdatedBy }}</td>
@@ -128,18 +128,18 @@
 
             <br>
 
-            @if (Auth::user()->role == "headmaster")
+            {{-- @if (Auth::user()->role == "headmaster")
               @if ($filterTitle == null)
                 <a href="{{ route('convertReport') }}">
                   <button type="button" class="btn btn-success">Export Data Laporan</button>
                 </a>
               
               @else
-                <a href="{{ route('convertCategoryReport', ['categoryId' => $categoryNow]) }}">
+                <a href="{{ route('convertCategoryReport', ['category_id' => $categoryNow]) }}">
                   <button type="button" class="btn btn-success">Export Data Laporan</button>
                 </a>  
               @endif
-            @endif
+            @endif --}}
           
         </div>
       </div>

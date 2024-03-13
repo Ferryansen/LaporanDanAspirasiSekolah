@@ -107,7 +107,7 @@
                       <i class="bi bi-people"></i>
                     </div>
                     <div class="ps-3" style="display:flex">
-                      <h6>{{ $users->where('staffTypeId', '!=', null)->count() }}</h6>
+                      <h6>{{ $users->where('staffType_id', '!=', null)->count() }}</h6>
                       <span class="text-muted small pt-2 ps-1"> orang</span>
                     </div>
                   </div>

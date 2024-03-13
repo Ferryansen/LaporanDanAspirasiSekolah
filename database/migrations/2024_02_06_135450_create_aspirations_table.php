@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('aspirations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('userId')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('aspirationNo', 20);
-            $table->foreignId('categoryId')->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('category_id')->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
             $table->string('name', 255);
             $table->string('description', 255);
             $table->boolean('isPinned');

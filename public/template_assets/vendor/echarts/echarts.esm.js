@@ -59190,20 +59190,20 @@ function categoryVisual(ecModel) {
     if (categoriesData.count()) {
       data.each(function (idx) {
         var model = data.getItemModel(idx);
-        var categoryIdx = model.getShallow('category');
+        var category_idx = model.getShallow('category');
 
-        if (categoryIdx != null) {
-          if (isString(categoryIdx)) {
-            categoryIdx = categoryNameIdxMap['ec-' + categoryIdx];
+        if (category_idx != null) {
+          if (isString(category_idx)) {
+            category_idx = categoryNameIdxMap['ec-' + category_idx];
           }
 
-          var categoryStyle = categoriesData.getItemVisual(categoryIdx, 'style');
+          var categoryStyle = categoriesData.getItemVisual(category_idx, 'style');
           var style = data.ensureUniqueItemVisual(idx, 'style');
           extend(style, categoryStyle);
           var visualList = ['symbol', 'symbolSize', 'symbolKeepAspect'];
 
           for (var i = 0; i < visualList.length; i++) {
-            data.setItemVisual(idx, visualList[i], categoriesData.getItemVisual(categoryIdx, visualList[i]));
+            data.setItemVisual(idx, visualList[i], categoriesData.getItemVisual(category_idx, visualList[i]));
           }
         }
       });
@@ -61796,8 +61796,8 @@ function (_super) {
       // Overwrite nodeData.getItemModel to
       nodeData.wrapMethod('getItemModel', function (model) {
         var categoriesModels = self._categoriesModels;
-        var categoryIdx = model.getShallow('category');
-        var categoryModel = categoriesModels[categoryIdx];
+        var category_idx = model.getShallow('category');
+        var categoryModel = categoriesModels[category_idx];
 
         if (categoryModel) {
           categoryModel.parentModel = model.parentModel;

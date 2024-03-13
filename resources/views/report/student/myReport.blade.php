@@ -49,7 +49,7 @@
                             <tr>
                                 <td>{{ $report->name }}</td>
                                 <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
-                                @if ($report->status == "In review by staff" || $report->status == "In review by headmaster")
+                                @if ($report->status == "In review by staff" || $report->status == "In review to headmaster")
                                     <td>Freshly submitted</td>
                                 @elseif ($report->status == "Monitoring process")
                                     <td>In Progress</td>
