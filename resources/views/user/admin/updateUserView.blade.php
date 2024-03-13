@@ -107,7 +107,7 @@
             <option selected disabled>Pilih Tipe Staf</option>
 
             @foreach ($staffTypes as $staffType)
-                <option value="{{ $staffType->id }}" {{ old('staffType') != null ? (old('staffType') == $staffType->id ? 'selected' : '') : ($currUser->staffTypeId == $staffType->id ? 'selected' : '') }}>{{ $staffType->name }}</option>
+                <option value="{{ $staffType->id }}" {{ old('staffType') != null ? (old('staffType') == $staffType->id ? 'selected' : '') : ($currUser->staffType_id == $staffType->id ? 'selected' : '') }}>{{ $staffType->name }}</option>
             @endforeach
         </select>
         @error('staffType')

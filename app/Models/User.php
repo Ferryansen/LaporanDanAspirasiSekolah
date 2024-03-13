@@ -18,7 +18,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'userNo',
-        'staffTypeId',
+        'staffType_id',
         'name',
         'email',
         'password',
@@ -65,7 +65,7 @@ class User extends Authenticatable
     }
 
     public function aspirations_upvote() {
-        return $this->belongsToMany(Aspiration::class, 'userUpvotesAspiration', 'userId', 'aspirationId');
+        return $this->belongsToMany(Aspiration::class, 'userUpvotesAspiration', 'user_id', 'aspirationId');
     }
 
     public function user_report_aspirations() {
@@ -74,6 +74,6 @@ class User extends Authenticatable
   
     public function reportedAspirations()
     {
-        return $this->belongsToMany(Aspiration::class, 'userReportAspirations', 'userId', 'aspirationId')->withPivot('reportReason');
+        return $this->belongsToMany(Aspiration::class, 'userReportAspirations', 'user_id', 'aspirationId')->withPivot('reportReason');
     }
 }

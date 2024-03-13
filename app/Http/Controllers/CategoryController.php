@@ -29,7 +29,7 @@ class CategoryController extends Controller
 
     Category::create([
         'name' => $request->categoryName,
-        'staffTypeId' => $request->categoryStaffType,
+        'staffType_id' => $request->categoryStaffType,
     ]);
 
     return redirect()->route('categories.list');
@@ -62,7 +62,7 @@ class CategoryController extends Controller
 
         $category->update([
             'name' => $request->categoryName,
-            'staffTypeId' => $request->categoryStaffType
+            'staffType_id' => $request->categoryStaffType
         ]);
 
         return redirect()->route('categories.list');

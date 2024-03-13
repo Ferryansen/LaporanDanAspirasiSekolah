@@ -9,10 +9,12 @@ class Report extends Model
 {
     use HasFactory;
 
+    protected $table = 'reports';
+
     protected $fillable = [
         'reportNo',
-        'userId',
-        'categoryId',
+        'user_id',
+        'category_id',
         'name',
         'description',
         'isUrgent',
@@ -27,7 +29,7 @@ class Report extends Model
     ];
 
     public function user() {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
     
     public function category() {

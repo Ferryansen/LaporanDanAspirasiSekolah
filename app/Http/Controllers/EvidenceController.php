@@ -9,19 +9,19 @@ use Illuminate\Support\Facades\Storage;
 
 class EvidenceController extends Controller
 {
-    public function index($reportId){
-        $report = Report::findOrFail($reportId);
-        $reportEvidences = Evidence::where('reportId', $reportId)->get();
+    public function index($report_id){
+        $report = Report::findOrFail($report_id);
+        $reportEvidences = Evidence::where('report_id', $report_id)->get();
 
         return view('report.studentHeadmasterStaff.reportDetail', compact('report', 'reportEvidences'));
     }
 
-    public function store (Request $request, $reportId){
+    public function store (Request $request, $report_id){
         $request->validate([
             'reportEvidences.*' => 'required|image|mimes:png,jpg,jpeg,webp'
         ]);
 
-        $report = Report::findOrFail($reportId);
+        $report = Report::findOrFail($report_id);
 
         $evidenceData = [];
         if($files = $request->file('reportEvidences')){
@@ -40,7 +40,7 @@ class EvidenceController extends Controller
                 $imageUrl = Storage::disk('public')->putFileAs('ListImage', $file, $filename);
 
                 $evidenceData[] = [
-                    'reportId' => $report->id,
+                    'report_id' => $report->id,
                     'image' => $imageUrl,
                     'name' => $name
                 ];

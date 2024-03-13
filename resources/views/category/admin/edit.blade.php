@@ -38,7 +38,7 @@
         <select class="form-select" aria-label="Default select example" name="categoryStaffType" required>
           <option selected disabled value>Pilih Tipe Staf</option>
           @foreach ($staffTypes as $staffType)
-            <option value={{ $staffType->id }} @if (old('categoryStaffType', $category->staffTypeId) == $staffType->id) {{ 'selected' }} @endif>{{ $staffType->name }}</option>
+            <option value={{ $staffType->id }} @if (old('categoryStaffType', $category->staffType_id) == $staffType->id) {{ 'selected' }} @endif>{{ $staffType->name }}</option>
           @endforeach
         </select>
       </div>

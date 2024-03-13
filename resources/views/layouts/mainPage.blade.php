@@ -121,7 +121,7 @@
             </li>
           @else
             <li>
-              <a href="{{ route('admin.manageReport') }}">
+              <a href="{{ route('report.adminHeadmasterStaff.manageReport') }}">
                 <i class="bi bi-circle"></i><span>Manage Report</span>
               </a>
             </li>
@@ -242,7 +242,7 @@
                               <option value="Freshly submitted" >Freshly submitted</option>
                               @if(Auth::user()->role != "student")
                                 <option value="In review by staff" >In review by staff</option>
-                                <option value="In review by headmaster" >In review by headmaster</option>
+                                <option value="In review to headmaster" >In review to headmaster</option>
                               @endif
                               <option value="Approved" >Approved</option>
                               <option value="Rejected" >Rejected</option>
@@ -286,6 +286,7 @@
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="{{ asset('template_assets/vendor/apexcharts/apexcharts.min.js') }}"></script>
   <script src="{{ asset('template_assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
   <script src="{{ asset('template_assets/vendor/chart.js/chart.umd.js') }}"></script>

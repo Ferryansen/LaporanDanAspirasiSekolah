@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('staffTypeId')->references('id')->on('staff_types')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('staffType_id')->references('id')->on('staff_types')->onUpdate('cascade')->onDelete('cascade');
             $table->string('name', 255);
             $table->timestamps();
             $table->softDeletes();
