@@ -90,6 +90,7 @@ Route::middleware(['isheadandstaff'])->group(function () {
 
 
 Route::middleware(['isadmin'])->group(function () {
+    // Staff Type
     Route::prefix('/staffType')->group(function(){
         Route::get('/createForm', [StaffTypeController::class, 'createStaffTypeForm'])->name('admin.createStaffTypeForm');
         Route::post('/create', [StaffTypeController::class, 'createStaffType'])->name('admin.createStaffType');
@@ -99,8 +100,10 @@ Route::middleware(['isadmin'])->group(function () {
         Route::get('/list', [StaffTypeController::class, 'index'])->name('admin.staffTypeList');
     });
     
+    // User
     Route::prefix('/manage/users')->group(function(){
         Route::get('/', [UserController::class, 'seeAllUser'])->name('manage.users.seeall');
+        Route::get('/search', [UserController::class, 'searchUserList'])->name('manage.users.search');
         Route::get('/detail/{user_id}', [UserController::class, 'getUserDetail'])->name('manage.users.detail');
         
         Route::get('/register', [UserController::class, 'registerUserForm'])->name('manage.users.register');
@@ -109,7 +112,7 @@ Route::middleware(['isadmin'])->group(function () {
         Route::get('/update/{user_id}', [UserController::class, 'updateUserForm'])->name('manage.users.update');
         Route::patch('/update/{user_id}', [UserController::class, 'updateUser'])->name('manage.users.update.submit');
         Route::patch('/password/change/{user_id}', [UserController::class, 'resetPassword'])->name('manage.users.reset.password');
-        Route::patch('/status/{user_id}', [UserController::class, 'suspend'])->name('manage.users.suspend');
+        Route::post('/delete/selected', [UserController::class, 'removeSelectedUsers'])->name('manage.users.delete.selected');
         Route::delete('/delete/{user_id}', [UserController::class, 'removeUser'])->name('manage.users.delete');
         
         Route::get('/studentsimport', [UserController::class, 'importStudentsForm'])->name('manage.users.importstudents'); 
@@ -126,11 +129,17 @@ Route::middleware(['isadmin'])->group(function () {
         Route::delete('/delete/{id}', [CategoryController::class, 'deleteCategory'])->name('categories.delete');
     });
     
+    // Aspiration
     Route::prefix('/aspirations')->group(function(){
         Route::delete('/delete/{id}', [AspirationController::class, 'deleteAspiration'])->name('aspirations.delete');
+        
         Route::get('/reported', [UserReportAspirationController::class, 'getAllReportedAspirations'])->name('aspirations.reported');
-        Route::get('/reported/{aspirationId}', [UserReportAspirationController::class, 'getAllReportedAspirationDetail'])->name('aspirations.reported.details');
+        Route::get('/reported/{aspiration_id}', [UserReportAspirationController::class, 'getAllReportedAspirationDetail'])->name('aspirations.reported.details');
         Route::delete('/reported/delete/{id}', [UserReportAspirationController::class, 'deleteReportedAspiration'])->name('aspirations.reported.delete');
+        
+        Route::patch('/suspend/{user_id}', [UserReportAspirationController::class, 'suspend'])->name('manage.users.suspend');
+        Route::get('/suspended', [UserReportAspirationController::class, 'getAllSuspendedUsers'])->name('aspirations.suspended.list');
+        Route::patch('/unsuspend/{user_id}', [UserReportAspirationController::class, 'unsuspend'])->name('manage.users.unsuspend');
     });
 
     Route::delete('/report/delete/{id}', [ReportController::class, 'deleteReportAdmin'])->name('admin.deleteReport');

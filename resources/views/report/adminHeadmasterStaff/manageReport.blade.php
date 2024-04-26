@@ -1,16 +1,16 @@
 @extends('layouts.mainpage')
 
 @section('title')
-    Manage Laporan
+    Urus Laporan
 @endsection
 
 @section('breadcrumb')
 <div class="pagetitle">
-  <h1>Manage Laporan</h1>
+  <h1>Laporan</h1>
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{{ route('report.adminHeadmasterStaff.manageReport') }}">Laporan</a></li>
-      <li class="breadcrumb-item active">Manage Laporan</li>
+      <li class="breadcrumb-item active">Urus Laporan</li>
     </ol>
   </nav>
 </div>

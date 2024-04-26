@@ -1,15 +1,15 @@
 @extends('layouts.mainpage')
 
 @section('title')
-     Tambah Kategori
+    Tambah Kategori
 @endsection
 
 @section('breadcrumb')
 <div class="pagetitle">
-  <h1>Tambah Kategori</h1>
+  <h1>Pengguna</h1>
   <nav>
     <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Manage Pengguna</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Pengguna</a></li>
     <li class="breadcrumb-item"><a href="{{ route('categories.list') }}">Kategori Pengerjaan</a></li>
     <li class="breadcrumb-item active">Tambah Kategori</li>
     </ol>
@@ -19,7 +19,7 @@
 
 @section('sectionPage')
 <section class="section">
-  <h5 class="card-title">Masukkan Kategori Baru</h5>
+  <h5 class="card-title">Tambah Kategori</h5>
 
   <!-- General Form Elements -->
   <form action="{{ route('categories.create') }}" enctype="multipart/form-data" method="POST">

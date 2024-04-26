@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('userNo', 10);
+            $table->string('userNo', 12);
             $table->foreignId('staffType_id')->nullable()->references('id')->on('staff_types')->onUpdate('cascade')->onDelete('cascade');
             $table->string('name', 255);
             $table->string('email', 255);
@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('role', 15);
             $table->boolean('isSuspended');
             $table->string('suspendReason', 255)->nullable();
+            $table->date('suspendDate')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

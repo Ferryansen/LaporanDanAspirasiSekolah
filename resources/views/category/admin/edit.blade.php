@@ -6,10 +6,10 @@
 
 @section('breadcrumb')
 <div class="pagetitle">
-  <h1>Perbarui Kategori</h1>
+  <h1>Pengguna</h1>
   <nav>
     <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Manage Pengguna</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Pengguna</a></li>
     <li class="breadcrumb-item"><a href="{{ route('categories.list') }}">Kategori Pengerjaan</a></li>
     <li class="breadcrumb-item active">Perbarui Kategori</li>
     </ol>

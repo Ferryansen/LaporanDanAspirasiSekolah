@@ -1,15 +1,15 @@
 @extends('layouts.mainpage')
 
 @section('title')
-    Category View
+    Kategori Pengerjaan
 @endsection
 
 @section('breadcrumb')
 <div class="pagetitle">
-  <h1>Kategori Pengerjaan</h1>
+  <h1>Pengguna</h1>
   <nav>
     <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Manage Pengguna</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Pengguna</a></li>
     <li class="breadcrumb-item active">Kategori Pengerjaan</li>
     </ol>
   </nav>

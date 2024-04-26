@@ -6,6 +6,9 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
   <title>@yield('title')</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -122,7 +125,7 @@
           @else
             <li>
               <a href="{{ route('report.adminHeadmasterStaff.manageReport') }}">
-                <i class="bi bi-circle"></i><span>Manage Report</span>
+                <i class="bi bi-circle"></i><span>Urus Laporan</span>
               </a>
             </li>
           @endif
@@ -148,13 +151,18 @@
           @else
           <li>
             <a href="{{ route('aspirations.manageAspirations') }}">
-              <i class="bi bi-circle"></i><span>Manage Aspirasi</span>
+              <i class="bi bi-circle"></i><span>Urus Aspirasi</span>
             </a>
           </li>
             @if (Auth::user()->role == "admin")
               <li>
                 <a href="{{ route('aspirations.reported') }}">
                   <i class="bi bi-circle"></i><span>Aspirasi Bermasalah</span>
+                </a>
+              </li>
+              <li>
+                <a href="{{ route('aspirations.suspended.list') }}">
+                  <i class="bi bi-circle"></i><span>Daftar Suspend</span>
                 </a>
               </li>
             @endif
@@ -165,12 +173,12 @@
       @if (Auth::user()->role == "admin")
         <li class="nav-item">
           <a class="nav-link collapsed" data-bs-target="#users-nav" data-bs-toggle="collapse" href="#">
-            <i class="bi bi-person"></i><span>Manage Pengguna</span><i class="bi bi-chevron-down ms-auto"></i>
+            <i class="bi bi-person"></i><span>Pengguna</span><i class="bi bi-chevron-down ms-auto"></i>
           </a>
           <ul id="users-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
             <li>
               <a href="{{ route('manage.users.seeall') }}">
-                <i class="bi bi-circle"></i><span>Semua Pengguna</span>
+                <i class="bi bi-circle"></i><span>Urus Pengguna</span>
               </a>
             </li>
             <li>

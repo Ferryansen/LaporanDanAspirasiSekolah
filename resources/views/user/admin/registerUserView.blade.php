@@ -1,17 +1,17 @@
 @extends('layouts.mainpage')
 
 @section('title')
-    Daftar Pengguna Baru
+    Tambah Pengguna Baru
 @endsection
 
 @section('breadcrumb')
     <div class="pagetitle">
-        <h1>Daftar Pengguna Baru</h1>
+        <h1>Tambah Pengguna Baru</h1>
         <nav>
             <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Manage Pengguna</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Semua Pengguna</a></li>
-            <li class="breadcrumb-item active">Daftar Pengguna Baru</li>
+            <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Pengguna</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Urus Pengguna</a></li>
+            <li class="breadcrumb-item active">Tambah Pengguna Baru</li>
             </ol>
         </nav>
     </div><!-- End Page Title -->
@@ -19,8 +19,6 @@
 
 @section('sectionPage')
 <section class="section">
-  <h5 class="card-title">Daftar Pengguna Baru</h5>
-
   <!-- General Form Elements -->
   <form action="{{ route('manage.users.register.submit') }}" enctype="multipart/form-data" method="POST" novalidate>
     @csrf
@@ -118,7 +116,7 @@
     <div class="row mb-3">
       <label class="col-sm-2 col-form-label"></label>
       <div class="col-sm-10">
-        <button type="submit" class="btn btn-primary">Daftarkan</button>
+        <button type="submit" class="btn btn-primary">Tambah</button>
       </div>
     </div>
 

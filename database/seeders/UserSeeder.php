@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
     {
         User::query()->insert([[
                     'staffType_id' => 1,
-                    'userNo' => 'USR001',
+                    'userNo' => 'USR000001',
                     'name' => 'John Doe',
                     'email' => 'johndoes@example.com',
                     'password' => Hash::make('testing123'),
@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
                 ],
                 [
                     'staffType_id' => 1,
-                    'userNo' => 'USR002',
+                    'userNo' => 'USR000002',
                     'name' => 'John Antonius',
                     'email' => 'johnantonius@example.com',
                     'password' => Hash::make('testing123'),
@@ -45,7 +45,7 @@ class UserSeeder extends Seeder
                 ],
                 [
                     'staffType_id' => 1,
-                    'userNo' => 'USR003',
+                    'userNo' => 'USR000003',
                     'name' => 'Nelsen aja',
                     'email' => 'nelsen@example.com',
                     'password' => Hash::make('testing123'),
@@ -58,7 +58,7 @@ class UserSeeder extends Seeder
                 ],
                 [
                     'staffType_id' => 1,
-                    'userNo' => 'USR004',
+                    'userNo' => 'USR000004',
                     'name' => 'Anthony',
                     'email' => 'Anthony@example.com',
                     'password' => Hash::make('testing123'),
@@ -71,7 +71,7 @@ class UserSeeder extends Seeder
                 ],
                 [
                     'staffType_id' => 1,
-                    'userNo' => 'USR005',
+                    'userNo' => 'USR000005',
                     'name' => 'Montod',
                     'email' => 'Montod@example.com',
                     'password' => Hash::make('testing123'),
@@ -84,7 +84,7 @@ class UserSeeder extends Seeder
                 ],
                 [
                     'staffType_id' => 2,
-                    'userNo' => 'USR006',
+                    'userNo' => 'USR000006',
                     'name' => 'Kagawa',
                     'email' => 'Kagawa@example.com',
                     'password' => Hash::make('testing123'),
@@ -97,7 +97,7 @@ class UserSeeder extends Seeder
                 ],
                 [
                     'staffType_id' => 2,
-                    'userNo' => 'USR007',
+                    'userNo' => 'USR000007',
                     'name' => 'Son',
                     'email' => 'Son@example.com',
                     'password' => Hash::make('testing123'),
@@ -110,7 +110,7 @@ class UserSeeder extends Seeder
                 ],
                 [
                     'staffType_id' => 2,
-                    'userNo' => 'USR007',
+                    'userNo' => 'USR000008',
                     'name' => 'Sonny',
                     'email' => 'Sonny@example.com',
                     'password' => Hash::make('testing123'),
@@ -123,7 +123,7 @@ class UserSeeder extends Seeder
                 ],
                 [
                     'staffType_id' => 1,
-                    'userNo' => 'USR008',
+                    'userNo' => 'USR000009',
                     'name' => 'Kagara',
                     'email' => 'Kagara@example.com',
                     'password' => Hash::make('testing123'),
@@ -136,7 +136,7 @@ class UserSeeder extends Seeder
                 ],
                 [
                     'staffType_id' => 1,
-                    'userNo' => 'USR009',
+                    'userNo' => 'USR000010',
                     'name' => 'Sonaldo',
                     'email' => 'Sonaldo@example.com',
                     'password' => Hash::make('testing123'),
@@ -149,7 +149,7 @@ class UserSeeder extends Seeder
                 ],
                 [
                     'staffType_id' => 3,
-                    'userNo' => 'USR010',
+                    'userNo' => 'USR000011',
                     'name' => 'Kurzawa',
                     'email' => 'Kagawa@example.com',
                     'password' => Hash::make('testing123'),
@@ -162,7 +162,7 @@ class UserSeeder extends Seeder
                 ],
                 [
                     'staffType_id' => 3,
-                    'userNo' => 'USR011',
+                    'userNo' => 'USR000012',
                     'name' => 'Sonny',
                     'email' => 'Sonny@example.com',
                     'password' => Hash::make('testing123'),
