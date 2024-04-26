@@ -9,6 +9,7 @@ use App\Models\Category;
 
 use Illuminate\Support\Carbon;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -223,40 +224,6 @@ class UserController extends Controller
         return view('user.myProfileView');
     }
 
-    public function suspend(Request $request, $user_id) {
-        $user = User::findOrFail($user_id);
-        $message = null;
-
-        if ($user->isSuspended == true) {
-            $credentials['isSuspended'] = false;
-            $message = 'Pencabutan suspend berhasil! Pengguna dapat menyampaikan aspirasi seperti biasa';
-            
-        } else {
-            $rules = [
-                'suspendReason' => 'required|max:250',
-            ];
-
-            $messages = [
-                'suspendReason.required' => 'Jangan lupa masukin alasan suspend-nya yaa',
-                'suspendReason.max' => 'Alasan yang kamu masukin cuman bisa maksimal 250 karakter nih',
-            ];
-
-            $validator = Validator::make($request->all(), $rules, $messages);
-    
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-            $credentials['suspendReason'] = $request->suspendReason;
-
-            $credentials['isSuspended'] = true;
-            $message = 'Suspend berhasil! Pengguna sudah tidak dapat menyampaikan aspirasi';
-        }
-
-        $user->update($credentials);
-        return redirect()->route('manage.users.seeall')->with('successMessage', $message);
-    }
-
     public function changeProfile(Request $request) {
         $user = Auth::user();
 
@@ -315,7 +282,7 @@ class UserController extends Controller
                 $query->where('user_id', '<>', $currUser->id);
             })->count();
 
-            return view('admin.userDetailView', compact('currUser', 'problematicAspirations'));
+            return view('user.admin.userDetailView', compact('currUser', 'problematicAspirations'));
         }
 
         return view('user.admin.userDetailView', compact('currUser'));
@@ -325,7 +292,7 @@ class UserController extends Controller
         $staffTypes = StaffType::all();
         $currUser = User::findOrFail($user_id);
 
-        return view('admin.updateUserView', compact('staffTypes', 'currUser'));
+        return view('user.admin.updateUserView', compact('staffTypes', 'currUser'));
     }
 
     public function updateUser(Request $request, $user_id) {
@@ -414,6 +381,22 @@ class UserController extends Controller
         return redirect()->route('manage.users.seeall')->with('successMessage', 'Pengguna berhasil diperbarui');
     }
 
+    public function removeSelectedUsers(Request $request) {
+        $checkedUsers = $request->input('checkedUsers', '');
+        $checkedUsersArray = explode(",", $checkedUsers);
+
+        foreach ($checkedUsersArray as $user_id) {
+            $user = User::findOrFail($user_id);
+            $user->delete();
+        }
+
+        $response = [
+            'redirectUrl' => '/manage/users',
+        ];
+        $request->session()->flash('successMessage', count($checkedUsersArray).' pengguna yang dipilih berhasil dihapus');
+        return response()->json($response);
+    }
+
     public function removeUser($user_id) {
         $user = User::findOrFail($user_id);
         $user->delete();
@@ -499,9 +482,9 @@ class UserController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $currentYear = now()->year;
-        $userCount = User::whereYear('created_at', $currentYear)->count() + 1;
-        $user_no = sprintf('USR%03d', $userCount);
+        $userService = new UserService;
+        $user_no = $userService->generateUserNo($request->birthDate);
+
 
         $credentials = [
             'userNo' => $user_no,
@@ -538,7 +521,17 @@ class UserController extends Controller
 
     public function showLoginForm() {
         if (Auth::check()) {
-            return redirect('/dashboard');
+            $currUser = Auth::user()->role;
+            
+            if($currUser == "student"){
+                return redirect('/report/myReport');
+            }
+            else if($currUser == "headmaster" || $currUser == "staff"){
+                return redirect('/dashboard');
+            }
+            else if($currUser == "admin"){
+                return redirect('/report/manage');
+            }
         }
 
         return view('user.loginView');
@@ -585,6 +578,19 @@ class UserController extends Controller
             'email' => 'Duh, Email/Password ini enggak sesuai',
             'password' => 'Duh, Email/Password ini enggak sesuai'
         ])->withInput($request->except('password'));
+    }
+
+    public function searchUserList(Request $request)
+    {
+        $userListFounded = User::where("name", "like", "%$request->userName%")
+            ->paginate(10)->withQueryString();
+
+        $data = [
+            'users' => $userListFounded,
+            'searchNameParam' => $request->userName
+        ];
+
+        return view('user.admin.manageUsersView', $data);
     }
 
     public function search(Request $request)

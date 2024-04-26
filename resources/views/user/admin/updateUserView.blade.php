@@ -6,12 +6,12 @@
 
 @section('breadcrumb')
     <div class="pagetitle">
-        <h1>Daftar Pengguna Baru</h1>
+        <h1>Pengguna</h1>
         <nav>
             <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Manage Pengguna</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Semua Pengguna</a></li>
-            <li class="breadcrumb-item active">Import murid</li>
+            <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Pengguna</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Urus Pengguna</a></li>
+            <li class="breadcrumb-item active">Perbarui Penguna</li>
             </ol>
         </nav>
     </div><!-- End Page Title -->

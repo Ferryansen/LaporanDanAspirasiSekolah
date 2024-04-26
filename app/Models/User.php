@@ -28,6 +28,7 @@ class User extends Authenticatable
         'role',
         'isSuspended',
         'suspendReason',
+        'suspendDate',
     ];
     /**
      * The attributes that should be hidden for serialization.
@@ -60,9 +61,9 @@ class User extends Authenticatable
         return $this->hasMany(Report::class);
     }
     
-    public function user_upvote_aspirations() {
-        return $this->hasMany(UserUpvoteAspiration::class);
-    }
+    // public function user_upvote_aspirations() {
+    //     return $this->hasMany(UserUpvoteAspiration::class);
+    // }
 
     public function aspirations_upvote() {
         return $this->belongsToMany(Aspiration::class, 'userUpvotesAspiration', 'user_id', 'aspirationId');
