@@ -46,7 +46,7 @@ class FaqController extends Controller
         $credentials = [
             'question' => $request->question,
             'answer' => $request->answer,
-            'createdBy' => Auth::user()->name,
+            'updatedBy' => Auth::user()->name,
         ];
 
         $currFaq->update($credentials);
