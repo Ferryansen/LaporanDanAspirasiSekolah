@@ -194,6 +194,24 @@
           </ul>
         </li>
       @endif
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#supports-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-question-circle"></i><span>Bantuan</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="supports-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('downloadcontent.seeall') }}">
+              <i class="bi bi-circle"></i><span>Pusat Download</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('faq.seeall') }}">
+              <i class="bi bi-circle"></i><span>FAQ</span>
+            </a>
+          </li>
+        </ul>
+      </li>
     </ul>
 
   </aside><!-- End Sidebar-->

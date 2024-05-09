@@ -2,11 +2,14 @@
 
 use App\Http\Controllers\AspirationController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DownloadContentController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StaffTypeController;
 use App\Http\Controllers\UserReportAspirationController;
+use App\Http\Controllers\FaqController;
+use App\Models\Faq;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,7 +39,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/searching', [UserController::class, 'search'])->name('searching');
     Route::get('/aspirations/detail/{aspirationId}', [AspirationController::class, 'showDetail'])->name('aspirations.details');
     Route::get('/report/detail/{id}', [ReportController::class, 'reportDetail'])->name('student.reportDetail');
-
+    Route::get('/FAQ', [FaqController::class, 'seeAllFaq'])->name('faq.seeall');
+    Route::get('downloadcenter', [DownloadContentController::class, 'seeAllDownloadContent'])->name('downloadcontent.seeall');
 });
 
 Route::middleware(['isschool'])->group(function () {
@@ -50,6 +54,28 @@ Route::middleware(['isschool'])->group(function () {
         Route::get('/manage', [ReportController::class, 'manageReport'])->name('report.adminHeadmasterStaff.manageReport');
         Route::get('/manage/{category_id}', [ReportController::class, 'manageReportFilterCategory'])->name('report.adminHeadmasterStaff.manageReportFilterCategory');
         Route::get('/manageBy/{status}', [ReportController::class, 'manageReportFilterStatus'])->name('report.adminHeadmasterStaff.manageReportFilterStatus');
+    });
+
+    Route::prefix('/support/manage')->group(function(){
+        Route::prefix('/FAQ')->group(function(){
+            Route::get('/create', [FaqController::class, 'createFaqForm'])->name('faq.createForm');
+            Route::post('/create', [FaqController::class, 'createFaq'])->name('faq.create');
+
+            Route::get('/update/{id}', [FaqController::class, 'updateFaqForm'])->name('faq.updateForm');
+            Route::patch('/update/{id}', [FaqController::class, 'updateFaq'])->name('faq.update');
+
+            Route::delete('/delete/{id}', [FaqController::class, 'deleteFaq'])->name('faq.delete');
+        });
+
+        Route::prefix('/downloadcenter')->group(function(){
+            Route::get('/create', [DownloadContentController::class, 'createDownloadContentForm'])->name('downloadcontent.createForm');
+            Route::post('/create', [DownloadContentController::class, 'createDownloadContent'])->name('downloadcontent.create');
+
+            Route::get('/update/{id}', [DownloadContentController::class, 'updateDownloadContentForm'])->name('downloadcontent.updateForm');
+            Route::patch('/update/{id}', [DownloadContentController::class, 'updateDownloadContent'])->name('downloadcontent.update');
+
+            Route::delete('/delete/{id}', [DownloadContentController::class, 'deleteDownloadContent'])->name('downloadcontent.delete');
+        });
     });
 });
 
