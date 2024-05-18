@@ -57,10 +57,19 @@
           </a>
         </li><!-- End Search Icon-->
 
+        @if (Auth::user()->role == "student")
+          <li class="nav-item pe-3">
+            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="{{ route('student.urgentReportPage') }}">
+              <i class="fa-sharp fa-solid fa-circle-exclamation fa-2xl" style="color: #BB2D3B"></i>
+              <span class="d-none d-md-block ps-2" style="color: #BB2D3B">Urgent Report</span>
+            </a>
+          </li>
+        @endif <!-- End Urgent Report -->
+
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="{{ asset('template_assets/img/profile-img.png') }}" alt="Profile" class="rounded-circle">
+            <img src="{{ asset('template_assets/img/profile-img.png') }}" alt="Profile" class="rounded-circle" style="width: 2.1rem">
             <span class="d-none d-md-block dropdown-toggle ps-2">{{ Auth::user()->name }}</span>
           </a><!-- End Profile Iamge Icon -->
 
@@ -303,6 +312,7 @@
   <script src="{{ asset('template_assets/vendor/simple-datatables/simple-datatables.js') }}"></script>
   <script src="{{ asset('template_assets/vendor/tinymce/tinymce.min.js') }}"></script>
   <script src="{{ asset('template_assets/vendor/php-email-form/validate.js') }}"></script>
+  <script src="https://kit.fontawesome.com/f98710255c.js" crossorigin="anonymous"></script>
 
   <!-- Main JS File -->
   <script src="{{ asset('template_assets/js/main.js') }}"></script>

@@ -25,10 +25,11 @@
 
             <div class="card">
                 <div class="card-body">
-                <h5 class="card-title">Buat laporan</h5>
+                    <h5 class="card-title">Buat laporan</h5>
 
                 <!-- General Form Elements -->
                 <form action="{{ route('student.createReport')}}" enctype="multipart/form-data" method="POST">
+
                     @csrf
                     <div class="row mb-3">
                     <label for="inputText" class="col-sm-2 col-form-label">Judul</label>
@@ -40,7 +41,7 @@
                     <div class="row mb-3">
                     <label for="inputPassword" class="col-sm-2 col-form-label">Deskripsi</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control @error('reportDescription') is-invalid @enderror" style="height: 100px" id="reportDescription" required name="reportDescription" value="{{ old('reportDescription') }}"></textarea>
+                        <textarea class="form-control @error('reportDescription') is-invalid @enderror" style="height: 100px" id="reportDescription" required name="reportDescription">{{ old('reportDescription') }}</textarea>
                         @error('reportDescription')
                             <div class="invalid-feedback">
                                 {{ "Maksimal 200 Karakter" }} 
@@ -60,7 +61,7 @@
                     <div class="row mb-3">
                         <label for="inputNumber" class="col-sm-2 col-form-label">Upload Bukti Gambar (Maksimal: 5 bukti)</label>
                         <div class="col-sm-10">
-                            <input accept=".png,.jpg,.jpeg,.webp" multiple class="form-control @error('reportEvidences') is-invalid @enderror" type="file" id="formFile" name="reportEvidences[]" required>
+                            <input accept=".png,.jpg,.jpeg,.webp" multiple class="form-control @error('reportEvidences') is-invalid @enderror" type="file" id="formFile" name="reportEvidences[]">
                             @error('reportEvidences')
                                 <div class="invalid-feedback">
                                     @if ($message == "validation.max.array")
@@ -81,7 +82,7 @@
                     <div class="row mb-3">
                     <label class="col-sm-2 col-form-label">Kategori</label>
                     <div class="col-sm-10">
-                        <select  name="reportCategory" class="form-select" aria-label="Default select example" name="reportCategory" required>
+                        <select  name="reportCategory" class="form-select" aria-label="Default select example" required>
                             <option selected disabled value>Pilih Kategori Laporan</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
