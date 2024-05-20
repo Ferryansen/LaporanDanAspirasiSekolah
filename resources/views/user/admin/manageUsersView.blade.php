@@ -38,14 +38,14 @@
                             </div>
                             <div id="action-button-user">
                                 <a href="{{ route('manage.users.register') }}">
-                                    <button type="button" class="btn btn-primary">Tambah Pengguna Baru</button>
+                                    <button type="button" class="btn btn-primary"><i class="bi bi-person-plus-fill" style="margin-right: 4px;"></i> Tambah Pengguna Baru</button>
                                 </a>
 
                                 <a href="{{ route('manage.users.importstudents') }}">
-                                    <button type="button" class="btn btn-primary">Import Murid</button>
+                                    <button type="button" class="btn btn-primary"><i class="fa-solid fa-upload" style="margin-right: 4px; font-size: 13px;"></i> Import Murid</button>
                                 </a>
 
-                                <button type="button" id="delete-user-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUsersModal" disabled>Hapus</button>
+                                <button type="button" id="delete-user-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUsersModal" disabled><i class="bi bi-trash-fill" style="margin-right: 4px;"></i> Hapus</button>
                                 {{-- Modal --}}
                                 <div class="modal fade" id="deleteUsersModal" tabindex="-1">
                                     <div class="modal-dialog modal-dialog-centered">
@@ -70,7 +70,7 @@
                         <br>
                         <br>
                         <!-- Default Table -->
-                        <table class="table">
+                        <table class="table" style="vertical-align: middle;">
                             <thead>
                             <tr>
                                 <th scope="col">
@@ -97,7 +97,7 @@
                                 </td>
                                 <td style="display: flex; justify-content: end;">
                                     <a href="{{ route('manage.users.detail', $user->id) }}">
-                                        <button type="button" class="btn btn-primary">Detail</button>
+                                        <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -128,6 +128,14 @@
             #action-button-user {
                 margin-top: 12px;
             }
+        }
+    </style>
+@endsection
+
+@section('css')
+    <style>
+        .upload-icon {
+            font-weight: bold;
         }
     </style>
 @endsection

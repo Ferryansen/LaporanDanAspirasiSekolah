@@ -45,7 +45,7 @@ class ImportUser implements ToModel, WithHeadingRow
             'role' => "student",
         ];
 
-        $formattedDate = date('Ymd', strtotime($row['tanggal_lahir']));
+        $formattedDate = date('dmY', strtotime($row['tanggal_lahir']));
         $freshPassword = "D3f@ult" . $formattedDate;
         $credentials['password'] = Hash::make($freshPassword);
 

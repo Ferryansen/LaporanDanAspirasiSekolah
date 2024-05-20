@@ -27,6 +27,10 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
+Route::get('/testEmail', function () {
+    return view('emails.reportInteractionNotification');
+});
+
 // Auths
 Route::get('/login', [UserController::class, 'showLoginForm'])->name('login.form');
 Route::post('/login', [UserController::class, 'login'])->name('login');
@@ -40,7 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/aspirations/detail/{aspirationId}', [AspirationController::class, 'showDetail'])->name('aspirations.details');
     Route::get('/report/detail/{id}', [ReportController::class, 'reportDetail'])->name('student.reportDetail');
     Route::get('/FAQ', [FaqController::class, 'seeAllFaq'])->name('faq.seeall');
-    Route::get('downloadcenter', [DownloadContentController::class, 'seeAllDownloadContent'])->name('downloadcontent.seeall');
+    Route::get('/downloadcenter', [DownloadContentController::class, 'seeAllDownloadContent'])->name('downloadcontent.seeall');
 });
 
 Route::middleware(['isschool'])->group(function () {

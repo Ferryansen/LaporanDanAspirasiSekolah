@@ -21,6 +21,7 @@ class Report extends Model
         'isChatOpened',
         'processDate',
         'processEstimationDate',
+        'processedBy',
         'approvalBy',
         'lastUpdatedBy',
         'status',
@@ -30,6 +31,10 @@ class Report extends Model
 
     public function user() {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function processExecutor() {
+        return $this->belongsTo(User::class, 'processedBy');
     }
     
     public function category() {

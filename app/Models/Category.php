@@ -23,6 +23,6 @@ class Category extends Model
     }
 
     public function staffType() {
-        return $this->belongsTo(StaffType::class);
+        return $this->belongsTo(StaffType::class, 'staffType_id');
     }
 }

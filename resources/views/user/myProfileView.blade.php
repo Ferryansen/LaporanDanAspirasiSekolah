@@ -18,7 +18,7 @@
 
 @section('sectionPage')
     @php
-        $user = Auth::user();    
+        $user = Auth::user();
     @endphp
 
     <section class="section profile">
@@ -71,7 +71,7 @@
 
                     <div class="row">
                         <div class="col-lg-3 col-md-4 label">Tanggal Lahir</div>
-                        <div class="col-lg-9 col-md-8">{{ $user->birthDate }}</div>
+                        <div class="col-lg-9 col-md-8">{{ \Carbon\Carbon::parse($user->birthDate)->format('d/m/Y') }}</div>
                     </div>
 
                     <div class="row">
@@ -116,7 +116,7 @@
                         @csrf
 
                         <div class="row mb-3">
-                        <label for="current_password" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
+                        <label for="current_password" class="col-md-4 col-lg-3 col-form-label">Password Sekarang</label>
                         <div class="col-md-8 col-lg-9">
                             <input name="current_password" type="password" class="form-control @error('currPassword') is-invalid @enderror" id="current_password">
                             @error('current_password')
@@ -126,7 +126,7 @@
                         </div>
 
                         <div class="row mb-3">
-                        <label for="new_password" class="col-md-4 col-lg-3 col-form-label">New Password</label>
+                        <label for="new_password" class="col-md-4 col-lg-3 col-form-label">Password Baru</label>
                         <div class="col-md-8 col-lg-9">
                             <input name="new_password" type="password" class="form-control @error('newPassword') is-invalid @enderror" id="new_password">
                             @error('new_password')
@@ -136,7 +136,7 @@
                         </div>
 
                         <div class="row mb-3">
-                        <label for="new_password_confirmation" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
+                        <label for="new_password_confirmation" class="col-md-4 col-lg-3 col-form-label">Konfirmasi Password Baru</label>
                         <div class="col-md-8 col-lg-9">
                             <input name="new_password_confirmation" type="password" class="form-control @error('confirmPassword') is-invalid @enderror" id="new_password_confirmation">
                             @error('new_password_confirmation')
@@ -145,8 +145,13 @@
                         </div>
                         </div>
 
-                        <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Change Password</button>
+                        <br>
+                        
+                        <div class="row mb-3" id="short-change-btn">
+                            <div class="col-md-4 col-lg-3"></div>
+                            <div class="col-md-8 col-lg-9">
+                                <button type="submit" class="btn btn-primary">Ubah Password</button>
+                            </div>
                         </div>
                     </form>
 
