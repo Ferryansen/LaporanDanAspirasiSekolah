@@ -118,9 +118,9 @@ class ReportController extends Controller
             'reportDescription' => 'required|max:200',
             'reportCategory' => 'required',
             'reportEvidences.*' => 'file|mimes:png,jpg,jpeg,webp',
-            'reportEvidenceVideo.*' => 'file|mimes:mp4,avi,quicktime|max:40960',
+            'reportEvidenceVideo.*' => 'required_without:reportEvidences|file|mimes:mp4,avi,quicktime|max:40960',
             'reportEvidences' => [
-                'required',
+                'required_without:reportEvidenceVideo',
                 'array',
                 'max:5'
             ],
@@ -214,7 +214,89 @@ class ReportController extends Controller
     
         return redirect()->route('report.student.myReport');
     }
+
+    public function createReportUrgent(Request $request)
+    {
+        try{
+            $currUser = Auth::user();
     
+            // dd($request->all());
+            // Validate the form data
+            $request->validate([
+                'reportName' => 'required',
+                'reportDescription' => 'required|max:200',
+                'reportCategory' => 'required',
+                'mediaFile.*' => 'required|file|mimes:png,jpeg,jpg,webp,mp4,avi,quicktime,webm|max:40960' // Max 40MB
+            ]);
+            
+            // Create report
+            $currentYear = now()->year;
+            $reportCount = Report::whereYear('created_at', $currentYear)->count() + 1;
+            $report_no = sprintf('%03d/REP/%d', $reportCount, $currentYear);
+    
+            $report = Report::create([
+                'reportNo' => $report_no,
+                'user_id' => $currUser->id,
+                'name' => $request->reportName,
+                'category_id' => $request->reportCategory,
+                'description' => $request->reportDescription,
+                'isUrgent' => true,
+                'isChatOpened' => false,
+                'processDate' => null,
+                'processEstimationDate' => null,
+                'approvalBy'=> null,
+                'lastUpdatedBy'=> null,
+                'status' => "Freshly submitted",
+                'deletedBy' => null,
+                'deleteReason' => null,
+            ]);
+    
+            // Handle the file upload
+            $mediaFile = $request->file('mediaFile');
+            $name = $mediaFile->getClientOriginalName();
+            $filename = now()->timestamp . '_' . $name;
+    
+            // dd($mediaFile->getMimeType());
+            // dd($name);
+            // dd($filename);
+    
+            // Determine whether the file is an image or a video
+            if (in_array($mediaFile->getMimeType(), ['video/mp4', 'video/avi', 'video/quicktime', 'video/webm'])) {
+                $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $mediaFile, $filename . '.' . $mediaFile->getClientOriginalExtension());
+                // Create evidence and associate it with the report
+                $report->evidences()->create([
+                    'video' => $videoUrl,
+                    'name' => $name
+                ]);
+            } else {
+                $imageUrl = Storage::disk('public')->putFileAs('ListImage', $mediaFile, $filename);
+                // Create evidence and associate it with the report
+                $report->evidences()->create([
+                    'image' => $imageUrl,
+                    'name' => $name
+                ]);
+            }
+    
+            // Redirect back to the appropriate route
+            return redirect()->route('report.student.myReport');
+        }
+        catch (\Exception $e) {
+            \Log::error('Error creating urgent report: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'There was an issue submitting your report. Please try again.']);
+        }
+    }
+
+
+    
+    public function urgentReportPage(){
+        $categories = Category::all();
+
+        $data = [
+            'categories' => $categories,
+        ];
+
+        return view('report.student.urgentReport', $data);
+    }
 
 
     public function createReportForm(){
@@ -226,6 +308,7 @@ class ReportController extends Controller
 
         return view('report.student.createReportForm', $data);
     }
+
 
     // public function updateReportForm($id){
     //     $report = Report::findorFail($id);
