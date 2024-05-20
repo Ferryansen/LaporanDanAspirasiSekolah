@@ -2,12 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ApprovalReportStaffNotificationEmail;
+use App\Mail\CompleteReportHeadmasterNotificationEmail;
+use App\Mail\CompleteReportStudentNotificationEmail;
+use App\Mail\CreateReportStaffNotificationEmail;
+use App\Mail\CreateReportStudentNotificationEmail;
+use App\Mail\InProgressReportStudentNotificationEmail;
+use App\Mail\RejectReportStudentNotificationEmail;
+use App\Mail\RequestReportHeadmasterNotificationEmail;
 use App\Models\Report;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
 
 class ReportController extends Controller
 {
@@ -187,6 +197,20 @@ class ReportController extends Controller
             // }
         }
 
+        $reportData = [
+            'reportID' => $report->id,
+            'reportNo' => $report_no,
+            'title' => $request->reportName,
+            'date' => Carbon::now()->format('d/m/Y'),
+        ];
+
+        
+        Mail::to($currUser->email)->send(new CreateReportStudentNotificationEmail($currUser->name, $reportData));
+        $relatedStaffs = $report->category->staffType->users;
+        foreach ($relatedStaffs as $staff) {
+            Mail::to($staff->email)->send(new CreateReportStaffNotificationEmail($staff->name, $reportData));
+        }
+
     
         return redirect()->route('report.student.myReport');
     }
@@ -338,11 +362,16 @@ class ReportController extends Controller
     public function rejectReport(Request $request){
         $report = Report::find($request->id);
         $currUser = Auth::user();
+        $rejectedUser = $report->user;
 
         $report->update([
             'status' => "Rejected",
             'approvalBy' => $currUser->name
         ]);
+
+        Mail::to($rejectedUser->email)->send(new RejectReportStudentNotificationEmail($rejectedUser->name, $report->name));
+
+
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 
@@ -352,7 +381,8 @@ class ReportController extends Controller
 
         $report->update([
             'status' => "In review by staff",
-            'lastUpdatedBy' => $currUser->name
+            'processedBy' => $currUser->id,
+            'lastUpdatedBy' => $currUser->name,
         ]);
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
@@ -360,22 +390,44 @@ class ReportController extends Controller
     public function inReviewHeadmasterReport(Request $request){
         $report = Report::find($request->id);
         $currUser = Auth::user();
+        $relatedHeadmasters = User::where('role', 'headmaster')->get();
 
         $report->update([
             'status' => "In review to headmaster",
             'lastUpdatedBy' => $currUser->name
         ]);
+
+        $reportData = [
+            'reportID' => $report->id,
+            'reportNo' => $report->reportNo,
+            'title' => $report->name,
+            'relatedStaff' => $currUser->name,
+        ];
+
+        foreach ($relatedHeadmasters as $headmaster) {
+            Mail::to($headmaster->email)->send(new RequestReportHeadmasterNotificationEmail($headmaster->name, $reportData));
+        }
+
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 
     public function approveReport(Request $request){
         $report = Report::find($request->id);
         $currUser = Auth::user();
+        $processExecutor = $report->processExecutor;
 
         $report->update([
             'status' => "Approved",
             'approvalBy' => $currUser->name
         ]);
+
+        $reportData = [
+            'reportID' => $report->id,
+            'title' => $report->name,
+        ];
+
+        Mail::to($processExecutor->email)->send(new ApprovalReportStaffNotificationEmail($processExecutor->name, $reportData));
+
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 
@@ -396,6 +448,14 @@ class ReportController extends Controller
             'status' => "In Progress",
             'lastUpdatedBy' => $currUser->name
         ]);
+
+        $reportData = [
+            'reportID' => $report->id,
+            'title' => $report->name,
+        ];
+
+        Mail::to($report->user->email)->send(new InProgressReportStudentNotificationEmail($report->user->name, $reportData));
+
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 
@@ -413,11 +473,26 @@ class ReportController extends Controller
     public function finishReport(Request $request){
         $report = Report::find($request->id);
         $currUser = Auth::user();
+        $relatedHeadmasters = User::where('role', 'headmaster')->get();
 
         $report->update([
             'status' => "Completed",
             'lastUpdatedBy' => $currUser->name
         ]);
+
+        $reportData = [
+            'reportID' => $report->id,
+            'reportNo' => $report->reportNo,
+            'title' => $report->name,
+            'relatedStaff' => $currUser->name,
+            'completionDate' => Carbon::now()->format('d/m/Y'),
+        ];
+
+        Mail::to($report->user->email)->send(new CompleteReportStudentNotificationEmail($report->user->name, $reportData));
+        foreach ($relatedHeadmasters as $headmaster) {
+            Mail::to($headmaster->email)->send(new CompleteReportHeadmasterNotificationEmail($headmaster->name, $reportData));
+        }
+
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 

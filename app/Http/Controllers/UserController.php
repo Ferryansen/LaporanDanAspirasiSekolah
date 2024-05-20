@@ -260,7 +260,7 @@ class UserController extends Controller
     public function resetPassword($user_id) {
         $currUser = User::findOrFail($user_id);
 
-        $formattedDate = date('Ymd', strtotime($currUser->birthDate));
+        $formattedDate = date('dmY', strtotime($currUser->birthDate));
         $freshPassword = "D3f@ult" . $formattedDate;
         $credentials['password'] = Hash::make($freshPassword);
 
@@ -426,10 +426,15 @@ class UserController extends Controller
 
         $fileUpload = $request->file('file');
         $fileName = rand().$fileUpload->getClientOriginalName();
+        $filePath = 'public/' . $fileName;
 
         Storage::putFileAs('public', $fileUpload, $fileName);
-        Excel::import(new ImportUser, storage_path('app/public/' . $fileName));
-        Storage::delete('public/' . $fileName);
+        try {
+            Excel::import(new ImportUser, storage_path('app/' . $filePath));
+            Storage::delete($filePath);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
 
         return redirect()->route('manage.users.seeall')->with('successMessage', 'Proses import murid selesai');
     }
@@ -446,7 +451,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'phoneNumber' => 'required|numeric|digits_between:10,12|regex:/^08[0-9]+$/',
             'gender' => 'required',
-            'birthDate' => 'required|date|before:today|after:1900-01-01',
+            'birthDate' => 'required|date_format:d/m/Y|before:today|after:1900-01-01',
             'role' => 'required',
             'staffType' => 'required_if:role,3',
         ];
@@ -467,7 +472,7 @@ class UserController extends Controller
             'gender.required' => 'Jangan lupa masukin gender penggunanya yaa',
             
             'birthDate.required' => 'Jangan lupa masukin tanggal lahir penggunanya yaa',
-            'birthDate.date' => 'Yuk masukin tanggal lahir dengan format yang benar',
+            'birthDate.date_format' => 'Yuk masukin tanggal lahir dengan format yang benar',
             'birthDate.before' => 'Tanggal lahir ini kurang tepat yaa',
             'birthDate.after' => 'Tanggal lahir ini kurang tepat yaa',
             
@@ -485,6 +490,8 @@ class UserController extends Controller
         $userService = new UserService;
         $user_no = $userService->generateUserNo($request->birthDate);
 
+        $birthDate = \DateTime::createFromFormat('d/m/Y', $request->birthDate);
+        $formattedBirthDate = $birthDate->format('Y-m-d');
 
         $credentials = [
             'userNo' => $user_no,
@@ -492,7 +499,7 @@ class UserController extends Controller
             'email' => $request->email,
             'phoneNumber' => $request->phoneNumber,
             'gender' => $request->gender,
-            'birthDate' => $request->birthDate,
+            'birthDate' => $formattedBirthDate,
             'isSuspended' => false,
             'suspendReason' => '',
         ];
@@ -511,7 +518,7 @@ class UserController extends Controller
             $credentials['role'] = "staff";
         }
 
-        $formattedDate = date('Ymd', strtotime($request->birthDate));
+        $formattedDate = date('dmY', strtotime($formattedBirthDate));
         $freshPassword = "D3f@ult" . $formattedDate;
         $credentials['password'] = Hash::make($freshPassword);
 

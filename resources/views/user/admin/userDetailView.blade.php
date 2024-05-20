@@ -67,7 +67,7 @@
 
                     <div class="row">
                         <div class="col-lg-3 col-md-4 label">Tanggal Lahir</div>
-                        <div class="col-lg-9 col-md-8">{{ $currUser->birthDate }}</div>
+                        <div class="col-lg-9 col-md-8">{{ \Carbon\Carbon::parse($currUser->birthDate)->format('d/m/Y') }}</div>
                     </div>
 
                     <div class="row">
