@@ -74,7 +74,7 @@
                                     <td>{{ $user->suspendReason }}</td>
                                     <td>{{ $user->suspendDate }}</td>
                                     <td style="display: flex; justify-content: end;">
-                                        <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#unsuspendUserModal">Cabut Suspend</button>
+                                        <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#unsuspendUserModal"><i class="bi bi-trash-fill"></i></button>
                                         {{-- Modal --}}
                                         <div class="modal fade" id="unsuspendUserModal" tabindex="-1">
                                             <div class="modal-dialog modal-dialog-centered">

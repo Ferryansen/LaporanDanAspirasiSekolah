@@ -224,7 +224,7 @@
 
 @section('breadcrumb')
 <div class="pagetitle">
-  <h1>List Aspirasi</h1>
+  <h1>Aspirasi Publik</h1>
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Aspirasi</a></li>
@@ -241,8 +241,7 @@
         <div class="col-lg-12">
     
           <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Aspirasi Publik</h5>
+            <div class="card-body" style="margin-top: 24px">
 
 
               <div class="row">
@@ -257,7 +256,7 @@
                 @if (Auth::user()->role == "student")
                 <div class="col-5 col-md-9 d-flex justify-content-end align-items-center">
                   <a href="{{ route('aspirations.addForm') }}">
-                    <button type="button" class="btn btn-primary">Tambah Aspirasi</button>
+                    <button type="button" class="btn btn-primary"><i class="fa-solid fa-plus" style="margin-right: 8px;"></i>Tambah Aspirasi</button>
                   </a>
                 </div>
                 @endif

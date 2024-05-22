@@ -20,8 +20,6 @@
 
 @section('sectionPage')
 <section class="section">
-  <h5 class="card-title">Masukkan Aspirasi Anda</h5>
-
   <!-- General Form Elements -->
   <form action="{{ route('aspirations.create') }}" enctype="multipart/form-data" method="POST">
     @csrf
