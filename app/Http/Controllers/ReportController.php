@@ -14,9 +14,9 @@ class ReportController extends Controller
     public function myReport()
     {
         $currUser = Auth::user();
-        $reports = $currUser->reports()->with('user')->paginate(10)->withQueryString();
-        // $reports = Report::all();
-        // dd($reports);
+        $reports = Report::orderBy('isUrgent', 'desc') // Urgent reports first
+                     ->orderBy('created_at', 'desc') // Further order by creation date
+                     ->paginate(10); // Adjust pagination as needed
 
         $data = [
             'reports' => $reports,
@@ -30,7 +30,9 @@ class ReportController extends Controller
         $currUser = Auth::user();
         
         if (Auth::user()->role == "admin" || Auth::user()->role == "headmaster"){
-            $reports = Report::paginate(10)->withQueryString();
+            $reports = Report::orderBy('isUrgent', 'desc') // Urgent reports first
+                     ->orderBy('created_at', 'desc') // Further order by creation date
+                     ->paginate(10); // Adjust pagination as needed
         }
         else{
             // Get the staffType_id of the current user
@@ -40,7 +42,9 @@ class ReportController extends Controller
             $categoriesFilter = Category::where('staffType_id', $staffType_id)->pluck('id');
     
             // Use whereIn to filter reports by category_id
-            $reports = Report::whereIn('category_id', $categoriesFilter)->paginate(10)->withQueryString();
+            $reports = Report::orderBy('isUrgent', 'desc') // Urgent reports first
+                     ->orderBy('created_at', 'desc') // Further order by creation date
+                     ->paginate(10); // Adjust pagination as needed
         }
 
         $categories = Category::all();
@@ -94,11 +98,28 @@ class ReportController extends Controller
         return view('report.adminHeadmasterStaff.manageReport', $data);
     }
 
-    public function reportDetail($id){
-        $report = Report::findorFail($id);
+    public function reportDetail($id) {
+        $report = Report::findOrFail($id);
+        $link = null;
+    
+        if ($report->status == "Approved" || 
+            $report->status == "In review by staff" || 
+            $report->status == "In review to headmaster" || 
+            $report->status == "In Progress" || 
+            $report->status == "Monitoring process" || 
+            $report->status == "Completed") {
 
-        return view('report.studentHeadmasterStaff.reportDetail', compact('report'));
+            if(Auth::user()->role == "staff"){
+                $link = url("/chatify/{$report->user_id}");
+            }
+            else{
+                $link = url("/chatify/{$report->processedBy}");
+            }
+        }
+    
+        return view('report.studentHeadmasterStaff.reportDetail', compact('report', 'link'));
     }
+    
 
     public function createReport(Request $request)
     {
@@ -285,7 +306,6 @@ class ReportController extends Controller
         return view('report.student.createReportForm', $data);
     }
 
-
     // public function updateReportForm($id){
     //     $report = Report::findorFail($id);
 
@@ -352,6 +372,7 @@ class ReportController extends Controller
 
         $report->update([
             'status' => "In review by staff",
+            'processedBy' => $currUser->id,
             'lastUpdatedBy' => $currUser->name
         ]);
         return redirect()->route('report.adminHeadmasterStaff.manageReport');

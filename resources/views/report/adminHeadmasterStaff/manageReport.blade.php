@@ -89,18 +89,22 @@
                 <tbody>
                   @foreach($reports as $report)
                     <tr>
-                      <td>{{ $report->name }}</td>
-                      <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
-                      @if ($report->status == "Approved" || $report->status == "Rejected")
-                        <td>{{ $report->status }} by {{ $report->approvalBy }}</td>
-                      @elseif ($report->status == "Cancelled" || $report->status == "Freshly submitted")
-                        <td>{{ $report->status }}</td>
+                      @if($report->isUrgent == true)
+                        <td style="vertical-align: middle">{{ $report->name }} <i class="fa-sharp fa-solid fa-circle-exclamation fa-lg" style="color: #BB2D3B"></i></td>
                       @else
-                        <td>{{ $report->status }} by {{ $report->lastUpdatedBy }}</td>
+                        <td style="vertical-align: middle">{{ $report->name }}</td>    
+                      @endif
+                      <td style="vertical-align: middle">{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
+                      @if ($report->status == "Approved" || $report->status == "Rejected")
+                        <td style="vertical-align: middle">{{ $report->status }} by {{ $report->approvalBy }}</td>
+                      @elseif ($report->status == "Cancelled" || $report->status == "Freshly submitted")
+                        <td style="vertical-align: middle">{{ $report->status }}</td>
+                      @else
+                        <td style="vertical-align: middle">{{ $report->status }} by {{ $report->lastUpdatedBy }}</td>
                       @endif
 
                       @if (Auth::user()->role == "admin")
-                      <td>
+                      <td style="vertical-align: middle">
                           <form action="{{ route('admin.deleteReport', $report->id) }}" method="POST">
                             @csrf
                             @method('DELETE')
@@ -108,7 +112,7 @@
                           </form>
                         </td>
                       @else
-                        <td>
+                        <td style="vertical-align: middle">
                           <a href="{{ route('student.reportDetail', $report->id) }}">
                             <button type="button" class="btn btn-info">Detail</button>
                           </a>

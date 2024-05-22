@@ -3,6 +3,7 @@
 use App\Http\Controllers\AspirationController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\PusherController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StaffTypeController;
@@ -167,6 +168,7 @@ Route::middleware(['isstudent'])->group(function () {
         Route::get('/urgent', [ReportController::class, 'urgentReportPage'])->name('student.urgentReportPage');
         Route::post('/create', [ReportController::class, 'createReport'])->name('student.createReport');
         Route::post('/createUrgent', [ReportController::class, 'createReportUrgent'])->name('student.createReportUrgent');
+        
         // Route::get('/updateForm/{id}', [ReportController::class, 'updateReportForm'])->name('student.updateReportForm');
         // Route::patch('/update/{id}', [ReportController::class, 'updateReport'])->name('student.updateReport');
         Route::patch('/cancel/{id}', [ReportController::class, 'cancelReport'])->name('student.cancelReport');
@@ -175,11 +177,14 @@ Route::middleware(['isstudent'])->group(function () {
 
 //Aspiration
 // Route::prefix('/aspirations')->group(function(){
-
-    // Route::view('/urgent', 'report.student.urgentReport')->name('urgentReport');
-
-
-
+    
+    Route::get('/chat', [PusherController::class, 'index']);
+    Route::post('/chat/broadcast', [PusherController::class, 'broadcast']);
+    Route::post('/chat/receive', [PusherController::class, 'receive']);
+    
+    
+    
+    // Route::get('/chatify/{id}', [ReportController::class, 'urgentReportPage'])->name('student.chatify');
 
 
 
