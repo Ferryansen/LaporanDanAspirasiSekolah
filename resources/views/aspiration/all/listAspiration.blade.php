@@ -213,6 +213,12 @@
           margin-bottom: 10px;
           border-radius: 4px 0px 100px 4px;
         }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 @endsection
 
@@ -263,6 +269,11 @@
               <!-- Table with stripped rows -->
               <table class="table">
                   <tbody>
+                    @if ($aspirations->count() == 0)
+                    <div class="container">
+                        <span style="color: dimgray">Belum ada aspirasi</span>
+                    </div>
+                    @endif
                   @foreach($aspirations as $aspiration)
                     @if ($aspiration->isPinned == true)
                       @if ($aspiration->status != 'Canceled')
@@ -340,6 +351,11 @@
                                         <h3 style="vertical-align: middle; font-weight: 600; color: #012970">Comment</h3>
                                         <button class="close-btn" data-aspiration-id="{{ $aspiration->id }}"><i class="fas fa-times"></i></button>
                                       </div>
+                                      @if ($aspiration->comments()->count() == 0)
+                                      <div class="container">
+                                          <span style="color: dimgray">Belum ada komentar</span>
+                                      </div>
+                                      @endif
                                         <!-- Comment content will be displayed here -->
                                         @foreach ($aspiration->comments as $comment)
                                             {{-- Display only standalone comments --}}
@@ -495,6 +511,11 @@
                                         <h3 style="vertical-align: middle; font-weight: 600; color: #012970">Comment</h3>
                                         <button class="close-btn" data-aspiration-id="{{ $aspiration->id }}"><i class="fas fa-times"></i></button>
                                       </div>
+                                      @if ($aspiration->comments()->count() == 0)
+                                      <div class="container">
+                                          <span style="color: dimgray">Belum ada komentar</span>
+                                      </div>
+                                      @endif
                                         <!-- Comment content will be displayed here -->
                                         @foreach ($aspiration->comments as $comment)
                                             {{-- Display only standalone comments --}}

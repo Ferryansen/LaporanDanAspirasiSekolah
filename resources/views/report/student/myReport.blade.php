@@ -4,6 +4,23 @@
     Laporan Saya
 @endsection
 
+@section('css')
+  <style>
+    table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .container {
+            text-align: center; /* Center the text within the td */
+            color: dimgray;
+        }
+  </style>
+@endsection
+
 @section('breadcrumb')
     <div class="pagetitle">
         <h1>Laporan Saya</h1>
@@ -45,6 +62,11 @@
                             </tr>
                             </thead>
                             <tbody>
+                            @if ($reports->count() == 0)
+                            <tr>
+                                <td class="container" colspan="4" style="color: dimgray">Belum ada laporan</td>
+                            </tr>
+                            @endif
                             @foreach ($reports as $report)
                             <tr>
                                 <td>{{ $report->name }}</td>
