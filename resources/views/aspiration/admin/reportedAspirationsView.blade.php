@@ -47,8 +47,6 @@
 
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">Aspirasi Bermasalah</h5>
-
           <br>
           <!-- Table with stripped rows -->
           <table class="table">
@@ -74,9 +72,9 @@
                     <td>{{ \Carbon\Carbon::parse($aspiration->created_at)->format('d/m/y') }}</td>
                     <td>{{ $aspiration->status }}</td>
                     <td>{{ $aspiration->user_report_aspirations_count }}</td>
-                    <td>
+                    <td style="display: flex; justify-content: end;">
                       <a href="{{ route('aspirations.reported.details', ['aspiration_id' => $aspiration->id]) }}">
-                        <button type="button" class="btn btn-info">Info</button>
+                          <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
                       </a>
                     </td>
                   </tr>

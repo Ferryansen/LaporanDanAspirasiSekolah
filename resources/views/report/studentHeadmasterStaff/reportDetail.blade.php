@@ -313,36 +313,6 @@ Detail Laporan
       </div>
   @endif
 
-  {{-- @else
-    <div class="col-lg-12">
-      <div class="card">
-        <div class="card-header">{{$report->reportNo}}</div>
-            <div class="card-body">
-                <h5 class="card-title">{{$report->name}}</h5>
-                <td>{{$report->description}}</td>
-                <br>
-                @if ($report->evidences->isEmpty())
-                  No evidence available
-                @else
-                    @foreach($report->evidences as $evidence)
-                        @if (strpos($evidence->image, 'ListImage') === 0)
-                            <!-- Display image -->
-                            <img style="max-width: 100%; margin-top: 20px" src="{{ asset('storage/'.$evidence->image) }}" alt="{{ $evidence->name }}">
-                        @elseif (strpos($evidence->video, 'ListVideo') === 0)
-                            <!-- Display video -->
-                            <video style="max-width: 100%; margin-top: 20px" controls>
-                                <source src="{{ asset('storage/'.$evidence->video) }}" type="{{ getVideoMimeType($evidence->video) }}">
-                                Your browser does not support the video tag.
-                            </video>
-                        @endif
-                    @endforeach
-                @endif
-            </div>
-        </div>
-      </div>
-    </div>
-  @endif --}}
-
 @endif
 
 @endsection

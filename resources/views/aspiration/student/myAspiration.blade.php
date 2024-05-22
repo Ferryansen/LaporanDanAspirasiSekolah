@@ -1,7 +1,7 @@
 @extends('layouts.mainpage')
 
 @section('title')
-    List Aspirasi
+    Aspirasi Saya
 @endsection
 
 @section('css')
@@ -76,7 +76,7 @@
 
 @section('breadcrumb')
 <div class="pagetitle">
-  <h1>List Aspirasi</h1>
+  <h1>Aspirasi Saya</h1>
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Aspirasi</a></li>
@@ -93,8 +93,7 @@
         <div class="col-lg-12">
 
       <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Aspirasi Saya</h5>
+        <div class="card-body" style="margin-top: 24px">
           <!-- Table with stripped rows -->
             <table class="table">
             <tbody>

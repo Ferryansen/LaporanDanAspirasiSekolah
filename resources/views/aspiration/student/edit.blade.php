@@ -12,7 +12,7 @@
       <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Aspirasi</a></li>
       <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Aspirasi Saya</a></li>
       <li class="breadcrumb-item"><a href="{{ route('aspirations.publicAspirations') }}">Aspirasi Publik</a></li>
-      <li class="breadcrumb-item active">Perbarui Aspirasis</li>
+      <li class="breadcrumb-item active">Perbarui Aspirasi</li>
     </ol>
   </nav>
 </div>
@@ -20,8 +20,6 @@
 
 @section('sectionPage')
 <section class="section">
-  <h5 class="card-title">Masukkan Ralat Aspirasi Anda</h5>
-
   <!-- General Form Elements -->
   <form action="{{ route('aspirations.update', $aspiration->id) }}" enctype="multipart/form-data" method="POST">
     @csrf

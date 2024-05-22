@@ -149,10 +149,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       </li><!-- End Components Nav -->
       
       <li class="nav-item">
-        <a class="nav-link {{ request()->is('aspirations/*') ? '' : 'collapsed'}}" data-bs-target="#aspiration-nav" data-bs-toggle="collapse" href="#">
+        <a class="nav-link {{ request()->is('aspirations/*') || request()->is('publicAspirations*') ? '' : 'collapsed'}}" data-bs-target="#aspiration-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-menu-button-wide"></i><span>Aspirasi</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="aspiration-nav" class="nav-content collapse {{ request()->is('aspirations/*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
+        <ul id="aspiration-nav" class="nav-content collapse {{ request()->is('aspirations/*') || request()->is('publicAspirations*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
           @if (Auth::user()->role == "student")
           <li>
             <a href="{{ route('aspirations.myAspirations') }}" class="{{ request()->is('aspirations/myAspirations') ? 'active' : ''}}">
@@ -160,7 +160,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
             </a>
           </li>
           <li>
-            <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('aspirations/publicAspirations*') ? 'active' : ''}}">
+            <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('publicAspirations*') || request()->is('comments*') || request()->is('aspirations/addForm') || request()->is('aspirations/updateForm/*') ? 'active' : ''}}">
               <i class="bi bi-circle"></i><span>Aspirasi Publik</span>
             </a>
           </li>
@@ -168,7 +168,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
           <li>
             <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('aspirations/publicAspirations*') ? 'active' : ''}}">
 
-              <i class="bi bi-circle"></i><span>Urus Aspirasi</span>
+              <i class="bi bi-circle"></i><span>Kelola Aspirasi</span>
             </a>
           </li>
             @if (Auth::user()->role == "admin")
