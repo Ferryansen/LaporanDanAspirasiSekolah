@@ -117,15 +117,18 @@
                 @endif
                   @foreach($reports as $report)
                     <tr>
-                   
-                      <td>{{ $report->name }}</td>
-                      <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
-                      @if ($report->status == "Approved" || $report->status == "Rejected")
-                        <td>{{ $report->status }} by {{ $report->approvalBy }}</td>
-                      @elseif ($report->status == "Cancelled" || $report->status == "Freshly submitted")
-                        <td>{{ $report->status }}</td>
+                      @if($report->isUrgent == true)
+                        <td style="vertical-align: middle">{{ $report->name }} <i class="fa-sharp fa-solid fa-circle-exclamation fa-lg" style="color: #BB2D3B"></i></td>
                       @else
-                        <td>{{ $report->status }} by {{ $report->lastUpdatedBy }}</td>
+                        <td style="vertical-align: middle">{{ $report->name }}</td>    
+                      @endif
+                      <td style="vertical-align: middle">{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
+                      @if ($report->status == "Approved" || $report->status == "Rejected")
+                        <td style="vertical-align: middle">{{ $report->status }} by {{ $report->approvalBy }}</td>
+                      @elseif ($report->status == "Cancelled" || $report->status == "Freshly submitted")
+                        <td style="vertical-align: middle">{{ $report->status }}</td>
+                      @else
+                        <td style="vertical-align: middle">{{ $report->status }} by {{ $report->lastUpdatedBy }}</td>
                       @endif
 
                       @if (Auth::user()->role == "admin")
@@ -160,6 +163,7 @@
                         </td>
                       @else
                         <td style="display: flex; justify-content: end;">
+
                           <a href="{{ route('student.reportDetail', $report->id) }}">
                               <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
                           </a>

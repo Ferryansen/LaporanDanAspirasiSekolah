@@ -73,18 +73,24 @@
                             @endif
                             @foreach ($reports as $report)
                             <tr>
-                                <td>{{ $report->name }}</td>
-                                <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
-                                @if ($report->status == "In review by staff" || $report->status == "In review to headmaster")
-                                    <td>Freshly submitted</td>
-                                @elseif ($report->status == "Monitoring process")
-                                    <td>In Progress</td>
+                                @if($report->isUrgent == true)
+                                    <td style="vertical-align: middle">{{ $report->name }} <i class="fa-sharp fa-solid fa-circle-exclamation fa-lg" style="color: #BB2D3B"></i></td>
                                 @else
-                                    <td>{{ $report->status }}</td>
+                                    <td style="vertical-align: middle">{{ $report->name }}</td>    
                                 @endif
-                                <td style="display: flex; justify-content: end;">
+
+                                <td style="vertical-align: middle">{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
+                                @if ($report->status == "In review by staff" || $report->status == "In review to headmaster")
+                                    <td style="vertical-align: middle">Freshly submitted</td>
+                                @elseif ($report->status == "Monitoring process")
+                                    <td style="vertical-align: middle">In Progress</td>
+                                @else
+                                    <td style="vertical-align: middle">{{ $report->status }}</td>
+                                @endif
+
+                                <td style="vertical-align: middle">
                                     <a href="{{ route('student.reportDetail', $report->id) }}">
-                                        <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
+                                        <button type="button" class="btn btn-info">Detail</button>
                                     </a>
                                 </td>
                             </tr>
