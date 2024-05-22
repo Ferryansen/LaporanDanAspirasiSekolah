@@ -135,13 +135,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
           @if (Auth::user()->role == "student")
             <li>
               <a href="{{ route('report.student.myReport') }}" class="{{ request()->is('report/myReport') || request()->is('report/detail*') ? 'active' : ''}}">
-                <i class="bi bi-circle"></i><span>My Report</span>
+                <i class="bi bi-circle"></i><span>Laporan Saya</span>
               </a>
             </li>
           @else
             <li>
-              <a href="{{ route('report.adminHeadmasterStaff.manageReport') }}" class="{{ request()->is('report/manage') || request()->is('report/detail*') ? 'active' : ''}}">
-                <i class="bi bi-circle"></i><span>Urus Laporan</span>
+              <a href="{{ route('report.adminHeadmasterStaff.manageReport') }}" class="{{ request()->is('report/manage*') || request()->is('report/detail*') ? 'active' : ''}}">
+                <i class="bi bi-circle"></i><span>Kelola Laporan</span>
               </a>
             </li>
           @endif

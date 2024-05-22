@@ -53,7 +53,7 @@
                                 <td style="display: flex; justify-content: end;">
                                     @if(file_exists(public_path().'\storage/'.$downloadContent->file))
                                         <a href="{{ asset('storage/'.$downloadContent->file) }}" style="margin: 0 4px" download>
-                                            <button type="button" class="btn btn-primary">Download</button>
+                                            <button type="button" class="btn btn-primary"><i class="fa-solid fa-download"></i></button>
                                         </a>
                                     @else
                                         <button type="button" class="btn btn-primary" style="margin: 0 4px" disabled>File Error</button>
@@ -61,10 +61,10 @@
 
                                     @if (Auth::user()->role != 'student')
                                         <a href="{{ route('downloadcontent.updateForm', $downloadContent->id) }}" style="margin: 0 4px">
-                                            <button type="button" class="btn btn-primary">Perbarui</button>
+                                            <button type="button" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></button>
                                         </a>
                                         <button style="margin: 0 4px" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#deleteDownloadContentModal_" . $downloadContent->id}}">
-                                            Hapus
+                                            <i class="bi bi-trash-fill"></i>
                                         </button>
 
                                         {{-- Modal --}}

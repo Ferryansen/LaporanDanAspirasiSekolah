@@ -46,7 +46,8 @@ class ReportController extends Controller
         $currUser = Auth::user();
         
         if (Auth::user()->role == "admin" || Auth::user()->role == "headmaster"){
-            $reports = Report::paginate(10)->withQueryString();
+            $reports = Report::paginate(10)
+                        ->withQueryString();
         }
         else{
             // Get the staffType_id of the current user
@@ -56,7 +57,10 @@ class ReportController extends Controller
             $categoriesFilter = Category::where('staffType_id', $staffType_id)->pluck('id');
     
             // Use whereIn to filter reports by category_id
-            $reports = Report::whereIn('category_id', $categoriesFilter)->paginate(10)->withQueryString();
+            $reports = Report::whereIn('category_id', $categoriesFilter)
+                                ->orderBy('created_at', 'desc')
+                                ->paginate(10)
+                                ->withQueryString();
         }
 
         $categories = Category::all();
@@ -591,6 +595,6 @@ class ReportController extends Controller
 
         $report->delete();
        
-        return redirect()->route('report.adminHeadmasterStaff.manageReport');
+        return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Laporan berhasil dihapus');
     }
 }

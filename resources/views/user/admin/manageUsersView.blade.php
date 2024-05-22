@@ -1,16 +1,16 @@
 @extends('layouts.mainpage')
 
 @section('title')
-    Semua Pengguna
+    Kelola Pengguna
 @endsection
 
 @section('breadcrumb')
     <div class="pagetitle">
-        <h1>Urus Pengguna</h1>
+        <h1>Kelola Pengguna</h1>
         <nav>
             <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Pengguna</a></li>
-            <li class="breadcrumb-item active">Urus Pengguna</li>
+            <li class="breadcrumb-item active">Kelola Pengguna</li>
             </ol>
         </nav>
     </div><!-- End Page Title -->
@@ -105,11 +105,13 @@
                             </tbody>
                         </table>
 
-                        <div class="row mt-5">
-                            <div class="d-flex justify-content-end">
-                                {{ $users->appends(['checked_users_session' => session('checked_users_session')])->withQueryString()->links() }}
+                        @if ($users->hasPages())
+                            <div class="row mt-5">
+                                <div class="d-flex justify-content-end">
+                                    {{ $users->appends(['checked_users_session' => session('checked_users_session')])->withQueryString()->links() }}
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
 

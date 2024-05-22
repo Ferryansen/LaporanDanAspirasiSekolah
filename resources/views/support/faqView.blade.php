@@ -51,10 +51,10 @@
                                     @if (Auth::user()->role != 'student')
                                         <div class="action">
                                             <a href="{{ route('faq.updateForm', $faq->id) }}">
-                                                <button type="button" class="btn btn-primary">Perbarui</button>
+                                                <button type="button" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></button>
                                             </a>
                                             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#deleteFaqModal_" . $faq->id}}">
-                                                Hapus
+                                                <i class="bi bi-trash-fill"></i>
                                             </button>
 
                                             {{-- Modal --}}

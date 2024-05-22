@@ -1,30 +1,35 @@
 @extends('layouts.mainpage')
 
 @section('title')
-    Urus Laporan
+    Kelola Laporan
 @endsection
 
 @section('breadcrumb')
 <div class="pagetitle">
-  <h1>Laporan</h1>
+  <h1>Kelola Laporan</h1>
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{{ route('report.adminHeadmasterStaff.manageReport') }}">Laporan</a></li>
-      <li class="breadcrumb-item active">Urus Laporan</li>
+      <li class="breadcrumb-item active">Kelola Laporan</li>
     </ol>
   </nav>
 </div>
 @endsection
 
 @section('sectionPage')
+@if(session('successMessage'))
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+        {{ session('successMessage') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
 <section class="section">
   <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-12" style="margin-bottom: 0;">
 
       <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Manage Laporan</h5>
-
+        <div class="card-body" style="margin-top: 24px">
           @if (Auth::user()->role == "staff")
             <div class="row">
               <div class="col-3">
@@ -100,12 +105,34 @@
                       @endif
 
                       @if (Auth::user()->role == "admin")
-                      <td>
-                          <form action="{{ route('admin.deleteReport', $report->id) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i></button>
-                          </form>
+                      <td style="display: flex; justify-content: end;">
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#deleteReportModal_" . $report->id}}">
+                          <i class="bi bi-trash-fill"></i>
+                        </button>
+
+                        {{-- Modal --}}
+                        <div class="modal fade" id="{{"deleteReportModal_" . $report->id}}" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header border-0">
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body" style="text-align: center;">
+                                <h5 class="modal-title" style="font-weight: 700">Yakin mau hapus laporan ini?</h5>
+                                Data yang udah terhapus akan sulit untuk dikembalikan seperti semula
+                                </div>
+                                <div class="modal-footer border-0" style="flex-wrap: nowrap;">
+                                <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Tidak</button>
+                                <form class="w-100" action="{{ route('admin.deleteReport', $report->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit" class="btn btn-secondary w-100">Ya, hapus</button>
+                                </form>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
                         </td>
                       @else
                         <td>
@@ -120,26 +147,13 @@
             </table>
             <!-- End Table with stripped rows -->
 
-            <div class="row mt-5">
-              <div class="d-flex justify-content-end">
-                  {{ $reports->withQueryString()->links() }}
+            @if ($reports->hasPages())
+              <div class="row mt-5">
+                <div class="d-flex justify-content-end">
+                    {{ $reports->withQueryString()->links() }}
+                </div>
               </div>
-            </div>
-
-            <br>
-
-            {{-- @if (Auth::user()->role == "headmaster")
-              @if ($filterTitle == null)
-                <a href="{{ route('convertReport') }}">
-                  <button type="button" class="btn btn-success">Export Data Laporan</button>
-                </a>
-              
-              @else
-                <a href="{{ route('convertCategoryReport', ['category_id' => $categoryNow]) }}">
-                  <button type="button" class="btn btn-success">Export Data Laporan</button>
-                </a>  
-              @endif
-            @endif --}}
+            @endif
           
         </div>
       </div>

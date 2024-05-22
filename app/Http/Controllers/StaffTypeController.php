@@ -31,7 +31,7 @@ class StaffTypeController extends Controller
             'name' => $request->staffTypeName,
         ]);
 
-        return redirect()->route('admin.staffTypeList');
+        return redirect()->route('admin.staffTypeList')->with('successMessage', 'Tipe staf berhasil ditambahkan');
     }
 
     public function createStaffTypeForm(){
@@ -56,17 +56,16 @@ class StaffTypeController extends Controller
             
         ]);
 
-        return redirect()->route('admin.staffTypeList');
+        return redirect()->route('admin.staffTypeList')->with('successMessage', 'Tipe staf berhasil diperbarui');
     }
 
     public function deleteStaffType(Request $request){
         $staffType = StaffType::find($request->id);
     
-        // Update users with a new staffType_id or set to null
         User::where('staffType_id', $request->id)->update(['staffType_id' => null]);
     
         $staffType->delete();
         
-        return redirect()->route('admin.staffTypeList');
+        return redirect()->route('admin.staffTypeList')->with('successMessage', 'Tipe staf berhasil dihapus');
     }
 }
