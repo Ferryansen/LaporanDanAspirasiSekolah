@@ -4,6 +4,23 @@
     Pusat Download
 @endsection
 
+@section('css')
+  <style>
+    table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .container {
+            text-align: center; /* Center the text within the td */
+            color: dimgray;
+        }
+  </style>
+@endsection
+
 @section('breadcrumb')
     <div class="pagetitle">
         <h1>Pusat Download</h1>
@@ -46,6 +63,11 @@
                             </tr>
                             </thead>
                             <tbody>
+                            @if ($downloadContents->count() == 0)
+                                <tr>
+                                    <td class="container" colspan="3" style="color: dimgray">Belum ada file</td>
+                                </tr>
+                            @endif
                             @foreach ($downloadContents as $downloadContent)
                             <tr>
                                 <td>{{ $downloadContent->title }}</td>

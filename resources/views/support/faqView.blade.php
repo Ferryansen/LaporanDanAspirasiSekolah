@@ -4,6 +4,16 @@
     FAQ
 @endsection
 
+@section('css')
+<style>
+    .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+</style>
+@endsection
+
 @section('breadcrumb')
     <div class="pagetitle">
         <h1>FAQ</h1>
@@ -39,6 +49,11 @@
                     @endif
 
                     <div class="accordion accordion-flush" id="accordionFlushExample">
+                        @if ($faqs->count() == 0)
+                        <div class="container">
+                            <span style="color: dimgray">Belum ada FAQ</span>
+                        </div>
+                        @endif
                         @foreach ($faqs as $faq)
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="{{ "flush-heading-" . $faq->id }}">

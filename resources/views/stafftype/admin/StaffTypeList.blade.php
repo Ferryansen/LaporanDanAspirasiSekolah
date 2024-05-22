@@ -4,6 +4,23 @@
     Admin Dashboard
 @endsection
 
+@section('css')
+  <style>
+    table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .container {
+            text-align: center; /* Center the text within the td */
+            color: dimgray;
+        }
+  </style>
+@endsection
+
 @section('breadcrumb')
     <div class="pagetitle">
         <h1>Tipe Staf</h1>
@@ -36,6 +53,11 @@
                             </tr>
                             </thead>
                             <tbody>
+                            @if ($staffTypes->count() == 0)
+                                <tr>
+                                    <td class="container" colspan="2" style="color: dimgray">Belum ada tipe staff</td>
+                                </tr>
+                            @endif
                             @foreach ($staffTypes as $staffType)
                             <tr>
                                 <td>{{ $staffType->name }}</td>

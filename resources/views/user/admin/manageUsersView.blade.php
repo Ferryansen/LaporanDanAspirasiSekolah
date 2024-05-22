@@ -4,6 +4,23 @@
     Semua Pengguna
 @endsection
 
+@section('css')
+  <style>
+    table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .container {
+            text-align: center; /* Center the text within the td */
+            color: dimgray;
+        }
+  </style>
+@endsection
+
 @section('breadcrumb')
     <div class="pagetitle">
         <h1>Urus Pengguna</h1>
@@ -82,6 +99,11 @@
                             </tr>
                             </thead>
                             <tbody>
+                            @if ($users->count() == 0)
+                                <tr>
+                                    <td class="container" colspan="4" style="color: dimgray">Belum ada pengguna</td>
+                                </tr>
+                            @endif
                             @foreach ($users as $user)
                             <tr>
                                 <td>

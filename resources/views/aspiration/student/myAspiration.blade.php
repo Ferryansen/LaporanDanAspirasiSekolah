@@ -64,6 +64,13 @@
           border-radius: 4px 0px 100px 4px;
         }
 
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 30px;
+        }
+
     </style>
 @endsection
 
@@ -91,7 +98,12 @@
           <!-- Table with stripped rows -->
             <table class="table">
             <tbody>
-                  @foreach($aspirations as $aspiration)
+                @if ($aspirations->count() == 0)
+                    <div class="container">
+                        <span style="color: dimgray">Belum ada aspirasi</span>
+                    </div>
+                @endif
+                @foreach($aspirations as $aspiration)
                       <tr>
 
                       <div class="post">
