@@ -14,18 +14,18 @@ class Aspiration extends Model
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
-        'aspiration_no',
+        'aspirationNo',
         'user_id',
         'category_id',
         'name',
         'description',
         'processDate',
-        'processEstimationDate',
+        // 'processEstimationDate',
         'processedBy',
         'status',
-        'evidence',
-        'likeCount',
-        'dislikeCount',
+        // 'evidence',
+        // 'likeCount',
+        // 'dislikeCount',
         'problematicAspirationCount',
         'isPinned',
         'isChatOpened',
@@ -36,6 +36,10 @@ class Aspiration extends Model
     public function user() {
         return $this->belongsTo(User::class);
     }
+
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
     
     public function category() {
         return $this->belongsTo(Category::class);
@@ -43,5 +47,20 @@ class Aspiration extends Model
 
     public function reportedByUsers() {
         return $this->belongsToMany(User::class, 'user_report_aspirations', 'aspiration_id', 'user_id');
+    }
+
+    public function reactions()
+    {
+        return $this->hasMany(AspirationReaction::class);
+    }
+    
+    public function likes()
+    {
+        return $this->reactions()->where('reaction', 'like');
+    }
+    
+    public function dislikes()
+    {
+        return $this->reactions()->where('reaction', 'dislike');
     }
 }

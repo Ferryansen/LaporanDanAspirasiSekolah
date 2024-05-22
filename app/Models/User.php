@@ -78,4 +78,14 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Aspiration::class, 'userReportAspirations', 'user_id', 'aspirationId')->withPivot('reportReason');
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function aspirationReactions()
+    {
+        return $this->hasMany(AspirationReaction::class);
+    }
 }
