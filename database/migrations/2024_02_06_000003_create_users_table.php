@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('email', 255);
             $table->string('password');
             $table->char('phoneNumber', 12);
+            $table->char('urgentPhoneNumber', 12)->nullable();
             $table->string('gender', 6);
             $table->date('birthDate');
             $table->string('role', 15);

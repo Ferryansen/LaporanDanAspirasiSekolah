@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Halaman Login</title>
+  <title>Laporan Urgent</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -47,31 +47,22 @@
                 <div class="card-body">
 
                   <div class="pt-4 pb-2">
-                    <h5 class="card-title text-center pb-0 fs-4">Yuk, Login ke Akunmu!</h5>
-                    <p class="text-center small">Isi email dan password-mu yaa</p>
+                    <h5 class="card-title text-center pb-0 fs-4">Yuk, Masukkan Kode Aksesnya!</h5>
+                    <p class="text-center small">Kode aksesnya dapat kamu temukan di SMS</p>
                   </div>
 
-                  <form class="row g-3 needs-validation" method="POST" action="{{ route('login') }}" novalidate>
+                  <form class="row g-3 needs-validation" method="POST" action="{{ route('urgent.accessCheck', $urgentAccess) }}" novalidate>
                     @csrf
 
                     <div class="col-12">
-                      <label for="yourEmail" class="form-label">Email</label>
-                      <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', Cookie::get('CookieEmail', '')) }}" id="yourEmail">
-                      @error('email')
+                      <input type="text" name="accessCode" class="form-control @error('accessCode') is-invalid @enderror" value="{{ old('accessCode') }}" id="accessCode" placeholder="XXXXXX" maxlength="6">
+                      @error('accessCode')
                           <div class="invalid-feedback">{{ $message }}</div>
                       @enderror
                     </div>
 
                     <div class="col-12">
-                      <label for="yourPassword" class="form-label">Password</label>
-                      <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" value="{{ Cookie::get('CookieEmail', '') }}" id="yourPassword">
-                      @error('password')
-                          <div class="invalid-feedback">{{ $message }}</div>
-                      @enderror
-                    </div>
-
-                    <div class="col-12">
-                      <button class="btn btn-primary w-100" type="submit">Login</button>
+                      <button class="btn btn-primary w-100" type="submit">Masuk</button>
                     </div>
 
                   </form>

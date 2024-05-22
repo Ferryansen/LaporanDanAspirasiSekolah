@@ -254,7 +254,34 @@ class UserController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('successMessage', 'Password berhasil diperbarui');
+        return redirect()->back()->with('changePassSuccessMessage', 'Password berhasil diperbarui');
+    }
+
+    public function updateUrgentPhoneNum(Request $request) {
+        $user = Auth::user();
+
+        $rules = [
+            'urgent_phone_number' => 'required|numeric|digits_between:10,12|regex:/^08[0-9]+$/',
+        ];
+
+        $messages = [
+            'urgent_phone_number.required' => 'Nomor teleponnya belum diisi nih',
+            'urgent_phone_number.numeric' => 'Yuk masukin nomor telepon dengan format yang benar',
+            'urgent_phone_number.digits_between' => 'Duh, minimalnya 10 digit dan maksimalnya 12 digit yaa',
+            'urgent_phone_number.regex' => 'Nomor teleponnya harus dimulai dari "08" yaa',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+    
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
+
+        $user->update([
+            'urgentPhoneNumber' => $request->urgent_phone_number,
+        ]);
+
+        return redirect()->back()->with('updateUrgentSuccessMessage', 'Nomor telepon urgent berhasil diperbarui');
     }
 
     public function resetPassword($user_id) {
@@ -269,7 +296,10 @@ class UserController extends Controller
     }
 
     public function seeAllUser() {
-        $users = User::where('role', '!=', 'admin')->paginate(10)->withQueryString();
+        $users = User::where('role', '!=', 'admin')
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10)
+                        ->withQueryString();
 
         return view('user.admin.manageUsersView', compact('users'));
     }
@@ -590,7 +620,9 @@ class UserController extends Controller
     public function searchUserList(Request $request)
     {
         $userListFounded = User::where("name", "like", "%$request->userName%")
-            ->paginate(10)->withQueryString();
+                                    ->orderBy('created_at', 'desc')
+                                    ->paginate(10)
+                                    ->withQueryString();
 
         $data = [
             'users' => $userListFounded,
