@@ -34,16 +34,20 @@
 @endsection
 
 @section('sectionPage')
-
+    @if(session('successMessage'))
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            {{ session('successMessage') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Laporan Saya</h5>
-
+                    <div class="card-body" style="margin-top: 24px">
                         <a href="{{ route('student.createReportForm') }}">
-                            <button type="button" class="btn btn-primary">Tambah Laporan</button>
+                            <button type="button" class="btn btn-primary"><i class="fa-solid fa-plus" style="margin-right: 8px;"></i>Tambah Laporan</button>
                         </a>
                 
                           <br>
@@ -78,23 +82,24 @@
                                 @else
                                     <td>{{ $report->status }}</td>
                                 @endif
-                                <td>
-                                <a href="{{ route('student.reportDetail', $report->id) }}">
-                                    <button type="button" class="btn btn-info">Detail</button>
-                                </a>
+                                <td style="display: flex; justify-content: end;">
+                                    <a href="{{ route('student.reportDetail', $report->id) }}">
+                                        <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
+                                    </a>
                                 </td>
                             </tr>
                             @endforeach
                             </tbody>
                         </table>
-                    <!-- End Default Table Example -->
+                        <!-- End Default Table Example -->
 
-                    <div class="row mt-5">
-                        <div class="d-flex justify-content-end">
-                            {{ $reports->withQueryString()->links() }}
-                        </div>
-            
-                    </div>
+                        @if ($reports->hasPages())
+                            <div class="row mt-5">
+                                <div class="d-flex justify-content-end">
+                                    {{ $reports->withQueryString()->links() }}
+                                </div>
+                            </div>
+                        @endif
 
                     </div>
                 </div>

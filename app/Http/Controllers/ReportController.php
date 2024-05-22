@@ -46,7 +46,8 @@ class ReportController extends Controller
         $currUser = Auth::user();
         
         if (Auth::user()->role == "admin" || Auth::user()->role == "headmaster"){
-            $reports = Report::paginate(10)->withQueryString();
+            $reports = Report::paginate(10)
+                        ->withQueryString();
         }
         else{
             // Get the staffType_id of the current user
@@ -56,7 +57,10 @@ class ReportController extends Controller
             $categoriesFilter = Category::where('staffType_id', $staffType_id)->pluck('id');
     
             // Use whereIn to filter reports by category_id
-            $reports = Report::whereIn('category_id', $categoriesFilter)->paginate(10)->withQueryString();
+            $reports = Report::whereIn('category_id', $categoriesFilter)
+                                ->orderBy('created_at', 'desc')
+                                ->paginate(10)
+                                ->withQueryString();
         }
 
         $categories = Category::all();
@@ -218,7 +222,7 @@ class ReportController extends Controller
         }
 
     
-        return redirect()->route('report.student.myReport');
+        return redirect()->route('report.student.myReport')->with('successMessage', 'Laporan berhasil dibuat');
     }
 
     public function createReportUrgent(Request $request)
@@ -320,7 +324,7 @@ class ReportController extends Controller
 
     
             // Redirect back to the appropriate route
-            return redirect()->route('report.student.myReport');
+            return redirect()->route('report.student.myReport')->with('successMessage', 'Laporan urgent berhasil dibuat');
         }
         catch (\Exception $e) {
             \Log::error('Error creating urgent report: ' . $e->getMessage());
@@ -434,7 +438,7 @@ class ReportController extends Controller
         $report->update([
             'status' => "Cancelled",
         ]);
-        return redirect()->route('report.student.myReport');
+        return redirect()->route('report.student.myReport')->with('successMessage', 'Laporan berhasil dibatalkan');
     }
 
     public function rejectReport(Request $request){
@@ -450,7 +454,7 @@ class ReportController extends Controller
         Mail::to($rejectedUser->email)->send(new RejectReportStudentNotificationEmail($rejectedUser->name, $report->name));
 
 
-        return redirect()->route('report.adminHeadmasterStaff.manageReport');
+        return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Pengguna berhasil didaftarkan');
     }
 
     public function inReviewStaffReport(Request $request){
@@ -591,6 +595,6 @@ class ReportController extends Controller
 
         $report->delete();
        
-        return redirect()->route('report.adminHeadmasterStaff.manageReport');
+        return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Laporan berhasil dihapus');
     }
 }

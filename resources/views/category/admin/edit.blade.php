@@ -6,10 +6,10 @@
 
 @section('breadcrumb')
 <div class="pagetitle">
-  <h1>Pengguna</h1>
+  <h1>Perbarui Kategori</h1>
   <nav>
     <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Pengguna</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('categories.list') }}">Pengguna</a></li>
     <li class="breadcrumb-item"><a href="{{ route('categories.list') }}">Kategori Pengerjaan</a></li>
     <li class="breadcrumb-item active">Perbarui Kategori</li>
     </ol>
@@ -19,8 +19,6 @@
 
 @section('sectionPage')
 <section class="section">
-  <h5 class="card-title">Masukkan Ralat Kategori</h5>
-
   <!-- General Form Elements -->
   <form action="{{ route('categories.update', $category->id) }}" enctype="multipart/form-data" method="POST">
     @csrf
@@ -47,7 +45,7 @@
     <div class="row mb-3">
       <label class="col-sm-2 col-form-label"></label>
       <div class="col-sm-10">
-        <button type="submit" class="btn btn-primary">Simpan</button>
+        <button type="submit" class="btn btn-primary">Perbarui</button>
       </div>
     </div>
 
