@@ -2,12 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ApprovalReportStaffNotificationEmail;
+use App\Mail\CompleteReportHeadmasterNotificationEmail;
+use App\Mail\CompleteReportStudentNotificationEmail;
+use App\Mail\CreateReportStaffNotificationEmail;
+use App\Mail\CreateReportStudentNotificationEmail;
+use App\Mail\InProgressReportStudentNotificationEmail;
+use App\Mail\RejectReportStudentNotificationEmail;
+use App\Mail\RequestReportHeadmasterNotificationEmail;
 use App\Models\Report;
 use App\Models\Category;
+use App\Models\UrgentAccess;
 use App\Models\User;
+use App\Services\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class ReportController extends Controller
 {
@@ -208,14 +224,29 @@ class ReportController extends Controller
             // }
         }
 
+        $reportData = [
+            'reportID' => $report->id,
+            'reportNo' => $report_no,
+            'title' => $request->reportName,
+            'date' => Carbon::now()->format('d/m/Y'),
+        ];
+
+        
+        Mail::to($currUser->email)->send(new CreateReportStudentNotificationEmail($currUser->name, $reportData));
+        $relatedStaffs = $report->category->staffType->users;
+        foreach ($relatedStaffs as $staff) {
+            Mail::to($staff->email)->send(new CreateReportStaffNotificationEmail($staff->name, $reportData));
+        }
+
     
-        return redirect()->route('report.student.myReport');
+        return redirect()->route('report.student.myReport')->with('successMessage', 'Laporan berhasil dibuat');
     }
 
     public function createReportUrgent(Request $request)
     {
         try{
             $currUser = Auth::user();
+            $headmasters = User::where('role', 'headmaster')->get();
     
             // dd($request->all());
             // Validate the form data
@@ -273,9 +304,44 @@ class ReportController extends Controller
                     'name' => $name
                 ]);
             }
+
+            $smsService = app(SmsService::class);
+            
+            do {
+                $accessCode = Str::random(6);
+                $exists = DB::table('urgent_accesses')->where('accessCode', $accessCode)->exists();
+            } while ($exists);
+            $expiration = Carbon::now()->addDays(7);
+
+            $urgentAccess = UrgentAccess::create([
+                'report_id' => $report->id,
+                'accessCode' => $accessCode,
+                'expires_at' => $expiration,
+            ]);
+
+            if ($currUser->urgentPhoneNumber != null) {
+                $toUrgentContact = '+62' . substr($currUser->urgentPhoneNumber, 1);
+                $messageUrgentContact = 'Ada kejadian urgent yang dilaporkan oleh ' . $currUser->name . '!!
+- Kejadian: ' . $report->name . '
+- Detail: ' .  route('urgent.accessForm', $urgentAccess) . '
+- Kode akses: ' . $urgentAccess->accessCode;
+    
+                $smsService->sendSms($toUrgentContact, $messageUrgentContact);
+            }
+
+            foreach ($headmasters as $headmaster) {
+                $toHeadmaster = '+62' . substr($headmaster->phoneNumber, 1);
+                $messageHeadmaster = 'Ada laporan urgent dari ' . $currUser->name . '!!
+- Judul: ' . $report->name . '
+- Deskripsi: ' . $report->description . '
+- Detail: ' . route('student.reportDetail', $report->id);
+
+                $smsService->sendSms($toHeadmaster, $messageHeadmaster);
+            }
+
     
             // Redirect back to the appropriate route
-            return redirect()->route('report.student.myReport');
+            return redirect()->route('report.student.myReport')->with('successMessage', 'Laporan urgent berhasil dibuat');
         }
         catch (\Exception $e) {
             \Log::error('Error creating urgent report: ' . $e->getMessage());
@@ -283,7 +349,43 @@ class ReportController extends Controller
         }
     }
 
+    public function urgentAccessForm(UrgentAccess $urgentAccess) {
+        return view('urgent.urgentAccessForm', compact('urgentAccess'));
+    }
 
+    public function urgentAccessCheck(Request $request, UrgentAccess $urgentAccess) {
+        $rule = [
+            'accessCode' => 'required',
+        ];
+
+        $message = [
+            'accessCode.required' => 'Jangan lupa diisi yaa'
+        ];
+
+        $validator = Validator::make($request->all(), $rule, $message);
+    
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
+
+        if ($urgentAccess->accessCode === $request->accessCode) {
+            Session::put("validated_access_code_{$urgentAccess->id}", $request->accessCode);
+
+            return redirect()->route('urgent.accessDetail', $urgentAccess);
+        }
+
+        return back()->withErrors(['accessCode' => 'Kode akses salah nih, coba lagi yaa']);
+    }
+
+    public function urgentAccessDetail(UrgentAccess $urgentAccess) {
+        $validatedAccessCode = Session::get("validated_access_code_{$urgentAccess->id}");
+
+        if ($validatedAccessCode != $urgentAccess->accessCode || Carbon::now() > $urgentAccess->expires_at) {
+            abort(404);
+        }
+
+        return view('urgent.urgentAccessDetail', compact('urgentAccess'));
+    }
     
     public function urgentReportPage(){
         $categories = Category::all();
@@ -352,18 +454,23 @@ class ReportController extends Controller
         $report->update([
             'status' => "Cancelled",
         ]);
-        return redirect()->route('report.student.myReport');
+        return redirect()->route('report.student.myReport')->with('successMessage', 'Laporan berhasil dibatalkan');
     }
 
     public function rejectReport(Request $request){
         $report = Report::find($request->id);
         $currUser = Auth::user();
+        $rejectedUser = $report->user;
 
         $report->update([
             'status' => "Rejected",
             'approvalBy' => $currUser->name
         ]);
-        return redirect()->route('report.adminHeadmasterStaff.manageReport');
+
+        Mail::to($rejectedUser->email)->send(new RejectReportStudentNotificationEmail($rejectedUser->name, $report->name));
+
+
+        return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Pengguna berhasil didaftarkan');
     }
 
     public function inReviewStaffReport(Request $request){
@@ -381,22 +488,44 @@ class ReportController extends Controller
     public function inReviewHeadmasterReport(Request $request){
         $report = Report::find($request->id);
         $currUser = Auth::user();
+        $relatedHeadmasters = User::where('role', 'headmaster')->get();
 
         $report->update([
             'status' => "In review to headmaster",
             'lastUpdatedBy' => $currUser->name
         ]);
+
+        $reportData = [
+            'reportID' => $report->id,
+            'reportNo' => $report->reportNo,
+            'title' => $report->name,
+            'relatedStaff' => $currUser->name,
+        ];
+
+        foreach ($relatedHeadmasters as $headmaster) {
+            Mail::to($headmaster->email)->send(new RequestReportHeadmasterNotificationEmail($headmaster->name, $reportData));
+        }
+
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 
     public function approveReport(Request $request){
         $report = Report::find($request->id);
         $currUser = Auth::user();
+        $processExecutor = $report->processExecutor;
 
         $report->update([
             'status' => "Approved",
             'approvalBy' => $currUser->name
         ]);
+
+        $reportData = [
+            'reportID' => $report->id,
+            'title' => $report->name,
+        ];
+
+        Mail::to($processExecutor->email)->send(new ApprovalReportStaffNotificationEmail($processExecutor->name, $reportData));
+
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 
@@ -417,6 +546,14 @@ class ReportController extends Controller
             'status' => "In Progress",
             'lastUpdatedBy' => $currUser->name
         ]);
+
+        $reportData = [
+            'reportID' => $report->id,
+            'title' => $report->name,
+        ];
+
+        Mail::to($report->user->email)->send(new InProgressReportStudentNotificationEmail($report->user->name, $reportData));
+
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 
@@ -434,11 +571,26 @@ class ReportController extends Controller
     public function finishReport(Request $request){
         $report = Report::find($request->id);
         $currUser = Auth::user();
+        $relatedHeadmasters = User::where('role', 'headmaster')->get();
 
         $report->update([
             'status' => "Completed",
             'lastUpdatedBy' => $currUser->name
         ]);
+
+        $reportData = [
+            'reportID' => $report->id,
+            'reportNo' => $report->reportNo,
+            'title' => $report->name,
+            'relatedStaff' => $currUser->name,
+            'completionDate' => Carbon::now()->format('d/m/Y'),
+        ];
+
+        Mail::to($report->user->email)->send(new CompleteReportStudentNotificationEmail($report->user->name, $reportData));
+        foreach ($relatedHeadmasters as $headmaster) {
+            Mail::to($headmaster->email)->send(new CompleteReportHeadmasterNotificationEmail($headmaster->name, $reportData));
+        }
+
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 
@@ -459,6 +611,6 @@ class ReportController extends Controller
 
         $report->delete();
        
-        return redirect()->route('report.adminHeadmasterStaff.manageReport');
+        return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Laporan berhasil dihapus');
     }
 }

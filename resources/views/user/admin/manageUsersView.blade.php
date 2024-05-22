@@ -1,16 +1,33 @@
 @extends('layouts.mainpage')
 
 @section('title')
-    Semua Pengguna
+    Kelola Pengguna
+@endsection
+
+@section('css')
+  <style>
+    table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .container {
+            text-align: center; /* Center the text within the td */
+            color: dimgray;
+        }
+  </style>
 @endsection
 
 @section('breadcrumb')
     <div class="pagetitle">
-        <h1>Urus Pengguna</h1>
+        <h1>Kelola Pengguna</h1>
         <nav>
             <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Pengguna</a></li>
-            <li class="breadcrumb-item active">Urus Pengguna</li>
+            <li class="breadcrumb-item active">Kelola Pengguna</li>
             </ol>
         </nav>
     </div><!-- End Page Title -->
@@ -38,14 +55,14 @@
                             </div>
                             <div id="action-button-user">
                                 <a href="{{ route('manage.users.register') }}">
-                                    <button type="button" class="btn btn-primary">Tambah Pengguna Baru</button>
+                                    <button type="button" class="btn btn-primary"><i class="bi bi-person-plus-fill" style="margin-right: 4px;"></i> Tambah Pengguna Baru</button>
                                 </a>
 
                                 <a href="{{ route('manage.users.importstudents') }}">
-                                    <button type="button" class="btn btn-primary">Import Murid</button>
+                                    <button type="button" class="btn btn-primary"><i class="fa-solid fa-upload" style="margin-right: 4px; font-size: 13px;"></i> Import Murid</button>
                                 </a>
 
-                                <button type="button" id="delete-user-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUsersModal" disabled>Hapus</button>
+                                <button type="button" id="delete-user-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUsersModal" disabled><i class="bi bi-trash-fill" style="margin-right: 4px;"></i> Hapus</button>
                                 {{-- Modal --}}
                                 <div class="modal fade" id="deleteUsersModal" tabindex="-1">
                                     <div class="modal-dialog modal-dialog-centered">
@@ -70,7 +87,7 @@
                         <br>
                         <br>
                         <!-- Default Table -->
-                        <table class="table">
+                        <table class="table" style="vertical-align: middle;">
                             <thead>
                             <tr>
                                 <th scope="col">
@@ -82,6 +99,11 @@
                             </tr>
                             </thead>
                             <tbody>
+                            @if ($users->count() == 0)
+                                <tr>
+                                    <td class="container" colspan="4" style="color: dimgray">Belum ada pengguna</td>
+                                </tr>
+                            @endif
                             @foreach ($users as $user)
                             <tr>
                                 <td>
@@ -97,7 +119,7 @@
                                 </td>
                                 <td style="display: flex; justify-content: end;">
                                     <a href="{{ route('manage.users.detail', $user->id) }}">
-                                        <button type="button" class="btn btn-primary">Detail</button>
+                                        <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -105,11 +127,13 @@
                             </tbody>
                         </table>
 
-                        <div class="row mt-5">
-                            <div class="d-flex justify-content-end">
-                                {{ $users->appends(['checked_users_session' => session('checked_users_session')])->withQueryString()->links() }}
+                        @if ($users->hasPages())
+                            <div class="row mt-5">
+                                <div class="d-flex justify-content-end">
+                                    {{ $users->appends(['checked_users_session' => session('checked_users_session')])->withQueryString()->links() }}
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
 
@@ -128,6 +152,14 @@
             #action-button-user {
                 margin-top: 12px;
             }
+        }
+    </style>
+@endsection
+
+@section('css')
+    <style>
+        .upload-icon {
+            font-weight: bold;
         }
     </style>
 @endsection

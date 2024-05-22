@@ -254,13 +254,40 @@ class UserController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('successMessage', 'Password berhasil diperbarui');
+        return redirect()->back()->with('changePassSuccessMessage', 'Password berhasil diperbarui');
+    }
+
+    public function updateUrgentPhoneNum(Request $request) {
+        $user = Auth::user();
+
+        $rules = [
+            'urgent_phone_number' => 'required|numeric|digits_between:10,12|regex:/^08[0-9]+$/',
+        ];
+
+        $messages = [
+            'urgent_phone_number.required' => 'Nomor teleponnya belum diisi nih',
+            'urgent_phone_number.numeric' => 'Yuk masukin nomor telepon dengan format yang benar',
+            'urgent_phone_number.digits_between' => 'Duh, minimalnya 10 digit dan maksimalnya 12 digit yaa',
+            'urgent_phone_number.regex' => 'Nomor teleponnya harus dimulai dari "08" yaa',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+    
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
+
+        $user->update([
+            'urgentPhoneNumber' => $request->urgent_phone_number,
+        ]);
+
+        return redirect()->back()->with('updateUrgentSuccessMessage', 'Nomor telepon urgent berhasil diperbarui');
     }
 
     public function resetPassword($user_id) {
         $currUser = User::findOrFail($user_id);
 
-        $formattedDate = date('Ymd', strtotime($currUser->birthDate));
+        $formattedDate = date('dmY', strtotime($currUser->birthDate));
         $freshPassword = "D3f@ult" . $formattedDate;
         $credentials['password'] = Hash::make($freshPassword);
 
@@ -269,7 +296,10 @@ class UserController extends Controller
     }
 
     public function seeAllUser() {
-        $users = User::where('role', '!=', 'admin')->paginate(10)->withQueryString();
+        $users = User::where('role', '!=', 'admin')
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10)
+                        ->withQueryString();
 
         return view('user.admin.manageUsersView', compact('users'));
     }
@@ -426,10 +456,15 @@ class UserController extends Controller
 
         $fileUpload = $request->file('file');
         $fileName = rand().$fileUpload->getClientOriginalName();
+        $filePath = 'public/' . $fileName;
 
         Storage::putFileAs('public', $fileUpload, $fileName);
-        Excel::import(new ImportUser, storage_path('app/public/' . $fileName));
-        Storage::delete('public/' . $fileName);
+        try {
+            Excel::import(new ImportUser, storage_path('app/' . $filePath));
+            Storage::delete($filePath);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
 
         return redirect()->route('manage.users.seeall')->with('successMessage', 'Proses import murid selesai');
     }
@@ -446,7 +481,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'phoneNumber' => 'required|numeric|digits_between:10,12|regex:/^08[0-9]+$/',
             'gender' => 'required',
-            'birthDate' => 'required|date|before:today|after:1900-01-01',
+            'birthDate' => 'required|date_format:d/m/Y|before:today|after:1900-01-01',
             'role' => 'required',
             'staffType' => 'required_if:role,3',
         ];
@@ -467,7 +502,7 @@ class UserController extends Controller
             'gender.required' => 'Jangan lupa masukin gender penggunanya yaa',
             
             'birthDate.required' => 'Jangan lupa masukin tanggal lahir penggunanya yaa',
-            'birthDate.date' => 'Yuk masukin tanggal lahir dengan format yang benar',
+            'birthDate.date_format' => 'Yuk masukin tanggal lahir dengan format yang benar',
             'birthDate.before' => 'Tanggal lahir ini kurang tepat yaa',
             'birthDate.after' => 'Tanggal lahir ini kurang tepat yaa',
             
@@ -485,6 +520,8 @@ class UserController extends Controller
         $userService = new UserService;
         $user_no = $userService->generateUserNo($request->birthDate);
 
+        $birthDate = \DateTime::createFromFormat('d/m/Y', $request->birthDate);
+        $formattedBirthDate = $birthDate->format('Y-m-d');
 
         $credentials = [
             'userNo' => $user_no,
@@ -492,7 +529,7 @@ class UserController extends Controller
             'email' => $request->email,
             'phoneNumber' => $request->phoneNumber,
             'gender' => $request->gender,
-            'birthDate' => $request->birthDate,
+            'birthDate' => $formattedBirthDate,
             'isSuspended' => false,
             'suspendReason' => '',
         ];
@@ -511,7 +548,7 @@ class UserController extends Controller
             $credentials['role'] = "staff";
         }
 
-        $formattedDate = date('Ymd', strtotime($request->birthDate));
+        $formattedDate = date('dmY', strtotime($formattedBirthDate));
         $freshPassword = "D3f@ult" . $formattedDate;
         $credentials['password'] = Hash::make($freshPassword);
 
@@ -583,7 +620,9 @@ class UserController extends Controller
     public function searchUserList(Request $request)
     {
         $userListFounded = User::where("name", "like", "%$request->userName%")
-            ->paginate(10)->withQueryString();
+                                    ->orderBy('created_at', 'desc')
+                                    ->paginate(10)
+                                    ->withQueryString();
 
         $data = [
             'users' => $userListFounded,

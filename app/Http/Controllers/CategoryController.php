@@ -32,7 +32,7 @@ class CategoryController extends Controller
         'staffType_id' => $request->categoryStaffType,
     ]);
 
-    return redirect()->route('categories.list');
+    return redirect()->route('categories.list')->with('successMessage', 'Kategori berhasil ditambahkan');
 }
 
     public function showAddCategoryForm()
@@ -65,7 +65,7 @@ class CategoryController extends Controller
             'staffType_id' => $request->categoryStaffType
         ]);
 
-        return redirect()->route('categories.list');
+        return redirect()->route('categories.list')->with('successMessage', 'Kategori berhasil diperbarui');
     }
 
     public function deleteCategory(Request $request)
@@ -73,6 +73,6 @@ class CategoryController extends Controller
         $category = Category::findOrFail($request->id);
         $category->delete();
 
-        return redirect()->route('categories.list');
+        return redirect()->route('categories.list')->with('successMessage', 'Kategori berhasil dihapus');
     }
 }

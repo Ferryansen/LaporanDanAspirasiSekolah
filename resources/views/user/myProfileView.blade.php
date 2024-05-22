@@ -18,7 +18,7 @@
 
 @section('sectionPage')
     @php
-        $user = Auth::user();    
+        $user = Auth::user();
     @endphp
 
     <section class="section profile">
@@ -31,18 +31,23 @@
               <ul class="nav nav-tabs nav-tabs-bordered">
 
                 <li class="nav-item">
-                  <button class="nav-link {{ !$errors->any() && !session('successMessage') ? 'active' : '' }}" data-bs-toggle="tab" data-bs-target="#profile-overview">Detail</button>
+                  <button class="nav-link {{ ($errors->has('urgent_phone_number') || session('updateUrgentSuccessMessage') || (!$errors->any() && !session('updateUrgentSuccessMessage')) ) && !($errors->has('current_password') || $errors->has('new_password') || $errors->has('new_password_confirmation')) && !session('changePassSuccessMessage') ? 'active' : '' }}" data-bs-toggle="tab" data-bs-target="#profile-overview">Detail</button>
                 </li>
 
                 <li class="nav-item">
-                  <button class="nav-link {{ $errors->any() || session('successMessage') ? 'active' : '' }}" data-bs-toggle="tab" data-bs-target="#profile-change-password">Ubah Password</button>
+                  <button class="nav-link {{ ($errors->has('current_password') || $errors->has('new_password') || $errors->has('new_password_confirmation') || session('changePassSuccessMessage')) && !( $errors->has('urgent_phone_number') || session('updateUrgentSuccessMessage')) ? 'active' : '' }}" data-bs-toggle="tab" data-bs-target="#profile-change-password">Ubah Password</button>
                 </li>
 
               </ul>
               <div class="tab-content pt-2">
-
-                <div class="tab-pane fade {{ !$errors->any() && !session('successMessage') ? 'show active' : '' }} profile-overview" id="profile-overview">
+                <div class="tab-pane fade {{ ($errors->has('urgent_phone_number') || session('updateUrgentSuccessMessage') || (!$errors->any() && !session('updateUrgentSuccessMessage'))) && !($errors->has('current_password') || $errors->has('new_password') || $errors->has('new_password_confirmation')) && !session('changePassSuccessMessage') ? 'show active' : '' }} profile-overview" id="profile-overview">
                     <br>
+                    @if(session('updateUrgentSuccessMessage'))
+                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                        {{ session('updateUrgentSuccessMessage') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
                     <div class="row">
                         <div class="col-lg-3 col-md-4 label ">Nama</div>
                         <div class="col-lg-9 col-md-8">{{ $user->name }}</div>
@@ -71,7 +76,7 @@
 
                     <div class="row">
                         <div class="col-lg-3 col-md-4 label">Tanggal Lahir</div>
-                        <div class="col-lg-9 col-md-8">{{ $user->birthDate }}</div>
+                        <div class="col-lg-9 col-md-8">{{ \Carbon\Carbon::parse($user->birthDate)->format('d/m/Y') }}</div>
                     </div>
 
                     <div class="row">
@@ -89,6 +94,43 @@
                         </div>
                     </div>
 
+                    @if ($user->role == 'student')
+                        <div class="row">
+                            <div class="col-lg-3 col-md-4 label">Nomor Telepon Urgent</div>
+                            <div class="col-lg-9 col-md-8" id="urgentPhoneValue" style="{{ $errors->has('urgent_phone_number') ? 'display: none;' : '' }}">
+                                @php
+                                    if ($user->urgentPhoneNumber == null) {
+                                        echo 'Belum terdaftar';
+                                    } else {
+                                        echo $user->urgentPhoneNumber;
+                                    }
+                                @endphp
+                                <i class="bi bi-pencil-square text-primary" id="update-urgent" style="cursor: pointer;"></i>
+                            </div>
+                            <div class="col-lg-9 col-md-8" id="urgentPhoneForm" style="{{ $errors->has('urgent_phone_number') ? '' : 'display: none;' }}">
+                                <form id="updateForm" action="{{ route('student.updateUrgentPhoneNum') }}" method="POST" enctype="multipart/form-data" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+
+                                    <div class="input-group">
+                                        <div style="display: flex;">
+                                            <div style="margin-right: 4px">
+                                                <input type="text" class="form-control @error('urgent_phone_number') is-invalid @enderror" value="{{ old('urgent_phone_number') ?? $user->urgentPhoneNumber ?? '08' }}" name="urgent_phone_number" required>
+                                                @error('urgent_phone_number')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="submit">Perbarui</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    @endif
+
                     @if ($user->staffType != null)
                         <div class="row">
                             <div class="col-lg-3 col-md-4 label">Tipe Staf</div>
@@ -98,27 +140,28 @@
 
                     @if ($user->isSuspended == true)
                         <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                            Kamu sedang ter-suspend dari fitur penyampaian aspirasi! Alasan suspend kamu adalah
+                            Kamu sedang ter-suspend dari fitur penyampaian aspirasi!<br><br>Alasan suspend kamu adalah
                             <b>{{ $user->suspendReason }}</b>
                         </div>
                     @endif
 
                 </div>
 
-                <div class="tab-pane fade {{ $errors->any() || session('successMessage') ? 'show active' : '' }} pt-3" id="profile-change-password">
-                    @if(session('successMessage'))
+                <div class="tab-pane fade {{ ($errors->has('current_password') || $errors->has('new_password') || $errors->has('new_password_confirmation') || session('changePassSuccessMessage')) && !( $errors->has('urgent_phone_number') || session('updateUrgentSuccessMessage')) ? 'show active' : '' }} pt-3" id="profile-change-password">
+                    @if(session('changePassSuccessMessage'))
                         <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                            {{ session('successMessage') }}
+                            {{ session('changePassSuccessMessage') }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
-                    <form action="{{ route('changepassword') }}" method="POST" enctype="multipart/form-data" method="POST" novalidate>
+                    <form action="{{ route('changepassword') }}" method="POST" enctype="multipart/form-data" novalidate>
                         @csrf
+                        @method('PATCH')
 
                         <div class="row mb-3">
-                        <label for="current_password" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
+                        <label for="current_password" class="col-md-4 col-lg-3 col-form-label">Password Sekarang</label>
                         <div class="col-md-8 col-lg-9">
-                            <input name="current_password" type="password" class="form-control @error('currPassword') is-invalid @enderror" id="current_password">
+                            <input name="current_password" type="password" class="form-control @error('current_password') is-invalid @enderror" id="current_password">
                             @error('current_password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -126,9 +169,9 @@
                         </div>
 
                         <div class="row mb-3">
-                        <label for="new_password" class="col-md-4 col-lg-3 col-form-label">New Password</label>
+                        <label for="new_password" class="col-md-4 col-lg-3 col-form-label">Password Baru</label>
                         <div class="col-md-8 col-lg-9">
-                            <input name="new_password" type="password" class="form-control @error('newPassword') is-invalid @enderror" id="new_password">
+                            <input name="new_password" type="password" class="form-control @error('new_password') is-invalid @enderror" id="new_password">
                             @error('new_password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -136,17 +179,22 @@
                         </div>
 
                         <div class="row mb-3">
-                        <label for="new_password_confirmation" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
+                        <label for="new_password_confirmation" class="col-md-4 col-lg-3 col-form-label">Konfirmasi Password Baru</label>
                         <div class="col-md-8 col-lg-9">
-                            <input name="new_password_confirmation" type="password" class="form-control @error('confirmPassword') is-invalid @enderror" id="new_password_confirmation">
+                            <input name="new_password_confirmation" type="password" class="form-control @error('new_password_confirmation') is-invalid @enderror" id="new_password_confirmation">
                             @error('new_password_confirmation')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         </div>
 
-                        <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Change Password</button>
+                        <br>
+                        
+                        <div class="row mb-3" id="short-change-btn">
+                            <div class="col-md-4 col-lg-3"></div>
+                            <div class="col-md-8 col-lg-9">
+                                <button type="submit" class="btn btn-primary">Ubah Password</button>
+                            </div>
                         </div>
                     </form>
 
@@ -160,4 +208,13 @@
         </div>
       </div>
     </section>
+@endsection
+
+@section('script')
+    <script>
+        document.getElementById('update-urgent').addEventListener('click', function() {
+            document.getElementById('urgentPhoneValue').style.display = 'none';
+            document.getElementById('urgentPhoneForm').style.display = 'block';
+        });
+    </script>
 @endsection

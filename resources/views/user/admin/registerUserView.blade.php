@@ -75,10 +75,17 @@
     <div class="row mb-3">
         <label for="inputDate" class="col-sm-2 col-form-label">Tanggal Lahir</label>
         <div class="col-sm-10">
-        <input type="date" class="form-control @error('birthDate') is-invalid @enderror" name="birthDate" value="{{ old('birthDate') }}">
-        @error('birthDate')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
+            <div class="input-group">
+                <input type="text" class="date-picker form-control @error('birthDate') is-invalid @enderror" name="birthDate" value="{{ old('birthDate') }}" placeholder="DD/MM/YYYY">
+                <div class="input-group-append">
+                    <span class="input-group-text">
+                        <i class="bi bi-calendar"></i>
+                    </span>
+                </div>
+                @error('birthDate')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
         </div>
     </div>
 
@@ -153,6 +160,24 @@
                 staffTypeContainer.style.display = 'flex';
             }
         }
+
+        $(document).ready(function() {
+            $('.date-picker').datepicker({
+                dateFormat: 'dd/mm/yy',
+                onSelect: function(dateText) {
+                    $(this).val(dateText);
+                }
+            });
+
+            $('.date-picker').on('input', function() {
+                var val = this.value.replace(/\D/g, '');
+                if(val.length > 2) {
+                    this.value = val.slice(0, 2) + '/' + val.slice(2, 4) + '/' + val.slice(4, 8);
+                } else if(val.length > 4) {
+                    this.value = val.slice(0, 2) + '/' + val.slice(2, 4) + '/' + val.slice(4, 8);
+                }
+            });
+        });
     </script>
 @endsection
 

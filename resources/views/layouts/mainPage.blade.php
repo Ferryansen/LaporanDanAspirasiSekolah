@@ -16,6 +16,10 @@
   <link href="https://fonts.gstatic.com" rel="preconnect">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
+  {{-- Font Awesome --}}
+  <link rel="stylesheet" 
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
   <!-- Vendor CSS Files -->
   <link href="{{ asset('template_assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ asset('template_assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
@@ -28,6 +32,9 @@
   <!-- Main CSS File -->
   <link href="{{ asset('template_assets/css/style.css') }}" rel="stylesheet">
   @yield('css')
+
+  {{-- Jquery --}}
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 
 <body>
@@ -37,7 +44,7 @@
 
     <div class="d-flex align-items-center justify-content-between">
       <a href="index.html" class="logo d-flex align-items-center">
-        <span class="d-none d-lg-block">SkolahKita</span>
+        <span>SkolahKita</span>
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
@@ -113,7 +120,7 @@
 
       @if (Auth::user()->role == "headmaster" || Auth::user()->role == "staff")
         <li class="nav-item">
-          <a class="nav-link " href="{{ route('dashboard') }}">
+          <a class="nav-link {{ request()->is('dashboard') ? '' : 'collapsed'}}" href="{{ route('dashboard') }}">
             <i class="bi bi-grid"></i>
             <span>Dashboard</span>
           </a>
@@ -121,20 +128,20 @@
       @endif
 
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
+        <a class="nav-link {{ request()->is('report/*') ? '' : 'collapsed'}}" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-menu-button-wide"></i><span>Laporan</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="report-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <ul id="report-nav" class="nav-content collapse {{ request()->is('report/*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
           @if (Auth::user()->role == "student")
             <li>
-              <a href="{{ route('report.student.myReport') }}">
-                <i class="bi bi-circle"></i><span>My Report</span>
+              <a href="{{ route('report.student.myReport') }}" class="{{ request()->is('report/*') ? 'active' : ''}}">
+                <i class="bi bi-circle"></i><span>Laporan Saya</span>
               </a>
             </li>
           @else
             <li>
-              <a href="{{ route('report.adminHeadmasterStaff.manageReport') }}">
-                <i class="bi bi-circle"></i><span>Urus Laporan</span>
+              <a href="{{ route('report.adminHeadmasterStaff.manageReport') }}" class="{{ request()->is('report/*') ? 'active' : ''}}">
+                <i class="bi bi-circle"></i><span>Kelola Laporan</span>
               </a>
             </li>
           @endif
@@ -142,35 +149,36 @@
       </li><!-- End Components Nav -->
       
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#aspiration-nav" data-bs-toggle="collapse" href="#">
+        <a class="nav-link {{ request()->is('aspirations/*') ? '' : 'collapsed'}}" data-bs-target="#aspiration-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-menu-button-wide"></i><span>Aspirasi</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="aspiration-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <ul id="aspiration-nav" class="nav-content collapse {{ request()->is('aspirations/*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
           @if (Auth::user()->role == "student")
           <li>
-            <a href="{{ route('aspirations.myAspirations') }}">
+            <a href="{{ route('aspirations.myAspirations') }}" class="{{ request()->is('aspirations/myAspirations') ? 'active' : ''}}">
               <i class="bi bi-circle"></i><span>Aspirasi Saya</span>
             </a>
           </li>
           <li>
-            <a href="{{ route('aspirations.publicAspirations') }}">
+            <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('aspirations/publicAspirations*') ? 'active' : ''}}">
               <i class="bi bi-circle"></i><span>Aspirasi Publik</span>
             </a>
           </li>
           @else
           <li>
-            <a href="{{ route('aspirations.manageAspirations') }}">
+            <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('aspirations/publicAspirations*') ? 'active' : ''}}">
+
               <i class="bi bi-circle"></i><span>Urus Aspirasi</span>
             </a>
           </li>
             @if (Auth::user()->role == "admin")
               <li>
-                <a href="{{ route('aspirations.reported') }}">
+                <a href="{{ route('aspirations.reported') }}" class="{{ request()->is('aspirations/reported*') ? 'active' : ''}}">
                   <i class="bi bi-circle"></i><span>Aspirasi Bermasalah</span>
                 </a>
               </li>
               <li>
-                <a href="{{ route('aspirations.suspended.list') }}">
+                <a href="{{ route('aspirations.suspended.list') }}" class="{{ request()->is('aspirations/suspend*') || request()->is('aspirations/unsuspend*') || request()->is('aspirations/suspended') ? 'active' : ''}}">
                   <i class="bi bi-circle"></i><span>Daftar Suspend</span>
                 </a>
               </li>
@@ -181,28 +189,46 @@
 
       @if (Auth::user()->role == "admin")
         <li class="nav-item">
-          <a class="nav-link collapsed" data-bs-target="#users-nav" data-bs-toggle="collapse" href="#">
+          <a class="nav-link {{ request()->is('manage/users*') || request()->is('staffType/*') || request()->is('categories/*') ? '' : 'collapsed'}}" data-bs-target="#users-nav" data-bs-toggle="collapse" href="#">
             <i class="bi bi-person"></i><span>Pengguna</span><i class="bi bi-chevron-down ms-auto"></i>
           </a>
-          <ul id="users-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <ul id="users-nav" class="nav-content collapse {{ request()->is('manage/users*') || request()->is('staffType/*') || request()->is('categories/*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
             <li>
-              <a href="{{ route('manage.users.seeall') }}">
-                <i class="bi bi-circle"></i><span>Urus Pengguna</span>
+              <a href="{{ route('manage.users.seeall') }}" class="{{ request()->is('manage/users*') ? 'active' : ''}}">
+                <i class="bi bi-circle"></i><span>Kelola Pengguna</span>
               </a>
             </li>
             <li>
-              <a href="{{ route('admin.staffTypeList') }}">
+              <a href="{{ route('admin.staffTypeList') }}" class="{{ request()->is('staffType/*') ? 'active' : ''}}">
                 <i class="bi bi-circle"></i><span>Tipe Staf</span>
               </a>
             </li>
             <li>
-              <a href="{{ route('categories.list') }}">
+              <a href="{{ route('categories.list') }}" class="{{ request()->is('categories/*') ? 'active' : ''}}">
                 <i class="bi bi-circle"></i><span>Kategori Pengerjaan</span>
               </a>
             </li>
           </ul>
         </li>
       @endif
+
+      <li class="nav-item">
+        <a class="nav-link {{ request()->is('downloadcenter') || request()->is('FAQ') || request()->is('support/manage*') ? '' : 'collapsed'}}" data-bs-target="#supports-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-question-circle"></i><span>Bantuan</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="supports-nav" class="nav-content collapse {{ request()->is('downloadcenter') || request()->is('FAQ') || request()->is('support/manage*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('downloadcontent.seeall') }}" class="{{ request()->is('downloadcenter') || request()->is('support/manage/downloadcenter/*') ? 'active' : ''}}">
+              <i class="bi bi-circle"></i><span>Pusat Download</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('faq.seeall') }}" class="{{ request()->is('FAQ') || request()->is('support/manage/FAQ/*') ? 'active' : ''}}">
+              <i class="bi bi-circle"></i><span>FAQ</span>
+            </a>
+          </li>
+        </ul>
+      </li>
     </ul>
 
   </aside><!-- End Sidebar-->
@@ -324,6 +350,10 @@
   </script>
   @yield('script')
   @yield('js')
+
+  {{-- Jquery --}}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </body>
 
 </html>

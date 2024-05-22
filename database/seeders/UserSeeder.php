@@ -28,7 +28,9 @@ class UserSeeder extends Seeder
                     'gender' => 'Male',
                     'role' => 'admin',
                     'isSuspended' => false,
-                    'suspendReason' => ''
+                    'suspendReason' => '',
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
                     'staffType_id' => 1,
@@ -41,7 +43,9 @@ class UserSeeder extends Seeder
                     'gender' => 'Male',
                     'role' => 'student',
                     'isSuspended' => false,
-                    'suspendReason' => ''
+                    'suspendReason' => '',
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
                     'staffType_id' => 1,
@@ -54,7 +58,9 @@ class UserSeeder extends Seeder
                     'gender' => 'Male',
                     'role' => 'student',
                     'isSuspended' => false,
-                    'suspendReason' => ''
+                    'suspendReason' => '',
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
                     'staffType_id' => 1,
@@ -67,7 +73,9 @@ class UserSeeder extends Seeder
                     'gender' => 'Male',
                     'role' => 'student',
                     'isSuspended' => false,
-                    'suspendReason' => ''
+                    'suspendReason' => '',
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
                     'staffType_id' => 1,
@@ -80,7 +88,9 @@ class UserSeeder extends Seeder
                     'gender' => 'Male',
                     'role' => 'student',
                     'isSuspended' => false,
-                    'suspendReason' => ''
+                    'suspendReason' => '',
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
                     'staffType_id' => 2,
@@ -93,7 +103,9 @@ class UserSeeder extends Seeder
                     'gender' => 'Male',
                     'role' => 'headmaster',
                     'isSuspended' => false,
-                    'suspendReason' => ''
+                    'suspendReason' => '',
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
                     'staffType_id' => 2,
@@ -106,7 +118,9 @@ class UserSeeder extends Seeder
                     'gender' => 'Male',
                     'role' => 'staff',
                     'isSuspended' => false,
-                    'suspendReason' => ''
+                    'suspendReason' => '',
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
                     'staffType_id' => 2,
@@ -119,7 +133,9 @@ class UserSeeder extends Seeder
                     'gender' => 'Male',
                     'role' => 'staff',
                     'isSuspended' => false,
-                    'suspendReason' => ''
+                    'suspendReason' => '',
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
                     'staffType_id' => 1,
@@ -132,7 +148,9 @@ class UserSeeder extends Seeder
                     'gender' => 'Male',
                     'role' => 'headmaster',
                     'isSuspended' => false,
-                    'suspendReason' => ''
+                    'suspendReason' => '',
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
                     'staffType_id' => 1,
@@ -145,7 +163,9 @@ class UserSeeder extends Seeder
                     'gender' => 'Male',
                     'role' => 'staff',
                     'isSuspended' => false,
-                    'suspendReason' => ''
+                    'suspendReason' => '',
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
                     'staffType_id' => 3,
@@ -158,7 +178,9 @@ class UserSeeder extends Seeder
                     'gender' => 'Male',
                     'role' => 'headmaster',
                     'isSuspended' => false,
-                    'suspendReason' => ''
+                    'suspendReason' => '',
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
                     'staffType_id' => 3,
@@ -171,7 +193,9 @@ class UserSeeder extends Seeder
                     'gender' => 'Male',
                     'role' => 'staff',
                     'isSuspended' => false,
-                    'suspendReason' => ''
+                    'suspendReason' => '',
+                    'created_at' => \Carbon\Carbon::now(),
+                    'updated_at' => \Carbon\Carbon::now()
                 ],
             ]
         );

@@ -6,7 +6,7 @@
 
 @section('breadcrumb')
     <div class="pagetitle">
-        <h1>Pengguna</h1>
+        <h1>Import Murid</h1>
         <nav>
             <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('manage.users.seeall') }}">Pengguna</a></li>
@@ -19,8 +19,6 @@
 
 @section('sectionPage')
 <section class="section">
-  <h5 class="card-title">Import Murid</h5>
-
   <!-- General Form Elements -->
   <form action="{{ route('manage.users.importstudents.submit') }}" enctype="multipart/form-data" method="POST" novalidate>
     @csrf

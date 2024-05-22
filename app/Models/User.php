@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'phoneNumber',
+        'urgentPhoneNumber',
         'gender',
         'birthDate',
         'role',
@@ -76,5 +77,15 @@ class User extends Authenticatable
     public function reportedAspirations()
     {
         return $this->belongsToMany(Aspiration::class, 'userReportAspirations', 'user_id', 'aspirationId')->withPivot('reportReason');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function aspirationReactions()
+    {
+        return $this->hasMany(AspirationReaction::class);
     }
 }
