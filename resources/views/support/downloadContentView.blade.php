@@ -31,7 +31,7 @@
                     <div class="card-body" style="margin-top: 24px">
                         @if (Auth::user()->role != 'student')
                             <a href="{{ route('downloadcontent.createForm') }}">
-                                <button type="button" class="btn btn-primary">Tambah File Baru</button>
+                                <button type="button" class="btn btn-primary"><i class="fa-solid fa-plus" style="margin-right: 8px;"></i>Tambah File Baru</button>
                             </a>
                             <br>
                             <br>

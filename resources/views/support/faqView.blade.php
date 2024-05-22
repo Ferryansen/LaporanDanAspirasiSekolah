@@ -32,7 +32,7 @@
                 <div class="card-body" style="margin-top: 24px">
                     @if (Auth::user()->role != 'student')
                         <a href="{{ route('faq.createForm') }}">
-                            <button type="button" class="btn btn-primary">Tambah FAQ Baru</button>
+                            <button type="button" class="btn btn-primary"><i class="fa-solid fa-plus" style="margin-right: 8px;"></i>Tambah FAQ Baru</button>
                         </a>
                         <br>
                         <br>

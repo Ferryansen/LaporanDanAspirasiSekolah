@@ -135,9 +135,9 @@
                         </div>
                         </td>
                       @else
-                        <td>
+                        <td style="display: flex; justify-content: end;">
                           <a href="{{ route('student.reportDetail', $report->id) }}">
-                            <button type="button" class="btn btn-info">Detail</button>
+                              <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
                           </a>
                         </td>
                       @endif
