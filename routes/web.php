@@ -8,7 +8,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StaffTypeController;
 use App\Http\Controllers\UserReportAspirationController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\AspirationReactionController;
 use App\Models\Faq;
 use Illuminate\Support\Facades\Route;
 
@@ -45,13 +47,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/report/detail/{id}', [ReportController::class, 'reportDetail'])->name('student.reportDetail');
     Route::get('/FAQ', [FaqController::class, 'seeAllFaq'])->name('faq.seeall');
     Route::get('/downloadcenter', [DownloadContentController::class, 'seeAllDownloadContent'])->name('downloadcontent.seeall');
+    Route::get('/publicAspirations', [AspirationController::class, 'publicAspiration'])->name('aspirations.publicAspirations');
+    Route::get('/publicAspirations/{category_id}', [AspirationController::class, 'publicAspirationFilterCategory'])->name('aspirations.publicAspirationsCategory');
+    Route::post('/{aspiration}/react', [AspirationReactionController::class, 'react'])->name('aspirations.react');
+    Route::post('/comments/{comment}/reply', [CommentController::class, 'reply'])->name('comments.reply');
+    Route::post('/{aspiration}/comments', [CommentController::class, 'store'])->name('comments.store');
+
 });
 
 Route::middleware(['isschool'])->group(function () {
     Route::prefix('/aspirations')->group(function(){
-        Route::get('/manageAspirations', [AspirationController::class, 'manageAspiration'])->name('aspirations.manageAspirations');
+        Route::get('/manageAspirations', [AspirationController::class, 'publicAspiration'])->name('aspirations.manageAspirations');
         Route::get('/manageAspirations/{category_id}', [AspirationController::class, 'manageAspirationFilterCategory'])->name('aspirations.viewFilterCategory');
         Route::get('/manageAspirationsBy/{status}', [AspirationController::class, 'manageAspirationFilterStatus'])->name('aspirations.viewFilterStatus');
+        Route::get('/{id}/comments', [AspirationController::class, 'showComments'])->name('aspiration.comments');
+        Route::post('/{id}/update-status', [AspirationController::class, 'updateStatus'])->name('aspirations.updateStatus');
     });
     
     Route::prefix('/report')->group(function(){
@@ -95,8 +105,8 @@ Route::middleware(['isheadandstaff'])->group(function () {
         Route::patch('/monitoring/{id}', [AspirationController::class, 'monitoringAspiration'])->name('monitoringAspiration');
         Route::patch('/finish/{id}', [AspirationController::class, 'finishAspiration'])->name('finishAspiration');
         
-        Route::patch('/pin/{id}', [AspirationController::class, 'pinAspiration'])->name('pinAspiration');
-        Route::patch('/unpin/{id}', [AspirationController::class, 'unpinAspiration'])->name('unpinAspiration');
+        Route::get('/pin/{id}', [AspirationController::class, 'pinAspiration'])->name('pinAspiration');
+        Route::get('/unpin/{id}', [AspirationController::class, 'unpinAspiration'])->name('unpinAspiration');
     });
 
     Route::prefix('/report')->group(function(){
@@ -173,19 +183,18 @@ Route::middleware(['isadmin'])->group(function () {
     });
 
     Route::delete('/report/delete/{id}', [ReportController::class, 'deleteReportAdmin'])->name('admin.deleteReport');
+
 });
 
 
 Route::middleware(['isstudent'])->group(function () {
     Route::prefix('/aspirations')->group(function(){
-        Route::get('/publicAspirations', [AspirationController::class, 'publicAspiration'])->name('aspirations.publicAspirations');
-        Route::get('/publicAspirations/{category_id}', [AspirationController::class, 'publicAspirationFilterCategory'])->name('aspirations.publicAspirationsCategory');
         Route::get('/myAspirations', [AspirationController::class, 'myAspiration'])->name('aspirations.myAspirations');
         Route::get('/addForm', [AspirationController::class, 'showAddAspirationForm'])->name('aspirations.addForm');
         Route::post('/create', [AspirationController::class, 'addAspiration'])->name('aspirations.create');
         Route::get('/updateForm/{id}', [AspirationController::class, 'updateAspirationForm'])->name('aspirations.updateForm');
         Route::patch('/update/{id}', [AspirationController::class, 'updateAspirationLogic'])->name('aspirations.update');
-        Route::patch('/cancel/{id}', [AspirationController::class, 'cancelAspiration'])->name('aspirations.cancel');
+        Route::delete('/delete/{id}', [AspirationController::class, 'deleteAspiration'])->name('aspirations.delete');
         Route::post('/reported/create/{aspirationId}', [UserReportAspirationController::class, 'createReportedAspiration'])->name('aspirations.reported.create');
         Route::patch('/upvote/{id}', [AspirationController::class, 'upvote'])->name('upvote');
         Route::patch('/unUpvote/{id}', [AspirationController::class, 'unUpvote'])->name('unUpvote');
@@ -203,7 +212,7 @@ Route::middleware(['isstudent'])->group(function () {
     });
 });
 
-//Aspiration
+
 // Route::prefix('/aspirations')->group(function(){
 
     // Route::view('/urgent', 'report.student.urgentReport')->name('urgentReport');

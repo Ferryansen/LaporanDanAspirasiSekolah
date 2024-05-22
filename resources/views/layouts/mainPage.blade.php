@@ -166,7 +166,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
           </li>
           @else
           <li>
-            <a href="{{ route('aspirations.manageAspirations') }}" class="{{ request()->is('aspirations/manageAspirations*') || request()->is('aspirations/manageAspirationsBy*') ? 'active' : ''}}">
+            <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('aspirations/publicAspirations*') ? 'active' : ''}}">
+
               <i class="bi bi-circle"></i><span>Urus Aspirasi</span>
             </a>
           </li>
