@@ -66,10 +66,10 @@
             </thead>
             <tbody>
               @if ($categories->count() == 0)
-                    <div class="container">
-                        <span style="color: dimgray">Belum ada kategori</span>
-                    </div>
-                @endif
+                  <tr>
+                      <td class="container" colspan="3" style="color: dimgray">Belum ada kategori</td>
+                  </tr>
+              @endif
               @foreach ($categories as $category)
                 <tr>
                   <td>{{ $category->name}}</td>
