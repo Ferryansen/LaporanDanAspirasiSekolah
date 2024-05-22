@@ -86,7 +86,6 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-            {{-- <input type="date" id="date-picker" class="form-control @error('birthDate') is-invalid @enderror" name="birthDate" value="{{ old('birthDate') }}" placeholder="DD/MM/YYYY"> --}}
         </div>
     </div>
 

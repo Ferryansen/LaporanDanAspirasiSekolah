@@ -44,4 +44,9 @@ class Report extends Model
     public function evidences() {
         return $this->hasMany(Evidence::class);
     }
+
+    public function urgentAccess() {
+        return $this->hasOne(UrgentAccess::class, 'report_id');
+    }
+    
 }

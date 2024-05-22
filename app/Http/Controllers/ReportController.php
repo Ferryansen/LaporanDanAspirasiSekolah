@@ -12,12 +12,18 @@ use App\Mail\RejectReportStudentNotificationEmail;
 use App\Mail\RequestReportHeadmasterNotificationEmail;
 use App\Models\Report;
 use App\Models\Category;
+use App\Models\UrgentAccess;
 use App\Models\User;
+use App\Services\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class ReportController extends Controller
 {
@@ -219,6 +225,7 @@ class ReportController extends Controller
     {
         try{
             $currUser = Auth::user();
+            $headmasters = User::where('role', 'headmaster')->get();
     
             // dd($request->all());
             // Validate the form data
@@ -276,6 +283,41 @@ class ReportController extends Controller
                     'name' => $name
                 ]);
             }
+
+            $smsService = app(SmsService::class);
+            
+            do {
+                $accessCode = Str::random(6);
+                $exists = DB::table('urgent_accesses')->where('accessCode', $accessCode)->exists();
+            } while ($exists);
+            $expiration = Carbon::now()->addDays(7);
+
+            $urgentAccess = UrgentAccess::create([
+                'report_id' => $report->id,
+                'accessCode' => $accessCode,
+                'expires_at' => $expiration,
+            ]);
+
+            if ($currUser->urgentPhoneNumber != null) {
+                $toUrgentContact = '+62' . substr($currUser->urgentPhoneNumber, 1);
+                $messageUrgentContact = 'Ada kejadian urgent yang dilaporkan oleh ' . $currUser->name . '!!
+- Kejadian: ' . $report->name . '
+- Detail: ' .  route('urgent.accessForm', $urgentAccess) . '
+- Kode akses: ' . $urgentAccess->accessCode;
+    
+                $smsService->sendSms($toUrgentContact, $messageUrgentContact);
+            }
+
+            foreach ($headmasters as $headmaster) {
+                $toHeadmaster = '+62' . substr($headmaster->phoneNumber, 1);
+                $messageHeadmaster = 'Ada laporan urgent dari ' . $currUser->name . '!!
+- Judul: ' . $report->name . '
+- Deskripsi: ' . $report->description . '
+- Detail: ' . route('student.reportDetail', $report->id);
+
+                $smsService->sendSms($toHeadmaster, $messageHeadmaster);
+            }
+
     
             // Redirect back to the appropriate route
             return redirect()->route('report.student.myReport');
@@ -286,7 +328,43 @@ class ReportController extends Controller
         }
     }
 
+    public function urgentAccessForm(UrgentAccess $urgentAccess) {
+        return view('urgent.urgentAccessForm', compact('urgentAccess'));
+    }
 
+    public function urgentAccessCheck(Request $request, UrgentAccess $urgentAccess) {
+        $rule = [
+            'accessCode' => 'required',
+        ];
+
+        $message = [
+            'accessCode.required' => 'Jangan lupa diisi yaa'
+        ];
+
+        $validator = Validator::make($request->all(), $rule, $message);
+    
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
+
+        if ($urgentAccess->accessCode === $request->accessCode) {
+            Session::put("validated_access_code_{$urgentAccess->id}", $request->accessCode);
+
+            return redirect()->route('urgent.accessDetail', $urgentAccess);
+        }
+
+        return back()->withErrors(['accessCode' => 'Kode akses salah nih, coba lagi yaa']);
+    }
+
+    public function urgentAccessDetail(UrgentAccess $urgentAccess) {
+        $validatedAccessCode = Session::get("validated_access_code_{$urgentAccess->id}");
+
+        if ($validatedAccessCode != $urgentAccess->accessCode || Carbon::now() > $urgentAccess->expires_at) {
+            abort(404);
+        }
+
+        return view('urgent.urgentAccessDetail', compact('urgentAccess'));
+    }
     
     public function urgentReportPage(){
         $categories = Category::all();

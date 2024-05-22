@@ -27,19 +27,20 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-Route::get('/testEmail', function () {
-    return view('emails.reportInteractionNotification');
-});
-
 // Auths
 Route::get('/login', [UserController::class, 'showLoginForm'])->name('login.form');
 Route::post('/login', [UserController::class, 'login'])->name('login');
+
+// UrgentAccess
+Route::get('/urgentAccess/{urgentAccess}', [ReportController::class, 'urgentAccessForm'])->name('urgent.accessForm');
+Route::post('/urgentAccess/{urgentAccess}', [ReportController::class, 'urgentAccessCheck'])->name('urgent.accessCheck');
+Route::get('/urgentAccess/detail/{urgentAccess}', [ReportController::class, 'urgentAccessDetail'])->name('urgent.accessDetail');
 
 // Middlewares
 Route::middleware(['auth'])->group(function () {
     Route::get('/logout', [UserController::class, 'logout'])->name('logout');
     Route::get('/profile', [UserController::class, 'showProfile'])->name('myprofile');
-    Route::post('/profile/changepassword', [UserController::class, 'changeProfile'])->name('changepassword');
+    Route::patch('/profile/changepassword', [UserController::class, 'changeProfile'])->name('changepassword');
     Route::get('/searching', [UserController::class, 'search'])->name('searching');
     Route::get('/aspirations/detail/{aspirationId}', [AspirationController::class, 'showDetail'])->name('aspirations.details');
     Route::get('/report/detail/{id}', [ReportController::class, 'reportDetail'])->name('student.reportDetail');
@@ -201,6 +202,8 @@ Route::middleware(['isstudent'])->group(function () {
         // Route::patch('/update/{id}', [ReportController::class, 'updateReport'])->name('student.updateReport');
         Route::patch('/cancel/{id}', [ReportController::class, 'cancelReport'])->name('student.cancelReport');
     });
+
+    Route::patch('/updateUrgentPhoneNum', [UserController::class, 'updateUrgentPhoneNum'])->name('student.updateUrgentPhoneNum');
 });
 
 //Aspiration
