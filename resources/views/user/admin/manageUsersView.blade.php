@@ -94,7 +94,7 @@
                                     <input class="form-check-input" id="select-all-checkboxes" type="checkbox">
                                 </th>
                                 <th scope="col">Nama</th>
-                                <th scope="col">Status</th>
+                                <th scope="col">Tanggal Bergabung</th>
                                 <th scope="col"></th>
                             </tr>
                             </thead>
@@ -110,13 +110,7 @@
                                     <input class="form-check-input" type="checkbox" name="user_id[]" value="{{ $user->id }}">
                                 </td>
                                 <td>{{ $user->name }}</td>
-                                <td>
-                                    @if ($user->isSuspended == true)
-                                        Ter-suspend
-                                    @else
-                                        Aktif
-                                    @endif
-                                </td>
+                                <td>{{ \Carbon\Carbon::parse($user->created_at)->format('d/m/Y') }}</td>
                                 <td style="display: flex; justify-content: end;">
                                     <a href="{{ route('manage.users.detail', $user->id) }}">
                                         <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>

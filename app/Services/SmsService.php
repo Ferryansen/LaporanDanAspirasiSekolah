@@ -28,7 +28,7 @@ class SmsService
             'json' => [
                 'messages' => [
                     [
-                        'from' => 'Skolah Kita',
+                        'from' => 'SkolahKita',
                         'destinations' => [
                             [
                                 'to' => $to
