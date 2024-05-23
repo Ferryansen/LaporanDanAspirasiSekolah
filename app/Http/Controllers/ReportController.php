@@ -321,13 +321,13 @@ class ReportController extends Controller
             if ($currUser->urgentPhoneNumber != null) {
                 $toUrgentContact = '+62' . substr($currUser->urgentPhoneNumber, 1);
                 $messageUrgentContact = 'Ada kejadian urgent yang dilaporkan oleh ' . $currUser->name . '!!
-- Kejadian: ' . $report->name . '
-- Detail: ' .  route('urgent.accessForm', $urgentAccess) . '
-- Kode akses: ' . $urgentAccess->accessCode;
-    
+                - Kejadian: ' . $report->name . '
+                - Detail: ' .  route('urgent.accessForm', $urgentAccess) . '
+                - Kode akses: ' . $urgentAccess->accessCode;
+                
                 $smsService->sendSms($toUrgentContact, $messageUrgentContact);
             }
-
+            
             foreach ($headmasters as $headmaster) {
                 $toHeadmaster = '+62' . substr($headmaster->phoneNumber, 1);
                 $messageHeadmaster = 'Ada laporan urgent dari ' . $currUser->name . '!!
