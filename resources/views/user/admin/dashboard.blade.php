@@ -672,18 +672,30 @@
   document.addEventListener("DOMContentLoaded", () => {
     // Sample data from server
     var aspirations = @json($aspirations);
-    var reports = @json($reports);
+    var reportsObj = @json($reports);
+    var reports = Object.values(reportsObj);
 
     // Status options
     var statusOptions = [
-            'Freshly Submitted',
-            'In Review',
+            'Freshly submitted',
+            'In review',
             'Approved',
             'In Progress',
             'Monitoring',
             'Completed',
             'Rejected',
           ];
+
+    function mapStatus(status){
+      if(status.includes('In review')){
+        return 'In review';
+      }
+      else if(status.includes('Monitoring')){
+        return 'Monitoring';
+      }
+
+      return status;
+    };
 
     // Create initial chart data
     function createChartDataAsp() {
@@ -696,7 +708,7 @@
     function createChartDataRep() {
       return statusOptions.map(status => ({
         name: status,
-        value: reports.filter(report => report.status === status).length // Filter reports instead of aspirations
+        value: reports.filter(report => mapStatus(report.status) === status).length // Filter reports instead of aspirations
       }));
     }
 

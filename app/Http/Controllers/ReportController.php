@@ -30,10 +30,9 @@ class ReportController extends Controller
     public function myReport()
     {
         $currUser = Auth::user();
-        $reports = Report::orderBy('isUrgent', 'desc') // Urgent reports first
+        $reports = Report::where('user_id', $currUser->id)->orderBy('isUrgent', 'desc') // Urgent reports first
                      ->orderBy('created_at', 'desc') // Further order by creation date
                      ->paginate(10); // Adjust pagination as needed
-
         $data = [
             'reports' => $reports,
         ];
@@ -58,7 +57,7 @@ class ReportController extends Controller
             $categoriesFilter = Category::where('staffType_id', $staffType_id)->pluck('id');
     
             // Use whereIn to filter reports by category_id
-            $reports = Report::orderBy('isUrgent', 'desc') // Urgent reports first
+            $reports = Report::where('category_id', $staffType_id)->orderBy('isUrgent', 'desc') // Urgent reports first
                      ->orderBy('created_at', 'desc') // Further order by creation date
                      ->paginate(10); // Adjust pagination as needed
         }

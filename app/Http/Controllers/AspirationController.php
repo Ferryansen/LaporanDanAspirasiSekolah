@@ -47,8 +47,8 @@ class AspirationController extends Controller
         // $userUpvotes = UserUpvoteAspiration::all();
         $categories = Category::all();
         $statuses = [
-            'Freshly Submitted',
-            'In Review',
+            'Freshly submitted',
+            'In review',
             'Approved',
             'In Progress',
             'Monitoring',
@@ -62,32 +62,32 @@ class AspirationController extends Controller
         return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'message'));
     }
     
-    public function manageAspiration()
-    {
-        $currUser = Auth::user();
+    // public function manageAspiration()
+    // {
+    //     $currUser = Auth::user();
         
-        if (Auth::user()->role == "admin" || Auth::user()->role == "headmaster"){
-            $aspirations = Aspiration::paginate(10)->withQueryString();
-        }
-        else{
-            // Get the staffType_id of the current user
-            $staffTypeId = $currUser->staffType_id;
+    //     if (Auth::user()->role == "admin" || Auth::user()->role == "headmaster"){
+    //         $aspirations = Aspiration::paginate(10)->withQueryString();
+    //     }
+    //     else{
+    //         // Get the staffType_id of the current user
+    //         $staffTypeId = $currUser->staffType_id;
     
-            // Use whereHas to filter categories based on staffType_id
-            $categoriesFilter = Category::where('staffType_id', $staffTypeId)->pluck('id');
+    //         // Use whereHas to filter categories based on staffType_id
+    //         $categoriesFilter = Category::where('staffType_id', $staffTypeId)->pluck('id');
     
-            // Use whereIn to filter aspirations by category_id
-            // $aspirations = Aspiration::whereIn('category_id', $categoriesFilter)->orderByDesc('upvote')->paginate(10)->withQueryString();
-        $aspirations = Aspiration::where("category_id", "like", $category_id)->paginate(10)->withQueryString();
+    //         // Use whereIn to filter aspirations by category_id
+    //         // $aspirations = Aspiration::whereIn('category_id', $categoriesFilter)->orderByDesc('upvote')->paginate(10)->withQueryString();
+    //         $aspirations = Aspiration::where("category_id", "like", $category_id)->paginate(10)->withQueryString();
 
-        }
+    //     }
 
-        $categories = Category::all();
-        $filterTitle = null;
-        $message = null;
+    //     $categories = Category::all();
+    //     $filterTitle = null;
+    //     $message = null;
 
-        return view('aspiration.manageAspiration', compact('aspirations', 'categories', 'filterTitle', 'message'));
-    }
+    //     return view('aspiration.manageAspiration', compact('aspirations', 'categories', 'filterTitle', 'message'));
+    // }
 
     public function updateStatus(Request $request, $id)
     {
@@ -113,8 +113,8 @@ class AspirationController extends Controller
 
         $message = null;
         $statuses = [
-            'Freshly Submitted',
-            'In Review',
+            'Freshly submitted',
+            'In review',
             'Approved',
             'In Progress',
             'Monitoring',
@@ -218,7 +218,7 @@ class AspirationController extends Controller
             'processDate' => null,
             // 'processEstimationDate' => null,
             'processedBy' => null,
-            'status' => 'Freshly Submitted',
+            'status' => 'Freshly submitted',
             // 'evidence' => $evidenceUrl,
             // 'upvote' => null,
             'isChatOpened' => 0,
@@ -360,8 +360,8 @@ class AspirationController extends Controller
         $filterTitle = null;
         $message = "pin sukses";
         $statuses = [
-            'Freshly Submitted',
-            'In Review',
+            'Freshly submitted',
+            'In review',
             'Approved',
             'In Progress',
             'Monitoring',
@@ -382,8 +382,8 @@ class AspirationController extends Controller
         $categories = Category::all();
         $filterTitle = null;
         $statuses = [
-            'Freshly Submitted',
-            'In Review',
+            'Freshly submitted',
+            'In review',
             'Approved',
             'Rejected',
             'In Progress',

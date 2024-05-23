@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
     public function run()
     {
         User::query()->insert([[
-                    'staffType_id' => 1,
+                    'staffType_id' => null,
                     'userNo' => 'USR000001',
                     'name' => 'John Doe',
                     'email' => 'johndoes@example.com',
@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
                     'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
-                    'staffType_id' => 1,
+                    'staffType_id' => null,
                     'userNo' => 'USR000002',
                     'name' => 'John Antonius',
                     'email' => 'johnantonius@example.com',
@@ -48,7 +48,7 @@ class UserSeeder extends Seeder
                     'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
-                    'staffType_id' => 1,
+                    'staffType_id' => null,
                     'userNo' => 'USR000003',
                     'name' => 'Nelsen aja',
                     'email' => 'nelsen@example.com',
@@ -63,7 +63,7 @@ class UserSeeder extends Seeder
                     'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
-                    'staffType_id' => 1,
+                    'staffType_id' => null,
                     'userNo' => 'USR000004',
                     'name' => 'Anthony',
                     'email' => 'Anthony@example.com',
@@ -78,7 +78,7 @@ class UserSeeder extends Seeder
                     'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
-                    'staffType_id' => 1,
+                    'staffType_id' => null,
                     'userNo' => 'USR000005',
                     'name' => 'Montod',
                     'email' => 'Montod@example.com',
@@ -93,7 +93,7 @@ class UserSeeder extends Seeder
                     'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
-                    'staffType_id' => 2,
+                    'staffType_id' => null,
                     'userNo' => 'USR000006',
                     'name' => 'Kagawa',
                     'email' => 'Kagawa@example.com',
@@ -138,7 +138,7 @@ class UserSeeder extends Seeder
                     'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
-                    'staffType_id' => 1,
+                    'staffType_id' => null,
                     'userNo' => 'USR000009',
                     'name' => 'Kagara',
                     'email' => 'Kagara@example.com',
@@ -168,7 +168,7 @@ class UserSeeder extends Seeder
                     'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
-                    'staffType_id' => 3,
+                    'staffType_id' => null,
                     'userNo' => 'USR000011',
                     'name' => 'Kurzawa',
                     'email' => 'Kagawa@example.com',

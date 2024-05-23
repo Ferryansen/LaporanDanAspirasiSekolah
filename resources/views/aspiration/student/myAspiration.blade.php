@@ -135,7 +135,7 @@
                                 <div class="post-footer">
                                     <div class="actions">
                                 
-                                        @if ($aspiration->status == "Freshly Submitted")
+                                        @if ($aspiration->status == "Freshly submitted")
                                             <div class="row justify-content-start">
                                                 <div class="col-3 col-md-1">
                                                 <a href="{{ route('aspirations.updateForm', ['id' => $aspiration->id]) }}">
