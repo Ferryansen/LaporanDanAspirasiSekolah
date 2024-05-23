@@ -601,11 +601,13 @@
 
 
 
-                <div class="row mt-5">
-                  <div class="d-flex justify-content-end">
-                      {{ $aspirations->withQueryString()->links() }}
+                @if ($aspirations->hasPages())
+                  <div class="row mt-5">
+                    <div class="d-flex justify-content-end">
+                        {{ $aspirations->withQueryString()->links() }}
+                    </div>
                   </div>
-                </div>
+                @endif
               
             </div>
           </div>

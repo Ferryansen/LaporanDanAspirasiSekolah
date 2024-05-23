@@ -155,18 +155,18 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         <ul id="aspiration-nav" class="nav-content collapse {{ request()->is('aspirations/*') || request()->is('publicAspirations*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
           @if (Auth::user()->role == "student")
           <li>
-            <a href="{{ route('aspirations.myAspirations') }}" class="{{ request()->is('aspirations/myAspirations') ? 'active' : ''}}">
-              <i class="bi bi-circle"></i><span>Aspirasi Saya</span>
-            </a>
-          </li>
-          <li>
             <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('publicAspirations*') || request()->is('comments*') || request()->is('aspirations/addForm') || request()->is('aspirations/updateForm/*') ? 'active' : ''}}">
               <i class="bi bi-circle"></i><span>Aspirasi Publik</span>
             </a>
           </li>
+          <li>
+            <a href="{{ route('aspirations.myAspirations') }}" class="{{ request()->is('aspirations/myAspirations') ? 'active' : ''}}">
+              <i class="bi bi-circle"></i><span>Aspirasi Saya</span>
+            </a>
+          </li>
           @else
           <li>
-            <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('aspirations/publicAspirations*') ? 'active' : ''}}">
+            <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('publicAspirations*') ? 'active' : ''}}">
 
               <i class="bi bi-circle"></i><span>Kelola Aspirasi</span>
             </a>
