@@ -9,25 +9,25 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class CompleteReportStudentNotificationEmail extends Mailable
+class CompleteAspirationStudentNotificationEmail extends Mailable
 {
     use Queueable, SerializesModels;
-    protected $receiverName, $reportData;
+    protected $receiverName, $aspirationData;
 
     
-    public function __construct($receiverName, $reportData)
+    public function __construct($receiverName, $aspirationData)
     {
         $this->receiverName = $receiverName;
-        $this->reportData = $reportData;
+        $this->aspirationData = $aspirationData;
     }
 
     public function build()
     {
-        return $this->view('emails.student.reportCompletionNotification')
-                    ->subject('Proses Laporan "' . $this->reportData['title'] . '" Sudah Selesai')
+        return $this->view('emails.student.aspirationRealizationNotification')
+                    ->subject('Realisasi Aspirasi "' . $this->aspirationData['title'] . '" Sudah Selesai')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'mailData' => $this->reportData]
+                        'mailData' => $this->aspirationData]
                     );
     }
 }

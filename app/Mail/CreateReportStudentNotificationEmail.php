@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 class CreateReportStudentNotificationEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
-    public $receiverName, $reportData;
+    protected $receiverName, $reportData;
 
 
     public function __construct($receiverName, $reportData)

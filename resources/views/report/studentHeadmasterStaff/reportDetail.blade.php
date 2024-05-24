@@ -35,7 +35,7 @@ Detail Laporan
 <div class="row">
     @if ( $report->status == "Approved" || $report->status == "In review by staff" || $report->status == "In review to headmaster" || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
       <div class="col-3 col-md-1" align="start">
-        <a href="{{ $link }}"><button type="button" class="btn btn-primary">Chat</button></a>
+        <button type="button" class="btn btn-primary" id="chat-btn">Chat</button>
       </div>
     @endif
 
@@ -318,25 +318,32 @@ Detail Laporan
 @endsection
 
 @section('script')
-    
+    <script>
+      const reportID = <?php echo json_encode($report->id); ?>;
+      const redirectUrl = <?php echo json_encode($link); ?>;
+      var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+      $('#chat-btn').click(function() {
+          $.ajax({
+              url: '{{ route('openChat.notif') }}',
+              type: 'POST',
+              data: {
+                  reportID: reportID,
+              },
+              headers: {
+                  'X-CSRF-TOKEN': csrfToken 
+              },
+              success: function(response) {
+                window.location.href = redirectUrl;
+              },
+              error: function(response) {
+                alert('Ada error di proses pengiriman email :(\nTolong coba lagi yaa');
+              }
+          });
+      });
+    </script>
 @endsection
 
 @section('js')
 
 @endsection
-
-<?php
-
-  function getVideoMimeType($videoPath) {
-      $extension = pathinfo($videoPath, PATHINFO_EXTENSION);
-      
-      switch ($extension) {
-          case 'mp4':
-              return 'video/mp4';
-          case 'avi':
-              return 'video/avi';
-          case 'mov':
-              return 'video/quicktime';
-      }
-  }
-?>

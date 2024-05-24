@@ -54,7 +54,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/{aspiration}/react', [AspirationReactionController::class, 'react'])->name('aspirations.react');
     Route::post('/comments/{comment}/reply', [CommentController::class, 'reply'])->name('comments.reply');
     Route::post('/{aspiration}/comments', [CommentController::class, 'store'])->name('comments.store');
-
+    Route::post('/openChat', [ReportController::class, 'openChatNotification'])->name('openChat.notif');
 });
 
 Route::middleware(['isschool'])->group(function () {
@@ -63,7 +63,6 @@ Route::middleware(['isschool'])->group(function () {
         Route::get('/manageAspirations/{category_id}', [AspirationController::class, 'manageAspirationFilterCategory'])->name('aspirations.viewFilterCategory');
         Route::get('/manageAspirationsBy/{status}', [AspirationController::class, 'manageAspirationFilterStatus'])->name('aspirations.viewFilterStatus');
         Route::get('/{id}/comments', [AspirationController::class, 'showComments'])->name('aspiration.comments');
-        Route::post('/{id}/update-status', [AspirationController::class, 'updateStatus'])->name('aspirations.updateStatus');
     });
     
     Route::prefix('/report')->group(function(){
@@ -97,6 +96,7 @@ Route::middleware(['isschool'])->group(function () {
 
 Route::middleware(['isheadandstaff'])->group(function () {
     Route::prefix('/aspirations')->group(function(){
+        Route::post('/{id}/update-status', [AspirationController::class, 'updateStatus'])->name('aspirations.updateStatus');
         // Route::get('/pdf/convert', [PDFController::class, 'pdfGenerationAllAspirations'])->name('aspirations.pdf.convertAspiration');
         // Route::get('/pdf/convert/{category_id}', [PDFController::class, 'pdfGenerationAspirationsByCategory'])->name('aspirations.pdf.convertCategoryAspiration');
         Route::patch('/requestApproval/{id}', [AspirationController::class, 'requestApprovalAspiration'])->name('staff.requestApprovalAspiration');

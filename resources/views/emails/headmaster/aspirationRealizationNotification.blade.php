@@ -5,29 +5,29 @@
 @endsection
 
 @section('content')
-    <p>Halo <b>UserName</b>,</p>
+    <p>Halo <b>{{ $receiverName }}</b>,</p>
     <p>
-        Ada Aspirasi "AspirationName" nih yang baru aja diselesaikan.
+        Ada Aspirasi "{{ $mailData['title'] }}" nih yang baru aja diselesaikan.
     </p>
     <p>
         <table>
             <tr>
                 <td>No. Aspirasi</td>
-                <td>: 123456</td>
+                <td>: {{ $mailData['aspirationNo'] }}</td>
             </tr>
             <tr>
                 <td>Judul</td>
-                <td>: testinggg</td>
+                <td>: {{ $mailData['title'] }}</td>
             </tr>
             <tr>
                 <td>Penanggung Jawab</td>
-                <td>: Mr. Invincible</td>
+                <td>: {{ $mailData['relatedStaff'] }}</td>
             </tr>
         </table>
     </p>
     <p>
         <a href="#" class="btn btn-primary" style="display: block; width: 100%; margin: 0 auto; padding: 10px 0; text-align: center; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">
-            Cek Realisasi
+            Cek Realisasi "Rute masih ambigu"
         </a>
     </p>
     <p>
