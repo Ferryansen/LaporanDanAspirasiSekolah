@@ -84,21 +84,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                 </div>
             </div>
         </section>
-
-        <?php
-            function getVideoMimeType($videoPath) {
-                $extension = pathinfo($videoPath, PATHINFO_EXTENSION);
-                
-                switch ($extension) {
-                    case 'mp4':
-                        return 'video/mp4';
-                    case 'avi':
-                        return 'video/avi';
-                    case 'mov':
-                        return 'video/quicktime';
-                }
-            }
-        ?>
     </div>
   <main id="main" class="main">
   </main><!-- End #main -->

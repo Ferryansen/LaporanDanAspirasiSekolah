@@ -22,7 +22,7 @@
   <h5 class="card-title">Perbarui Pengguna</h5>
 
   <!-- General Form Elements -->
-  <form action="{{ route('manage.users.update.submit', $currUser->id) }}" enctype="multipart/form-data" method="POST" novalidate>
+  <form id="user-form" action="{{ route('manage.users.update.submit', $currUser->id) }}" enctype="multipart/form-data" method="POST" novalidate>
     @csrf
     @method('PATCH')
     <div class="row mb-3">
@@ -119,16 +119,16 @@
     <div class="row mb-3">
       <label class="col-sm-2 col-form-label"></label>
       <div class="col-sm-10">
-        <button type="submit" class="btn btn-primary">Perbarui</button>
+        <button id="sub-btn" type="submit" class="btn btn-primary">
+            <span id="sub-text">Perbarui</span>
+            <span id="load-animation" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+            <span id="load-text" style="display: none">Loading...</span>
+        </button>
       </div>
     </div>
 
   </form><!-- End General Form Elements -->
 </section>
-@endsection
-
-@section('css')
-    
 @endsection
 
 @section('js')
@@ -154,9 +154,20 @@
                 staffTypeContainer.style.display = 'flex';
             }
         }
-    </script>
-@endsection
 
-@section('script')
-    
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('user-form');
+            const submitBtn = document.getElementById('sub-btn');
+            const buttonText = document.getElementById('sub-text');
+            const buttonSpinner = document.getElementById('load-animation');
+            const loadingText = document.getElementById('load-text');
+
+            form.addEventListener('submit', function () {
+                submitBtn.disabled = true;
+                buttonText.style.display = 'none';
+                buttonSpinner.style.display = 'inline-block';
+                loadingText.style.display = 'inline-block';
+            });
+        });
+    </script>
 @endsection
