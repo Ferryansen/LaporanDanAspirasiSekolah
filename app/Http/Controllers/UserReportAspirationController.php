@@ -12,6 +12,24 @@ use Illuminate\Support\Facades\Validator;
 
 class UserReportAspirationController extends Controller
 {
+
+    public function createReportedAspiration(Request $request, $aspiration_id)
+    {
+        $currUser = Auth::user();
+
+        $request->validate([
+            'reportAspirationReason' => 'required|max:200',
+        ]);
+
+        UserReportAspiration::create([
+            'aspiration_id' => $aspiration_id,
+            'user_id' => $currUser->id,
+            'reportReason' => $request->reportAspirationReason
+        ]);
+
+        return redirect()->back()->with('success', 'Aspiration reported successfully');
+    }
+    
     public function getAllReportedAspirations()
     {
         $userReportAspirations = UserReportAspiration::select('aspiration_id', \DB::raw('COUNT(*) as totalReports'))

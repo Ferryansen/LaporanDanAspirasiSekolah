@@ -168,7 +168,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
           <li>
             <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('publicAspirations*') ? 'active' : ''}}">
 
-              <i class="bi bi-circle"></i><span>Kelola Aspirasi</span>
+              <i class="bi bi-circle"></i><span>Aspirasi Publik</span>
             </a>
           </li>
             @if (Auth::user()->role == "admin")
