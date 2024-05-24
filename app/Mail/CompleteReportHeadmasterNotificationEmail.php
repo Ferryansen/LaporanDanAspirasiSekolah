@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 class CompleteReportHeadmasterNotificationEmail extends Mailable
 {
     use Queueable, SerializesModels;
-    public $receiverName, $reportData;
+    protected $receiverName, $reportData;
 
     
     public function __construct($receiverName, $reportData)

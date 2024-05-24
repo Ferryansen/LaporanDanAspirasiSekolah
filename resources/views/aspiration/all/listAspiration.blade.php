@@ -1,7 +1,13 @@
 @extends('layouts.mainpage')
 
 @section('title')
-    List Aspirasi
+  @php
+      if (Auth::user()->role == 'student' || Auth::user()->role == 'admin') {
+        echo 'Aspirasi Publik';
+      } else {
+        echo 'Kelola Aspirasi';
+      }
+  @endphp
 @endsection
 
 @section('css')
@@ -224,11 +230,27 @@
 
 @section('breadcrumb')
 <div class="pagetitle">
-  <h1>Aspirasi Publik</h1>
+  <h1>
+    @php
+        if (Auth::user()->role == 'student' || Auth::user()->role == 'admin') {
+          echo 'Aspirasi Publik';
+        } else {
+          echo 'Kelola Aspirasi';
+        }
+    @endphp
+  </h1>
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Aspirasi</a></li>
-      <li class="breadcrumb-item active">Aspirasi Publik</li>
+      <li class="breadcrumb-item active">
+        @php
+            if (Auth::user()->role == 'student' || Auth::user()->role == 'admin') {
+              echo 'Aspirasi Publik';
+            } else {
+              echo 'Kelola Aspirasi';
+            }
+        @endphp
+      </li>
     </ol>
   </nav>
 </div>

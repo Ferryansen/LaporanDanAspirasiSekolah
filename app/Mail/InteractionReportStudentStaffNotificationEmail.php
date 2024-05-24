@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class CompleteReportStudentNotificationEmail extends Mailable
+class InteractionReportStudentStaffNotificationEmail extends Mailable
 {
     use Queueable, SerializesModels;
     protected $receiverName, $reportData;
@@ -23,8 +23,8 @@ class CompleteReportStudentNotificationEmail extends Mailable
 
     public function build()
     {
-        return $this->view('emails.student.reportCompletionNotification')
-                    ->subject('Proses Laporan "' . $this->reportData['title'] . '" Sudah Selesai')
+        return $this->view('emails.reportInteractionNotification')
+                    ->subject('Ada Respon Terkait Laporan "' . $this->reportData['title'] . '" nih!')
                     ->with([
                         'receiverName' => $this->receiverName,
                         'mailData' => $this->reportData]

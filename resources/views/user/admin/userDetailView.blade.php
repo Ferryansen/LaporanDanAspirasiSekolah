@@ -89,11 +89,30 @@
                         <a href="{{ route('manage.users.update', $currUser->id) }}">
                             <button style="margin-right:8px" type="button" class="btn btn-primary">Perbarui</button>
                         </a>
-                        <form action="{{ route('manage.users.delete', $currUser->id) }}" enctype="multipart/form-data" method="POST">
-                            @csrf
-                            @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Hapus</button>
-                        </form>
+                        <button type="button" id="delete-user-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal">Hapus</button>
+                        {{-- Modal --}}
+                        <div class="modal fade" id="deleteUserModal" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header border-0">
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body" style="text-align: center;">
+                                    <h5 class="modal-title" style="font-weight: 700">Yakin mau hapus pengguna ini?</h5>
+                                    <div id="checked-count-info">pengguna yang sudah terhapus akan sulit untuk dikembalikan seperti semula</div>
+                                </div>
+                                <div class="modal-footer border-0" style="flex-wrap: nowrap;">
+                                <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Tidak</button>
+                                <form class="w-100" action="{{ route('manage.users.delete', $currUser->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit" class="btn btn-secondary w-100">Ya, hapus</button>
+                                </form>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
                     </div>
                 </div>                
 
