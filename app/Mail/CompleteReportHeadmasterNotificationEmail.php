@@ -27,7 +27,7 @@ class CompleteReportHeadmasterNotificationEmail extends Mailable
                     ->subject('Proses Laporan "' . $this->reportData['title'] . '" Sudah Selesai')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'mailData' => $this->reportData]
+                        'reportData' => $this->reportData]
                     );
     }
 }

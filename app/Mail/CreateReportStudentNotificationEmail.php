@@ -27,7 +27,7 @@ class CreateReportStudentNotificationEmail extends Mailable implements ShouldQue
                     ->subject('Pengaduan Laporan "' . $this->reportData['title'] . '" Berhasil!')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'mailData' => $this->reportData]
+                        'reportData' => $this->reportData]
                     );
     }
 }

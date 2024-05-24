@@ -142,10 +142,10 @@ class ReportController extends Controller
 
         if ($currUser->role == 'staff') {
             $receiver = $report->user;
-            $link = url("/chatify/{$report->user_id}");
+            $link = url("/chat/{$report->processedBy}");
         } elseif ($currUser->role == 'student') {
             $receiver = $report->processExecutor;
-            $link = url("/chatify/{$report->processedBy}");
+            $link = url("/chat/{$report->user_id}");
         }
 
         $reportData = [

@@ -37,9 +37,9 @@ Detail Laporan
     @endif --}}
     
     @if (Auth::user()->role == "staff")
-        @if ( $report->status == "Approved" || $report->status == "In review by staff" || $report->status == "In review to headmaster" || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
+        @if ($report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
           <div class="col-3 col-md-1" align="start">
-            <a href="{{ $link }}"><button type="button" class="btn btn-primary">Chat</button></a>
+            <a href="{{ $link }}"><button type="button" id="chat-btn" class="btn btn-primary">Chat</button></a>
           </div>
         @endif
         @if ($report->status == "Freshly submitted")
@@ -66,7 +66,7 @@ Detail Laporan
             </div>
 
         @elseif ($report->status == "In review by staff")
-          <div class="col-6 col-md-10" align="end">
+          <div class="col-6 col-md-11" align="end">
             <form action="{{ route('headmaster.reviewReport', $report->id) }}" method="POST">
             @csrf
             @method('PATCH')
@@ -84,7 +84,7 @@ Detail Laporan
 
         @endif
         @if ($report->status == "Approved")
-            <div class="col-3 col-md-11" align="end">
+            <div class="col-3 col-md-12" align="end">
                 <form action="{{ route('processReport', $report->id) }}" method="POST">
                 @csrf
                 @method('PATCH')
@@ -305,7 +305,7 @@ Detail Laporan
       
       <br>
 
-      @endif
+    @endif
       <div class="col-lg-12">
         <div class="card">
           <div class="card-header">{{$report->reportNo}}</div>
@@ -367,8 +367,4 @@ Detail Laporan
           });
       });
     </script>
-@endsection
-
-@section('js')
-
 @endsection

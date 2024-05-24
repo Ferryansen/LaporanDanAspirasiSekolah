@@ -27,7 +27,7 @@ class CreateReportStaffNotificationEmail extends Mailable
                     ->subject('Laporan Baru "' . $this->reportData['title'] . '" Diterima')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'mailData' => $this->reportData]
+                        'reportData' => $this->reportData]
                     );
     }
 }
