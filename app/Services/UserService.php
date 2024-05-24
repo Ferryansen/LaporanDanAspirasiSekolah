@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Carbon;
 use App\Models\User;
+use DateTime;
 
 class UserService
 {
@@ -19,5 +20,17 @@ class UserService
         $userNo = "USR{$dayOfBirth}{$currentYear}" . sprintf('%05d', $nextIncremental);
 
         return $userNo;
+    }
+
+    public function generateUserNoByExcelFormat($DOB)
+    {
+        $dateOfBirth = Carbon::createFromFormat('Ymd', $DOB);
+        return $this->generateUserNo($dateOfBirth);
+    }
+
+    public function generateUserNoByFormFormat($DOB)
+    {
+        $dateOfBirth = Carbon::createFromFormat('d/m/Y', $DOB)->format('Ymd');
+        return $this->generateUserNo($dateOfBirth);
     }
 }

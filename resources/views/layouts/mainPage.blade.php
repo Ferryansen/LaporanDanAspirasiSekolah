@@ -43,7 +43,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
   <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="{{ url('/') }}" class="logo d-flex align-items-center">
         <span>SkolahKita</span>
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
@@ -155,20 +155,27 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         <ul id="aspiration-nav" class="nav-content collapse {{ request()->is('aspirations/*') || request()->is('publicAspirations*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
           @if (Auth::user()->role == "student")
           <li>
-            <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('publicAspirations*') || request()->is('comments*') || request()->is('aspirations/addForm') || request()->is('aspirations/updateForm/*') ? 'active' : ''}}">
+            <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('publicAspirations*') || request()->is('comments*') || request()->is('aspirations/addForm') ? 'active' : ''}}">
               <i class="bi bi-circle"></i><span>Aspirasi Publik</span>
             </a>
           </li>
           <li>
-            <a href="{{ route('aspirations.myAspirations') }}" class="{{ request()->is('aspirations/myAspirations') ? 'active' : ''}}">
+            <a href="{{ route('aspirations.myAspirations') }}" class="{{ request()->is('aspirations/myAspirations') || request()->is('aspirations/updateForm/*') ? 'active' : ''}}">
               <i class="bi bi-circle"></i><span>Aspirasi Saya</span>
             </a>
           </li>
           @else
           <li>
-            <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('publicAspirations*') ? 'active' : ''}}">
-
-              <i class="bi bi-circle"></i><span>Aspirasi Publik</span>
+            <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('publicAspirations*') || request()->is('comments*') ? 'active' : ''}}">
+              
+              <i class="bi bi-circle"></i>
+              <span>
+                @if (Auth::user()->role == 'admin')
+                  Aspirasi Publik
+                @else
+                  Kelola Aspirasi
+                @endif
+              </span>
             </a>
           </li>
           @if  (in_array(Auth::user()->role, ['staff', 'headmaster']))

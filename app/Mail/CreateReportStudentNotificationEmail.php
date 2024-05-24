@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 class CreateReportStudentNotificationEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
-    public $receiverName, $reportData;
+    protected $receiverName, $reportData;
 
 
     public function __construct($receiverName, $reportData)
@@ -27,7 +27,7 @@ class CreateReportStudentNotificationEmail extends Mailable implements ShouldQue
                     ->subject('Pengaduan Laporan "' . $this->reportData['title'] . '" Berhasil!')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'reportData' => $this->reportData]
+                        'mailData' => $this->reportData]
                     );
     }
 }

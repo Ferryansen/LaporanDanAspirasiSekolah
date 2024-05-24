@@ -11,7 +11,6 @@
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Aspirasi</a></li>
       <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Aspirasi Saya</a></li>
-      <li class="breadcrumb-item"><a href="{{ route('aspirations.publicAspirations') }}">Aspirasi Publik</a></li>
       <li class="breadcrumb-item active">Perbarui Aspirasi</li>
     </ol>
   </nav>
@@ -21,7 +20,7 @@
 @section('sectionPage')
 <section class="section">
   <!-- General Form Elements -->
-  <form action="{{ route('aspirations.update', $aspiration->id) }}" enctype="multipart/form-data" method="POST">
+  <form id="aspiration-form" action="{{ route('aspirations.update', $aspiration->id) }}" enctype="multipart/form-data" method="POST">
     @csrf
     @method('PATCH')
     <div class="row mb-3">
@@ -52,7 +51,11 @@
     <div class="row mb-3">
       <label class="col-sm-2 col-form-label"></label>
       <div class="col-sm-10">
-        <button type="submit" class="btn btn-primary">Simpan</button>
+        <button id="sub-btn" type="submit" class="btn btn-primary">
+          <span id="sub-text">Simpan</span>
+          <span id="load-animation" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+          <span id="load-text" style="display: none">Loading...</span>
+        </button>
       </div>
     </div>
 
@@ -60,14 +63,21 @@
 </section>
 @endsection
 
-@section('css')
-    
-@endsection
-
-@section('js')
-    
-@endsection
-
 @section('script')
-    
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('aspiration-form');
+        const submitBtn = document.getElementById('sub-btn');
+        const buttonText = document.getElementById('sub-text');
+        const buttonSpinner = document.getElementById('load-animation');
+        const loadingText = document.getElementById('load-text');
+
+        form.addEventListener('submit', function () {
+            submitBtn.disabled = true;
+            buttonText.style.display = 'none';
+            buttonSpinner.style.display = 'inline-block';
+            loadingText.style.display = 'inline-block';
+        });
+      });
+    </script>
 @endsection

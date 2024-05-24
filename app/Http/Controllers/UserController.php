@@ -518,7 +518,7 @@ class UserController extends Controller
         }
 
         $userService = new UserService;
-        $user_no = $userService->generateUserNo($request->birthDate);
+        $user_no = $userService->generateUserNoByFormFormat($request->birthDate);
 
         $birthDate = \DateTime::createFromFormat('d/m/Y', $request->birthDate);
         $formattedBirthDate = $birthDate->format('Y-m-d');
