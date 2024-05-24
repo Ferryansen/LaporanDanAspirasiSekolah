@@ -23,6 +23,7 @@ class Aspiration extends Model
         'processDate',
         // 'processEstimationDate',
         'processedBy',
+        'approvedBy',
         'status',
         // 'evidence',
         // 'likeCount',

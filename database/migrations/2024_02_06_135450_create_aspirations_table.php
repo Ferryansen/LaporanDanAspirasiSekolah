@@ -21,7 +21,8 @@ return new class extends Migration
             $table->boolean('isPinned');
             $table->boolean('isChatOpened');
             $table->dateTime('processDate')->nullable();
-            $table->string('processedBy', 255)->nullable();
+            $table->foreignId('processedBy')->nullable()->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('approvedBy')->nullable()->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('status', 20);
             $table->integer('likeCount')->nullable();
             $table->integer('dislikeCount')->nullable();
