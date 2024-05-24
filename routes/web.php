@@ -59,7 +59,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['isschool'])->group(function () {
     Route::prefix('/aspirations')->group(function(){
-        Route::get('/manageAspirations', [AspirationController::class, 'publicAspiration'])->name('aspirations.manageAspirations');
+        Route::get('/manageAspirations', [AspirationController::class, 'manageAspiration'])->name('aspirations.manageAspiration');
         Route::get('/manageAspirations/{category_id}', [AspirationController::class, 'manageAspirationFilterCategory'])->name('aspirations.viewFilterCategory');
         Route::get('/manageAspirationsBy/{status}', [AspirationController::class, 'manageAspirationFilterStatus'])->name('aspirations.viewFilterStatus');
         Route::get('/{id}/comments', [AspirationController::class, 'showComments'])->name('aspiration.comments');
@@ -109,6 +109,9 @@ Route::middleware(['isheadandstaff'])->group(function () {
         
         Route::get('/pin/{id}', [AspirationController::class, 'pinAspiration'])->name('pinAspiration');
         Route::get('/unpin/{id}', [AspirationController::class, 'unpinAspiration'])->name('unpinAspiration');
+        Route::post('/update-status', [AspirationController::class, 'updateStatus'])->name('aspiration.updateStatus');
+        Route::post('/assign', [AspirationController::class, 'assign'])->name('aspiration.assign');
+        Route::post('/aspiration/update-processed-by', [AspirationController::class, 'updateProcessedBy'])->name('aspiration.updateProcessedBy');
         
         Route::get('/manage/{aspiration_id}',[AspirationController::class, 'manageAspirationDetail'])->name('manage.aspiration.detail');
     });

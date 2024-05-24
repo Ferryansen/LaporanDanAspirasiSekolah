@@ -301,7 +301,6 @@
                       <tr>
 
                       <div class="post">
-                            @if (Auth::user()->role == "student")
                               @if ($aspiration->status == "Completed")
                               <div class="col-9 col-md-3">
                                     <span class="labelCompleted" >Completed</span>
@@ -311,7 +310,6 @@
                                     <span class="labelInProg" >In Progress</span>
                               </div>
                               @endif
-                            @endif
                             <div class="post-header">
                                 <div class="uploader-info">
                                     <span class="uploader-name">Anonymus</span> 
@@ -339,14 +337,16 @@
                             <div class="post-title">{{$aspiration->name}}</div>
                                 <p>{{$aspiration->description}}</p>
                             </div>
-                            @if  (in_array(Auth::user()->role, ['staff', 'headmaster']))
-                              <div class="col-9 col-md-3">
-                                <select class="form-select" aria-label="Default select example" name="aspirationStatus" required onchange="updateStatus(this)" data-aspiration-id="{{ $aspiration->id }}">
-                                    @foreach ($statuses as $status)
-                                        <option value="{{ $status }}" {{ $status === $aspiration->status ? 'selected' : '' }}>{{ $status }}</option>
-                                    @endforeach
-                                </select>
-                              </div>
+                            @if  (in_array(Auth::user()->role, ['staff']))
+                              @if ($aspiration->status == 'Freshly submitted')
+                                <div class="col-9 col-md-3">
+                                  <form action="{{ route('aspiration.updateProcessedBy') }}" method="POST">
+                                      @csrf
+                                      <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
+                                      <button type="submit" class="btn btn-primary">Process</button>
+                                  </form>
+                                </div>
+                              @endif
                             @endif
                             <div class="post-footer">
                               <div class="actions">
@@ -506,7 +506,6 @@
                       @if ($aspiration->status != 'Canceled')
                         <tr>
                           <div class="post">
-                          @if (Auth::user()->role == "student")
                               @if ($aspiration->status == "Completed")
                               <div class="col-9 col-md-3">
                                     <span class="labelCompleted" >Completed</span>
@@ -516,7 +515,6 @@
                                     <span class="labelInProg" >In Progress</span>
                               </div>
                               @endif
-                            @endif
                             <div class="post-header">
                                 <div class="uploader-info">
                                     <span class="uploader-name">Anonymus</span> 
@@ -541,14 +539,18 @@
                             <div class="post-title">{{$aspiration->name}}</div>
                                 <p>{{$aspiration->description}}</p>
                             </div>
-                            @if (in_array(Auth::user()->role, ['staff', 'headmaster']))
-                            <div class="col-9 col-md-3">
-                              <select class="form-select" aria-label="Default select example" name="aspirationStatus" required onchange="updateStatus(this)" data-aspiration-id="{{ $aspiration->id }}">
-                                  @foreach ($statuses as $status)
-                                      <option value="{{ $status }}" {{ $status === $aspiration->status ? 'selected' : '' }}>{{ $status }}</option>
-                                  @endforeach
-                              </select>
-                            </div>
+                            @if (in_array(Auth::user()->role, ['staff']))
+                              @if ($aspiration->status == 'Freshly submitted')
+                                @if($aspiration->category->staffType_id == Auth::user()->staffType_id)
+                                  <div class="col-9 col-md-3">
+                                    <form action="{{ route('aspiration.updateProcessedBy') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
+                                        <button type="submit" class="btn btn-primary">Kelola aspirasi ini</button>
+                                    </form>
+                                  </div>
+                                @endif
+                              @endif
                             @endif
                             <div class="post-footer">
                               <div class="actions">
@@ -743,39 +745,6 @@
 @endsection
 
 @section('script')
-
-<script>
-    function updateStatus(selectElement) {
-        const selectedStatus = selectElement.value;
-        const aspirationId = selectElement.dataset.aspirationId; // Get the aspiration ID from the data attribute
-
-        fetch(`/aspirations/${aspirationId}/update-status`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Include CSRF token for security
-            },
-            body: JSON.stringify({ status: selectedStatus })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                // Optionally, you can display a success message or update the UI
-                alert('Status updated successfully!');
-            } else {
-                // Handle error
-                alert('Failed to update status: ' + data.message);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-    
-</script>
 
 <script>
    document.addEventListener('DOMContentLoaded', function () {

@@ -62,44 +62,92 @@ class AspirationController extends Controller
         return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'message'));
     }
     
-    // public function manageAspiration()
-    // {
-    //     $currUser = Auth::user();
-        
-    //     if (Auth::user()->role == "admin" || Auth::user()->role == "headmaster"){
-    //         $aspirations = Aspiration::paginate(10)->withQueryString();
-    //     }
-    //     else{
-    //         // Get the staffType_id of the current user
-    //         $staffTypeId = $currUser->staffType_id;
-    
-    //         // Use whereHas to filter categories based on staffType_id
-    //         $categoriesFilter = Category::where('staffType_id', $staffTypeId)->pluck('id');
-    
-    //         // Use whereIn to filter aspirations by category_id
-    //         // $aspirations = Aspiration::whereIn('category_id', $categoriesFilter)->orderByDesc('upvote')->paginate(10)->withQueryString();
-    //         $aspirations = Aspiration::where("category_id", "like", $category_id)->paginate(10)->withQueryString();
-
-    //     }
-
-    //     $categories = Category::all();
-    //     $filterTitle = null;
-    //     $message = null;
-
-    //     return view('aspiration.manageAspiration', compact('aspirations', 'categories', 'filterTitle', 'message'));
-    // }
-
-    public function updateStatus(Request $request, $id)
+    public function manageAspiration()
     {
-        try {
-            $aspiration = Aspiration::findOrFail($id);
-            $aspiration->status = $request->status;
-            $aspiration->save();
-    
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 400);
+        $currentUser = Auth::user();
+        $allUser = User::all();
+
+        // Fetch users with the same staff_id as the current user
+        $users = User::where('staffType_id', $currentUser->staffType_id)->get();
+
+        if ($currentUser->role == 'headmaster') {
+            // Fetch all aspirations if the user is a headmaster
+            $aspirations = Aspiration::all();
+        } else {
+            // Fetch aspirations where the category's staffType_id matches the current user's staffType_id
+            $aspirations = Aspiration::whereHas('category', function ($query) use ($currentUser) {
+                $query->whereHas('staffType', function ($query) use ($currentUser) {
+                    $query->where('id', $currentUser->staffType_id);
+                });
+            })->get();
         }
+
+        // Pass the users and aspirations to the view
+        return view('aspiration.staffHeadmaster.manageAspiration', compact('users', 'aspirations', 'allUser'));
+    }
+
+    public function updateStatus(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'status' => 'required',
+            'aspiration_id' => 'required|exists:aspirations,id',
+        ]);
+        
+        // Find the aspiration
+        $aspiration = Aspiration::find($request->aspiration_id);
+
+        if ($request->status == 'Approved'){
+            $aspiration->approvedBy = Auth::user()->id;
+        }
+
+        // Update the status field
+        $aspiration->status = $request->status;
+        $aspiration->save();
+
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Aspirasi status telah diubah');
+    }
+
+    public function assign(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'aspiration_id' => 'required|exists:aspirations,id',
+        ]);
+
+        // Find the aspiration
+        $aspiration = Aspiration::find($request->aspiration_id);
+
+        // Find the user
+        $user = User::find($request->user_id);
+
+        // Update the processedBy field
+        $aspiration->processedBy = $user->id;
+        $aspiration->save();
+
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Penanggung jawab telah diubah');
+    }
+
+    public function updateProcessedBy(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'aspiration_id' => 'required|exists:aspirations,id',
+        ]);
+
+        // Find the aspiration
+        $aspiration = Aspiration::find($request->aspiration_id);
+
+        // Set the processedBy field to the current user's name
+        $aspiration->processedBy = Auth::user()->id;
+        $aspiration->status = "In review";
+        $aspiration->save();
+
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Aspirasi telah ditambah pada halaman kelola aspirasi');
     }
     
 
