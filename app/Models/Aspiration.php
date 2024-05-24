@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Aspiration extends Model
@@ -62,5 +63,9 @@ class Aspiration extends Model
     public function dislikes()
     {
         return $this->reactions()->where('reaction', 'dislike');
+    }
+
+    public function isReportedByCurrentUser() {
+        return $this->reportedByUsers()->where('user_id', Auth::id())->exists();
     }
 }
