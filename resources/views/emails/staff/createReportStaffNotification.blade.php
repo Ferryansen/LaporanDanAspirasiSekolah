@@ -14,20 +14,20 @@
         <table>
             <tr>
                 <td>No. Laporan</td>
-                <td>: {{ $reportData['reportNo'] }}</td>
+                <td>: {{ $mailData['reportNo'] }}</td>
             </tr>
             <tr>
                 <td>Judul</td>
-                <td>: {{ $reportData['title'] }}</td>
+                <td>: {{ $mailData['title'] }}</td>
             </tr>
             <tr>
                 <td>Tanggal Pengaduan</td>
-                <td>: {{ $reportData['date'] }}</td>
+                <td>: {{ $mailData['date'] }}</td>
             </tr>
         </table>
     </p>
     <p>
-        <a href="{{ route('student.reportDetail', $reportData['reportID']) }}" class="btn btn-primary" style="display: block; width: 100%; margin: 0 auto; padding: 10px 0; text-align: center; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">
+        <a href="{{ route('student.reportDetail', $mailData['reportID']) }}" class="btn btn-primary" style="display: block; width: 100%; margin: 0 auto; padding: 10px 0; text-align: center; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">
             Cek Laporan
         </a>
     </p>
