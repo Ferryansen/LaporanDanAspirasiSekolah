@@ -39,6 +39,14 @@ class Aspiration extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function realizationExecutor() {
+        return $this->belongsTo(User::class, 'processedBy');
+    }
+
+    public function approver() {
+        return $this->belongsTo(User::class, 'approvedBy');
+    }
+
     public function comments(){
         return $this->hasMany(Comment::class);
     }
