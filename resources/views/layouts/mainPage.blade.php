@@ -178,6 +178,14 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
               </span>
             </a>
           </li>
+          @if  (in_array(Auth::user()->role, ['staff', 'headmaster']))
+          <li>
+            <a href="{{ route('aspirations.manageAspiration') }}" class="{{ request()->is('aspirations/manageAspirations*') ? 'active' : ''}}">
+
+              <i class="bi bi-circle"></i><span>Kelola Aspirasi</span>
+            </a>
+          </li>
+          @endif
             @if (Auth::user()->role == "admin")
               <li>
                 <a href="{{ route('aspirations.reported') }}" class="{{ request()->is('aspirations/reported*') ? 'active' : ''}}">
