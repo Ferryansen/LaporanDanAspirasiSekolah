@@ -56,7 +56,7 @@ class ImportUser implements ToModel, WithHeadingRow
         }
 
         $userService = new UserService;
-        $user_no = $userService->generateUserNo($birthDate);
+        $user_no = $userService->generateUserNoByExcelFormat($birthDate);
         $credentials['userNo'] = $user_no;
 
         return new User($credentials);
