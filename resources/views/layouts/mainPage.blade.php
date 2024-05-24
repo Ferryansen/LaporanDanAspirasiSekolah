@@ -169,18 +169,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
             <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('publicAspirations*') || request()->is('comments*') ? 'active' : ''}}">
               
               <i class="bi bi-circle"></i>
-              <span>
-                @if (Auth::user()->role == 'admin')
-                  Aspirasi Publik
-                @else
-                  Kelola Aspirasi
-                @endif
-              </span>
+              <span>Aspirasi Publik</span>
             </a>
           </li>
           @if  (in_array(Auth::user()->role, ['staff', 'headmaster']))
           <li>
-            <a href="{{ route('aspirations.manageAspiration') }}" class="{{ request()->is('aspirations/manageAspirations*') ? 'active' : ''}}">
+            <a href="{{ route('aspirations.manageAspiration') }}" class="{{ request()->is('aspirations/manageAspirations*') || request()->is('aspirations/manage*') ? 'active' : ''}}">
 
               <i class="bi bi-circle"></i><span>Kelola Aspirasi</span>
             </a>

@@ -112,6 +112,8 @@ Route::middleware(['isheadandstaff'])->group(function () {
         Route::post('/update-status', [AspirationController::class, 'updateStatus'])->name('aspiration.updateStatus');
         Route::post('/assign', [AspirationController::class, 'assign'])->name('aspiration.assign');
         Route::post('/aspiration/update-processed-by', [AspirationController::class, 'updateProcessedBy'])->name('aspiration.updateProcessedBy');
+        
+        Route::get('/manage/{aspiration_id}',[AspirationController::class, 'manageAspirationDetail'])->name('manage.aspiration.detail');
     });
 
     Route::prefix('/report')->group(function(){

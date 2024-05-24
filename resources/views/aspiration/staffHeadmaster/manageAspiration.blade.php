@@ -42,7 +42,11 @@
                     @if ($aspiration->status != 'Freshly submitted')
                         <tr style="vertical-align: middle">
                             <td>
-                                <a href="">{{ $aspiration->name }}</a>
+                                @if ($aspiration->status == 'Approved' || $aspiration->status == 'In Progress' || $aspiration->status == 'Monitoring' || $aspiration->status == 'Completed')
+                                    <a href="{{ route('manage.aspiration.detail', ['aspiration_id' => $aspiration->id]) }}">{{ $aspiration->name }}</a>
+                                @else
+                                    {{ $aspiration->name }}
+                                @endif
                             </td>
 
                             @if (Auth::user()->role == "staff")
@@ -52,7 +56,7 @@
                                         @csrf
                                         <div>
                                             <select style="border: none; padding-left:0" name="status" id="status_{{ $aspiration->id }}" class="form-select" required onchange="document.getElementById('statusForm_{{ $aspiration->id }}').submit()">
-                                                <option value="Approved" {{ $aspiration->status == 'Approved' ? 'selected' : '' }}>Approved</option>
+                                                <option value="Approved" {{ $aspiration->status == 'Approved' ? 'selected' : '' }} {{ $aspiration->status == 'In Progress' || $aspiration->status == 'Monitoring' || $aspiration->status == 'Completed' ? 'disabled' : '' }}>Approved</option>
                                                 <option value="In Progress" {{ $aspiration->status == 'In Progress' ? 'selected' : '' }}>In Progress</option>
                                                 <option value="Monitoring" {{ $aspiration->status == 'Monitoring' ? 'selected' : '' }}>Monitoring</option>
                                                 <option value="Completed" {{ $aspiration->status == 'Completed' ? 'selected' : '' }}>Completed</option>
