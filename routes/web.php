@@ -109,6 +109,8 @@ Route::middleware(['isheadandstaff'])->group(function () {
         
         Route::get('/pin/{id}', [AspirationController::class, 'pinAspiration'])->name('pinAspiration');
         Route::get('/unpin/{id}', [AspirationController::class, 'unpinAspiration'])->name('unpinAspiration');
+        
+        Route::get('/manage/{aspiration_id}',[AspirationController::class, 'manageAspirationDetail'])->name('manage.aspiration.detail');
     });
 
     Route::prefix('/report')->group(function(){

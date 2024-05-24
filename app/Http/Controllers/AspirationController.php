@@ -394,43 +394,10 @@ class AspirationController extends Controller
         return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'message', 'statuses'));
     }
 
-    // public function upvote(Request $request){
-    //     $aspiration = Aspiration::find($request->id);
-    //     $currUserId = Auth::user()->id;
+    public function manageAspirationDetail($aspiration_id) {
+        $aspiration = Aspiration::findOrFail($aspiration_id);
 
-    //     $aspiration->update([
-    //         'upvote' => $aspiration->upvote + 1,
-    //     ]);
-
-    //     $userUpvote = new UserUpvoteAspiration();
-    //     $userUpvote->user_id = $currUserId;
-    //     $userUpvote->aspiration_id = $request->id;
-    //     $userUpvote->save();
-
-    //     return redirect()->route('aspirations.publicAspirations');
-    // }
-
-    // public function unUpvote(Request $request){
-    //     $aspiration = Aspiration::find($request->id);
-    //     $currUserId = Auth::user()->id;
-    
-    //     // Decrease the upvote count
-    //     $aspiration->update([
-    //         'upvote' => $aspiration->upvote - 1,
-    //     ]);
-    
-    //     // Remove the user's upvote record
-    //     $userUpvote = UserUpvoteAspiration::where('user_id', $currUserId)
-    //                                        ->where('aspiration_id', $request->id)
-    //                                        ->first();
-    
-    //     if ($userUpvote) {
-    //         $userUpvote->delete();
-    //     }
-    
-    //     return redirect()->route('aspirations.publicAspirations');
-    // }
-    
-
+        return view('aspiration.staffHeadmaster.manageAspirationDetailView', compact('aspiration'));
+    }
 
 }
