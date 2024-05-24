@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 class RejectReportStudentNotificationEmail extends Mailable
 {
     use Queueable, SerializesModels;
-    public $receiverName, $reportName;
+    protected $receiverName, $reportName;
 
     
     public function __construct($receiverName, $reportName)

@@ -5,15 +5,15 @@
 @endsection
 
 @section('content')
-    <p>Halo <b>UserName</b>,</p>
+    <p>Halo <b>{{ $receiverName }}</b>,</p>
     <p>
-        Ada respon nih terkait laporan "ReportName"
+        Ada respon nih terkait laporan "{{ $mailData['title'] }}"
     </p>
     <p>
         Yuk, segera balas responnya agar permasalahan ini cepat selesai!
     </p>
     <p>
-        <a href="#" class="btn btn-primary" style="display: block; width: 100%; margin: 0 auto; padding: 10px 0; text-align: center; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">
+        <a href="{{ $mailData['link'] }}" class="btn btn-primary" style="display: block; width: 100%; margin: 0 auto; padding: 10px 0; text-align: center; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">
             Cek Respon
         </a>
     </p>

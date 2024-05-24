@@ -121,7 +121,7 @@
                                                 @enderror
                                             </div>
                                             <div class="input-group-append">
-                                                <button class="btn btn-primary" type="submit">Perbarui</button>
+                                                <button type="submit" class="btn btn-primary">Perbarui</button>
                                             </div>
                                         </div>
                                     </div>
@@ -154,7 +154,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
-                    <form action="{{ route('changepassword') }}" method="POST" enctype="multipart/form-data" novalidate>
+                    <form id="passUpdateForm" action="{{ route('changepassword') }}" method="POST" enctype="multipart/form-data" novalidate>
                         @csrf
                         @method('PATCH')
 
@@ -193,7 +193,11 @@
                         <div class="row mb-3" id="short-change-btn">
                             <div class="col-md-4 col-lg-3"></div>
                             <div class="col-md-8 col-lg-9">
-                                <button type="submit" class="btn btn-primary">Ubah Password</button>
+                                <button id="sub-btn" type="submit" class="btn btn-primary">
+                                    <span id="sub-text">Ubah Password</span>
+                                    <span id="load-animation" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+                                    <span id="load-text" style="display: none">Loading...</span>
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -215,6 +219,21 @@
         document.getElementById('update-urgent').addEventListener('click', function() {
             document.getElementById('urgentPhoneValue').style.display = 'none';
             document.getElementById('urgentPhoneForm').style.display = 'block';
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('passUpdateForm');
+            const submitBtn = document.getElementById('sub-btn');
+            const buttonText = document.getElementById('sub-text');
+            const buttonSpinner = document.getElementById('load-animation');
+            const loadingText = document.getElementById('load-text');
+
+            form.addEventListener('submit', function () {
+                submitBtn.disabled = true;
+                buttonText.style.display = 'none';
+                buttonSpinner.style.display = 'inline-block';
+                loadingText.style.display = 'inline-block';
+            });
         });
     </script>
 @endsection

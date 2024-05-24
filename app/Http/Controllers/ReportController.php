@@ -8,6 +8,7 @@ use App\Mail\CompleteReportStudentNotificationEmail;
 use App\Mail\CreateReportStaffNotificationEmail;
 use App\Mail\CreateReportStudentNotificationEmail;
 use App\Mail\InProgressReportStudentNotificationEmail;
+use App\Mail\InteractionReportStudentStaffNotificationEmail;
 use App\Mail\RejectReportStudentNotificationEmail;
 use App\Mail\RequestReportHeadmasterNotificationEmail;
 use App\Models\Report;
@@ -133,6 +134,28 @@ class ReportController extends Controller
         }
     
         return view('report.studentHeadmasterStaff.reportDetail', compact('report', 'link'));
+    }
+
+    public function openChatNotification(Request $request) {
+        $report = Report::findOrFail($request->reportID);
+        $currUser = Auth::user();
+
+        if ($currUser->role == 'staff') {
+            $receiver = $report->user;
+            $link = url("/chatify/{$report->user_id}");
+        } elseif ($currUser->role == 'student') {
+            $receiver = $report->processExecutor;
+            $link = url("/chatify/{$report->processedBy}");
+        }
+
+        $reportData = [
+            'title' => $report->name,
+            'link' => $link
+        ];
+
+        Mail::to($receiver->email)->send(new InteractionReportStudentStaffNotificationEmail($receiver->name, $reportData));
+
+        return response()->json(['success' => 'Email sent successfully']);
     }
     
 

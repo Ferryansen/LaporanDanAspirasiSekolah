@@ -1,7 +1,13 @@
 @extends('layouts.mainpage')
 
 @section('title')
-    List Aspirasi
+  @php
+      if (Auth::user()->role == 'student' || Auth::user()->role == 'admin') {
+        echo 'Aspirasi Publik';
+      } else {
+        echo 'Kelola Aspirasi';
+      }
+  @endphp
 @endsection
 
 @section('css')
@@ -224,11 +230,27 @@
 
 @section('breadcrumb')
 <div class="pagetitle">
-  <h1>Aspirasi Publik</h1>
+  <h1>
+    @php
+        if (Auth::user()->role == 'student' || Auth::user()->role == 'admin') {
+          echo 'Aspirasi Publik';
+        } else {
+          echo 'Kelola Aspirasi';
+        }
+    @endphp
+  </h1>
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Aspirasi</a></li>
-      <li class="breadcrumb-item active">Aspirasi Publik</li>
+      <li class="breadcrumb-item active">
+        @php
+            if (Auth::user()->role == 'student' || Auth::user()->role == 'admin') {
+              echo 'Aspirasi Publik';
+            } else {
+              echo 'Kelola Aspirasi';
+            }
+        @endphp
+      </li>
     </ol>
   </nav>
 </div>
@@ -279,7 +301,6 @@
                       <tr>
 
                       <div class="post">
-                            @if (Auth::user()->role == "student")
                               @if ($aspiration->status == "Completed")
                               <div class="col-9 col-md-3">
                                     <span class="labelCompleted" >Completed</span>
@@ -289,7 +310,6 @@
                                     <span class="labelInProg" >In Progress</span>
                               </div>
                               @endif
-                            @endif
                             <div class="post-header">
                                 <div class="uploader-info">
                                     <span class="uploader-name">Anonymus</span> 
@@ -317,14 +337,16 @@
                             <div class="post-title">{{$aspiration->name}}</div>
                                 <p>{{$aspiration->description}}</p>
                             </div>
-                            @if  (in_array(Auth::user()->role, ['staff', 'headmaster']))
-                              <div class="col-9 col-md-3">
-                                <select class="form-select" aria-label="Default select example" name="aspirationStatus" required onchange="updateStatus(this)" data-aspiration-id="{{ $aspiration->id }}">
-                                    @foreach ($statuses as $status)
-                                        <option value="{{ $status }}" {{ $status === $aspiration->status ? 'selected' : '' }}>{{ $status }}</option>
-                                    @endforeach
-                                </select>
-                              </div>
+                            @if  (in_array(Auth::user()->role, ['staff']))
+                              @if ($aspiration->status == 'Freshly submitted')
+                                <div class="col-9 col-md-3">
+                                  <form action="{{ route('aspiration.updateProcessedBy') }}" method="POST">
+                                      @csrf
+                                      <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
+                                      <button type="submit" class="btn btn-primary">Process</button>
+                                  </form>
+                                </div>
+                              @endif
                             @endif
                             <div class="post-footer">
                               <div class="actions">
@@ -334,12 +356,12 @@
                                     
                                     <button type="submit" name="reaction" value="like"
                                             class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'like')->exists() ? 'activeLike' : '' }}">
-                                            <i class="bi bi-hand-thumbs-up"><span> {{ $aspiration->reactions()->where('reaction', 'like')->count()}}</span></i>
+                                            <i class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'like')->exists() ? 'bi bi-hand-thumbs-up-fill' : 'bi bi-hand-thumbs-up' }}"><span> {{ $aspiration->reactions()->where('reaction', 'like')->count()}}</span></i>
                                     </button>
                                     
-                                    <button style="margin-left: -12px;" type="submit" name="reaction" value="dislike"
+                                    <button style="margin-left: -14px;" type="submit" name="reaction" value="dislike"
                                             class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'dislike')->exists() ? 'activeDislike' : '' }}">
-                                            <i class="bi bi-hand-thumbs-down"><span> {{ $aspiration->reactions()->where('reaction', 'dislike')->count()}}</span></i>
+                                            <i class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'dislike')->exists() ? 'bi bi-hand-thumbs-down-fill' : 'bi bi-hand-thumbs-down' }}"><span> {{ $aspiration->reactions()->where('reaction', 'dislike')->count()}}</span></i>
                                     </button>
                                 </form>
 
@@ -427,8 +449,50 @@
                                     <i class="bi bi-chat-left"><span>  {{$aspiration->comments()->count()}}</span></i>
                                 </a>
 
-                                
+                                @if (Auth::user()->role == "student")
+                                  @if ( $aspiration->isReportedByCurrentUser() )
+                                    <i style="font-size: medium; cursor: default" class="bi bi-exclamation-triangle-fill text-danger"><span style="font-size:smaller"> Reported</span></i>
+                                  @else
+                                    
+                                  {{-- Report Section --}}
+                                    <!-- <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#reportAspirationModal">
+                                      Report Aspiration
+                                    </button> -->
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#reportAspirationModal">
+                                        <i style="font-size: medium" class="bi bi-exclamation-triangle"></i>
+                                    </a>
+                                    
+                                    <br>
 
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="reportAspirationModal" tabindex="-1" role="dialog" aria-labelledby="reportAspirationModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="reportAspirationModalLabel">Report Aspiration</h5>
+                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                            </button>
+                                          </div>
+                                          <div class="modal-body">
+                                            <!-- Report Aspiration Form -->
+                                            <form action="{{ route('aspirations.reported.create', ['aspirationId' => $aspiration->id]) }}" method="POST">
+                                              @csrf
+                                              <div class="form-group">
+                                                <label for="reportAspirationReason">Alasan melaporkan:</label>
+                                                <textarea class="form-control" id="reportAspirationReason" name="reportAspirationReason" rows="3" required></textarea>
+                                              </div>
+
+                                              <br>
+
+                                              <button type="submit" class="btn btn-danger">Submit Report</button>
+                                            </form>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>  
+                                  @endif
+                                @endif
                               </div>
                           </div>
                         </tr>
@@ -442,7 +506,6 @@
                       @if ($aspiration->status != 'Canceled')
                         <tr>
                           <div class="post">
-                          @if (Auth::user()->role == "student")
                               @if ($aspiration->status == "Completed")
                               <div class="col-9 col-md-3">
                                     <span class="labelCompleted" >Completed</span>
@@ -452,7 +515,6 @@
                                     <span class="labelInProg" >In Progress</span>
                               </div>
                               @endif
-                            @endif
                             <div class="post-header">
                                 <div class="uploader-info">
                                     <span class="uploader-name">Anonymus</span> 
@@ -477,14 +539,18 @@
                             <div class="post-title">{{$aspiration->name}}</div>
                                 <p>{{$aspiration->description}}</p>
                             </div>
-                            @if (in_array(Auth::user()->role, ['staff', 'headmaster']))
-                            <div class="col-9 col-md-3">
-                              <select class="form-select" aria-label="Default select example" name="aspirationStatus" required onchange="updateStatus(this)" data-aspiration-id="{{ $aspiration->id }}">
-                                  @foreach ($statuses as $status)
-                                      <option value="{{ $status }}" {{ $status === $aspiration->status ? 'selected' : '' }}>{{ $status }}</option>
-                                  @endforeach
-                              </select>
-                            </div>
+                            @if (in_array(Auth::user()->role, ['staff']))
+                              @if ($aspiration->status == 'Freshly submitted')
+                                @if($aspiration->category->staffType_id == Auth::user()->staffType_id)
+                                  <div class="col-9 col-md-3">
+                                    <form action="{{ route('aspiration.updateProcessedBy') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
+                                        <button type="submit" class="btn btn-primary">Kelola aspirasi ini</button>
+                                    </form>
+                                  </div>
+                                @endif
+                              @endif
                             @endif
                             <div class="post-footer">
                               <div class="actions">
@@ -494,12 +560,12 @@
                                     
                                     <button type="submit" name="reaction" value="like"
                                             class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'like')->exists() ? 'activeLike' : '' }}">
-                                            <i class="bi bi-hand-thumbs-up"><span> {{ $aspiration->reactions()->where('reaction', 'like')->count()}}</span></i>
+                                            <i class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'like')->exists() ? 'bi bi-hand-thumbs-up-fill' : 'bi bi-hand-thumbs-up' }}"><span> {{ $aspiration->reactions()->where('reaction', 'like')->count()}}</span></i>
                                     </button>
                                     
-                                    <button style="margin-left: -12px;" type="submit" name="reaction" value="dislike"
+                                    <button style="margin-left: -14px;" type="submit" name="reaction" value="dislike"
                                             class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'dislike')->exists() ? 'activeDislike' : '' }}">
-                                            <i class="bi bi-hand-thumbs-down"><span> {{ $aspiration->reactions()->where('reaction', 'dislike')->count()}}</span></i>
+                                            <i class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'dislike')->exists() ? 'bi bi-hand-thumbs-down-fill' : 'bi bi-hand-thumbs-down' }}"><span> {{ $aspiration->reactions()->where('reaction', 'dislike')->count()}}</span></i>
                                     </button>
                                 </form>
 
@@ -587,8 +653,50 @@
                                     <i class="bi bi-chat-left"><span>  {{$aspiration->comments()->count()}}</span></i>
                                 </a>
 
-                                
+                                @if (Auth::user()->role == "student")
+                                  @if ( $aspiration->isReportedByCurrentUser() )
+                                    <i style="font-size: medium; cursor: default" class="bi bi-exclamation-triangle-fill text-danger"><span style="font-size:smaller"> Reported</span></i>
+                                  @else
+                                    
+                                  {{-- Report Section --}}
+                                    <!-- <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#reportAspirationModal">
+                                      Report Aspiration
+                                    </button> -->
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#reportAspirationModal">
+                                        <i style="font-size: medium" class="bi bi-exclamation-triangle"></i>
+                                    </a>
+                                    
+                                    <br>
 
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="reportAspirationModal" tabindex="-1" role="dialog" aria-labelledby="reportAspirationModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="reportAspirationModalLabel">Report Aspiration</h5>
+                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                            </button>
+                                          </div>
+                                          <div class="modal-body">
+                                            <!-- Report Aspiration Form -->
+                                            <form action="{{ route('aspirations.reported.create', ['aspirationId' => $aspiration->id]) }}" method="POST">
+                                              @csrf
+                                              <div class="form-group">
+                                                <label for="reportAspirationReason">Alasan melaporkan:</label>
+                                                <textarea class="form-control" id="reportAspirationReason" name="reportAspirationReason" rows="3" required></textarea>
+                                              </div>
+
+                                              <br>
+
+                                              <button type="submit" class="btn btn-danger">Submit Report</button>
+                                            </form>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  @endif
+                                @endif
                               </div>
                           </div>
                         </tr>
@@ -637,39 +745,6 @@
 @endsection
 
 @section('script')
-
-<script>
-    function updateStatus(selectElement) {
-        const selectedStatus = selectElement.value;
-        const aspirationId = selectElement.dataset.aspirationId; // Get the aspiration ID from the data attribute
-
-        fetch(`/aspirations/${aspirationId}/update-status`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Include CSRF token for security
-            },
-            body: JSON.stringify({ status: selectedStatus })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                // Optionally, you can display a success message or update the UI
-                alert('Status updated successfully!');
-            } else {
-                // Handle error
-                alert('Failed to update status: ' + data.message);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-    
-</script>
 
 <script>
    document.addEventListener('DOMContentLoaded', function () {
