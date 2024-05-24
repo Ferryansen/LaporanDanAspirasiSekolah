@@ -125,10 +125,10 @@ class ReportController extends Controller
             $report->status == "Completed") {
 
             if(Auth::user()->role == "staff"){
-                $link = url("/chatify/{$report->user_id}");
+                $link = url("/chat/{$report->user_id}");
             }
             else{
-                $link = url("/chatify/{$report->processedBy}");
+                $link = url("/chat/{$report->processedBy}");
             }
         }
     
@@ -469,7 +469,7 @@ class ReportController extends Controller
         Mail::to($rejectedUser->email)->send(new RejectReportStudentNotificationEmail($rejectedUser->name, $report->name));
 
 
-        return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Pengguna berhasil didaftarkan');
+        return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Laporan berhasil di-reject');
     }
 
     public function inReviewStaffReport(Request $request){

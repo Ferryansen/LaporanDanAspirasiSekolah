@@ -6,9 +6,14 @@
 
 @section('css')
   <style>
+    .table-container {
+            overflow-x: auto;
+            max-width: 100%;
+        }
     table {
             width: 100%;
             border-collapse: collapse;
+            text-align:justify;
         }
         th, td {
             padding: 8px;
@@ -53,51 +58,53 @@
                           <br>
                           <br>
 
-                        <!-- Default Table -->
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>
-                                    <b>Judul</b>
-                                </th>
-                                <th data-type="date" data-format="YYYY/DD/MM">Tanggal dibuat</th>
-                                <th>Status</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @if ($reports->count() == 0)
-                            <tr>
-                                <td class="container" colspan="4" style="color: dimgray">Belum ada laporan</td>
-                            </tr>
-                            @endif
-                            @foreach ($reports as $report)
-                            <tr>
-                                @if($report->isUrgent == true)
-                                    <td style="vertical-align: middle">{{ $report->name }} <i class="fa-sharp fa-solid fa-circle-exclamation fa-lg" style="color: #BB2D3B"></i></td>
-                                @else
-                                    <td style="vertical-align: middle">{{ $report->name }}</td>    
+                        <div class="table-container">
+                            <!-- Default Table -->
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        <b>Judul</b>
+                                    </th>
+                                    <th data-type="date" data-format="YYYY/DD/MM">Tanggal dibuat</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @if ($reports->count() == 0)
+                                <tr>
+                                    <td class="container" colspan="4" style="color: dimgray">Belum ada laporan</td>
+                                </tr>
                                 @endif
-
-                                <td style="vertical-align: middle">{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
-                                @if ($report->status == "In review by staff" || $report->status == "In review to headmaster")
-                                    <td style="vertical-align: middle">Freshly submitted</td>
-                                @elseif ($report->status == "Monitoring process")
-                                    <td style="vertical-align: middle">In Progress</td>
-                                @else
-                                    <td style="vertical-align: middle">{{ $report->status }}</td>
-                                @endif
-
-                                <td style="display: flex; justify-content: end;">
-                                    <a href="{{ route('student.reportDetail', $report->id) }}">
-                                        <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                        <!-- End Default Table Example -->
+                                @foreach ($reports as $report)
+                                <tr>
+                                    @if($report->isUrgent == true)
+                                        <td style="vertical-align: middle">{{ $report->name }} <i class="fa-sharp fa-solid fa-circle-exclamation fa-lg" style="color: #BB2D3B"></i></td>
+                                    @else
+                                        <td style="vertical-align: middle">{{ $report->name }}</td>    
+                                    @endif
+    
+                                    <td style="vertical-align: middle">{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
+                                    @if ($report->status == "In review by staff" || $report->status == "In review to headmaster")
+                                        <td style="vertical-align: middle">Freshly submitted</td>
+                                    @elseif ($report->status == "Monitoring process")
+                                        <td style="vertical-align: middle">In Progress</td>
+                                    @else
+                                        <td style="vertical-align: middle">{{ $report->status }}</td>
+                                    @endif
+    
+                                    <td style="vertical-align: middle">
+                                        <a href="{{ route('student.reportDetail', $report->id) }}">
+                                            <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                            <!-- End Default Table Example -->
+                        </div>
 
                         @if ($reports->hasPages())
                             <div class="row mt-5">

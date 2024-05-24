@@ -122,8 +122,8 @@ Route::middleware(['isheadandstaff'])->group(function () {
         Route::patch('/process/{id}', [ReportController::class, 'onProgReport'])->name('processReport');
         Route::patch('/monitoring/{id}', [ReportController::class, 'monitoringReport'])->name('monitoringReport');
         Route::patch('/finish/{id}', [ReportController::class, 'finishReport'])->name('finishReport');
-        // Route::get('/report/pdf/convert', [PDFController::class, 'pdfGenerationAllReports'])->name('convertReport');
-        // Route::get('/report/pdf/convert/{category_id}', [PDFController::class, 'pdfGenerationReportsByCategory'])->name('convertCategoryReport');
+        Route::get('/report/pdf/convert', [PDFController::class, 'pdfGenerationAllReports'])->name('convertReport');
+        Route::get('/report/pdf/convert/{category_id}', [PDFController::class, 'pdfGenerationReportsByCategory'])->name('convertCategoryReport');
     });
 
     Route::get('/dashboard', [UserController::class, 'getDashboard'])->name('dashboard');
@@ -219,10 +219,6 @@ Route::middleware(['isstudent'])->group(function () {
 
 
 // Route::prefix('/aspirations')->group(function(){
-    
-    Route::get('/chat', [PusherController::class, 'index']);
-    Route::post('/chat/broadcast', [PusherController::class, 'broadcast']);
-    Route::post('/chat/receive', [PusherController::class, 'receive']);
     
     
     

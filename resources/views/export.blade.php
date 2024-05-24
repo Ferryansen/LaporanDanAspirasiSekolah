@@ -9,9 +9,9 @@
         table, th, td{
             padding: 2px;
             margin: 2px;
-            text-align: center;
+            text-align: left;
             border: 1px solid black;
-            border-radius: 8px;
+            /* border-radius: 8px; */
 
         }
         th{
@@ -22,7 +22,7 @@
 
         }
         td{
-            text-align: center;
+            text-align: left;
             background-color: white;
             color: black;
             font-weight: 400;
@@ -33,34 +33,6 @@
 
 
     <table style="box-shadow: 5px 10px black;" class="table">
-        @if($aspirations != null)
-            <thead>
-            <tr>
-                <th>Nomor Aspirasi</th>
-                <th>Judul</th>
-                <th>Deskripsi</th>
-                <th>Status</th>
-                <th>Tanggal dibuat</th>
-                <th>Bukti</th>
-            </tr>
-            </thead>
-            <tbody>
-                @foreach ($aspirations as $aspiration)
-
-                    <tr>
-
-                        <td>{{$aspiration->aspirationNo}}</td>
-                        <td>{{$aspiration->name}}</td>
-                        <td>{{$aspiration->description}}</td>
-                        <td>{{$aspiration->status}}</td>
-                        <td>{{ \Carbon\Carbon::parse($aspiration->created_at)->format('d/m/y') }}</td>
-                        <th><img src="{{ public_path().'\storage/'.$aspiration->evidence }}" style="width: 150px;"></th>
-
-                    </tr>
-
-                @endforeach
-            </tbody>
-          @else
             <thead>
                 <tr>
                     <th>Nomor Laporan</th>
@@ -68,7 +40,6 @@
                     <th>Deskripsi</th>
                     <th>Status</th>
                     <th>Tanggal dibuat</th>
-                    <th>Bukti</th>
                 </tr>
             </thead>
             <tbody>
@@ -76,18 +47,15 @@
 
                     <tr>
 
-                        <td>{{$report->report_no}}</td>
+                        <td>{{$report->reportNo}}</td>
                         <td>{{$report->name}}</td>
                         <td>{{$report->description}}</td>
                         <td>{{$report->status}}</td>
                         <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
-                        <th><img src="{{ public_path().'\storage/'.$report->evidence }}" style="width: 150px;"></th>
-
                     </tr>
 
                 @endforeach
             </tbody>
-        @endif
 
       </table>
 

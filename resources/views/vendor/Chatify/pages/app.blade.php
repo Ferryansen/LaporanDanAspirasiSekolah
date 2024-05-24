@@ -4,7 +4,7 @@
     <div class="messenger-listView {{ !!$id ? 'conversation-active' : '' }}">
         <div class="m-header">
             <nav>
-                <a href="#"><i class="fas fa-inbox"></i> <span class="messenger-headTitle">MESSAGES</span> </a>
+                <a href="#"><i class="fas fa-inbox"></i> <span class="messenger-headTitle">CHAT</span> </a>
                 
                 <nav class="m-header-right">
                     <a href="#"><i class="fas fa-user settings-btn"></i></a>
@@ -61,7 +61,12 @@
                 {{-- header buttons --}}
                 <nav class="m-header-right">
                     {{-- <a href="#" class="add-to-favorite"><i class="fas fa-star"></i></a> --}}
-                    <a href="/"><i class="fas fa-home"></i></a>
+                    @if (Auth::user()->role == "student")
+                        <a href="{{ route('report.student.myReport') }}"><i class="fas fa-home"></i></a>
+                    @else
+                        <a href="{{ route('report.adminHeadmasterStaff.manageReport') }}"><i class="fas fa-home"></i></a>
+                    @endif
+
                     {{-- <a href="#" class="show-infoSide"><i class="fas fa-info-circle"></i></a> --}}
                 </nav>
             </nav>

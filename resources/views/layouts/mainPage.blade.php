@@ -243,7 +243,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       <div class="modal-dialog">
           <div class="modal-content">
               <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="staticBackdropLabel">Which project is it?</h1>
+                  <h1 class="modal-title fs-5" id="staticBackdropLabel">Mau cari apa nih?</h1>
                   <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
                   

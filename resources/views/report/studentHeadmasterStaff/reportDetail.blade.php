@@ -33,13 +33,15 @@ Detail Laporan
 @if (Auth::user()->role == "headmaster" || Auth::user()->role == "staff")
 
 <div class="row">
-    @if ( $report->status == "Approved" || $report->status == "In review by staff" || $report->status == "In review to headmaster" || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
-      <div class="col-3 col-md-1" align="start">
-        <a href="{{ $link }}"><button type="button" class="btn btn-primary">Chat</button></a>
-      </div>
-    @endif
-
+    {{-- @if (Auth::user()->role == "staff")
+    @endif --}}
+    
     @if (Auth::user()->role == "staff")
+        @if ( $report->status == "Approved" || $report->status == "In review by staff" || $report->status == "In review to headmaster" || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
+          <div class="col-3 col-md-1" align="start">
+            <a href="{{ $link }}"><button type="button" class="btn btn-primary">Chat</button></a>
+          </div>
+        @endif
         @if ($report->status == "Freshly submitted")
             {{-- <div class="col-6 col-md-10">
                 <form action="{{ route('staff.requestApprovalReport', $report->id) }}" method="POST">
@@ -48,7 +50,7 @@ Detail Laporan
                     <button type="submit" class="btn btn-success">Request Approval ke head</button>
                 </form>
             </div> --}}
-            <div class="col-3 col-md-10" align="end">
+            <div class="col-3 col-md-11" align="end">
                 <form action="{{ route('staff.reviewReport', $report->id) }}" method="POST">
                 @csrf
                 @method('PATCH')
@@ -81,9 +83,35 @@ Detail Laporan
           </div>
 
         @endif
+        @if ($report->status == "Approved")
+            <div class="col-3 col-md-11" align="end">
+                <form action="{{ route('processReport', $report->id) }}" method="POST">
+                @csrf
+                @method('PATCH')
+                    <button type="submit" class="btn btn-success">Mulai Proses</button>
+                </form>
+            </div>
+        @elseif ($report->status == "In Progress")
+            <div class="col-3 col-md-11" align="end">
+                <form action="{{ route('monitoringReport', $report->id) }}" method="POST">
+                @csrf
+                @method('PATCH')
+                    <button type="submit" class="btn btn-success">Mulai Monitoring</button>
+                </form>
+            </div>
+        @elseif ($report->status == "Monitoring process")
+          <div class="col-3 col-md-11" align="end">
+                  <form action="{{ route('finishReport', $report->id) }}" method="POST">
+                  @csrf
+                  @method('PATCH')
+                      <button type="submit" class="btn btn-success">Selesaikan</button>
+                  </form>
+          </div>
+        @endif
+
     @elseif (Auth::user()->role == "headmaster")
         @if ($report->status == "In review to headmaster")
-            <div class="col-3 col-md-10" align="end">
+            <div class="col-3 col-md-11" align="end">
                 <form action="{{ route('headmaster.approveReport', $report->id) }}" method="POST">
                 @csrf
                 @method('PATCH')
@@ -100,31 +128,6 @@ Detail Laporan
         @endif
     @endif
   
-    @if ($report->status == "Approved")
-        <div class="col-3 col-md-11" align="end">
-            <form action="{{ route('processReport', $report->id) }}" method="POST">
-            @csrf
-            @method('PATCH')
-                <button type="submit" class="btn btn-success">Mulai Proses</button>
-            </form>
-        </div>
-    @elseif ($report->status == "In Progress")
-        <div class="col-3 col-md-11" align="end">
-            <form action="{{ route('monitoringReport', $report->id) }}" method="POST">
-            @csrf
-            @method('PATCH')
-                <button type="submit" class="btn btn-success">Mulai Monitoring</button>
-            </form>
-        </div>
-    @elseif ($report->status == "Monitoring process")
-    <div class="col-3 col-md-11" align="end">
-            <form action="{{ route('finishReport', $report->id) }}" method="POST">
-            @csrf
-            @method('PATCH')
-                <button type="submit" class="btn btn-success">Selesaikan</button>
-            </form>
-        </div>
-    @endif
   </div>
 
   <br>
@@ -166,7 +169,7 @@ Detail Laporan
     {{-- Laporan di reject --}}
     @if ($report->status == "Rejected")
       <br>
-      <h3>Maaf, Laporan Anda Ditolak</h3>
+      <h3 style="color: #dc3545; font-weight: bold">Maaf, Laporan Anda Ditolak</h3>
     @else 
       {{-- Laporan di terima (Progress Bar) --}}
       <div class="progress-bar">
