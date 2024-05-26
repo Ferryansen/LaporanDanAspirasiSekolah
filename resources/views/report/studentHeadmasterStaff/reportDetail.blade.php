@@ -85,12 +85,47 @@ Detail Laporan
         @endif
         @if ($report->status == "Approved")
             <div class="col-3 col-md-12" align="end">
-                <form action="{{ route('processReport', $report->id) }}" method="POST">
-                @csrf
-                @method('PATCH')
-                    <button type="submit" class="btn btn-success">Mulai Proses</button>
-                </form>
+              <button type="submit" class="btn btn-success" data-bs-toggle="modal" data-bs-target="{{"#processReportModal_" . $report->id}}">Mulai Proses</button>
+              {{-- Modal --}}
+              <div class="modal fade" id="{{"processReportModal_" . $report->id}}" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" style="font-weight: 700">Masukkan tanggal estimasi dan prioritas</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('processReport', $report->id) }}" method="POST">
+                      @csrf
+                      @method('PATCH')
+                        <div class="modal-body">
+                          <div class="col-sm-10">
+                            <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
+                            @error('processEstimationDate')
+                              <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                          </div>
+
+                          <br>
+                          
+                          <div class="col-sm-10">
+                            <select class="form-select" aria-label="Default select example" required name="priority">
+                              <option selected disabled value>Pilih Prioritas</option>
+                              <option value="High">High</option>
+                              <option value="Medium">Medium</option>
+                              <option value="Low">Low</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                  </div>
+                </div>
+              </div><!-- End Vertically centered Modal-->
             </div>
+
         @elseif ($report->status == "In Progress")
             <div class="col-3 col-md-11" align="end">
                 <form action="{{ route('monitoringReport', $report->id) }}" method="POST">
@@ -134,14 +169,31 @@ Detail Laporan
 
   <div class="col-lg-12">
       <div class="card">
-        <div class="card-header">{{$report->reportNo}}</div>
+        @if($report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center">
+            <div class="reportNo">
+                {{$report->reportNo}}
+              </div>
+
+              <div class="reportPIC">
+                <div class="reportProcess" style="color: black; font-weight: 700">
+                  Handled by: {{$report->processExecutor->name}}
+                </div>
+                <div class="reportEstimation" style="color: black">
+                  Estimation: {{ \Carbon\Carbon::parse($report->processEstimationDate)->format('d/m/y') }}
+                </div>
+              </div>
+            </div>
+          @else
+            <div class="card-header">{{$report->reportNo}}</div>
+          @endif
             <div class="card-body">
                 <h5 class="card-title">{{$report->name}}</h5>
                 <td>{{$report->description}}</td>
                 <br>
                 @if ($report->evidences->isEmpty())
                     No evidence available
-                  @else
+                @else
                       @foreach($report->evidences as $evidence)
                           @if (strpos($evidence->image, 'ListImage') === 0)
                               <!-- Display image -->
@@ -157,7 +209,8 @@ Detail Laporan
                               </video>
                           @endif
                       @endforeach
-                  @endif
+                @endif
+                <br>
             </div>
         </div>
       </div>
@@ -222,22 +275,6 @@ Detail Laporan
             @endif
             <p class="text">In Progress</p>
           </li>
-  
-          {{-- <li>
-            <i class="icon uil uil-eye"></i>
-            @if ($report->status == "Monitoring" || $report->status == "Completed")
-              <div class="progressing four active">
-                <p>4</p>
-                <i class="uil uil-check"></i>
-              </div>
-            @else
-              <div class="progressing four">
-                <p>4</p>
-                <i class="uil uil-check"></i>
-              </div>
-            @endif
-            <p class="text">Monitoring</p>
-          </li> --}}
   
           <li>
             <i class="icon uil uil-file-check-alt"></i>
@@ -308,7 +345,24 @@ Detail Laporan
     @endif
       <div class="col-lg-12">
         <div class="card">
-          <div class="card-header">{{$report->reportNo}}</div>
+          @if($report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center">
+            <div class="reportNo">
+                {{$report->reportNo}}
+              </div>
+
+              <div class="reportPIC">
+                <div class="reportProcess" style="color: black; font-weight: 700">
+                  Handled by: {{$report->processExecutor->name}}
+                </div>
+                <div class="reportEstimation" style="color: black">
+                  Estimation: {{ \Carbon\Carbon::parse($report->processEstimationDate)->format('d/m/y') }}
+                </div>
+              </div>
+            </div>
+          @else
+            <div class="card-header">{{$report->reportNo}}</div>
+          @endif
               <div class="card-body">
                   <h5 class="card-title">{{$report->name}}</h5>
                   <td>{{$report->description}}</td>
@@ -340,10 +394,19 @@ Detail Laporan
 
 @endif
 
+
+
 @endsection
 
 @section('script')
-    <script>
+<script>
+      document.addEventListener('DOMContentLoaded', function () {
+        @if($errors->any() && session('reportId') == $report->id)
+          var modal = new bootstrap.Modal(document.getElementById('processReportModal_{{ $report->id }}'));
+          modal.show();
+        @endif
+      });
+
       const reportID = <?php echo json_encode($report->id); ?>;
       const redirectUrl = <?php echo json_encode($link); ?>;
       var csrfToken = $('meta[name="csrf-token"]').attr('content');
@@ -366,5 +429,8 @@ Detail Laporan
               }
           });
       });
+
+
+
     </script>
 @endsection

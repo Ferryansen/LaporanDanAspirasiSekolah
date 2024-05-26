@@ -186,6 +186,7 @@ class ReportController extends Controller
             'name' => $request->reportName,
             'category_id' => $request->reportCategory,
             'description' => $request->reportDescription,
+            'priority' => "Not set",
             'isUrgent' => false,
             'isChatOpened' => false,
             'processDate' => null,
@@ -290,6 +291,7 @@ class ReportController extends Controller
                 'name' => $request->reportName,
                 'category_id' => $request->reportCategory,
                 'description' => $request->reportDescription,
+                'priority' => "Not set",
                 'isUrgent' => true,
                 'isChatOpened' => false,
                 'processDate' => null,
@@ -564,9 +566,32 @@ class ReportController extends Controller
         $report = Report::find($request->id);
         $currUser = Auth::user();
 
+        $rules = [
+          'processEstimationDate' => 'required|date|after_or_equal:today'
+        ];
+
+        $messages = [
+            'processEstimationDate.required' => 'Jangan lupa masukin tanggal estimasinya yaa', 
+            'processEstimationDate.date' => 'Yuk masukin tanggal estimasi dengan format yang benar',
+            'processEstimationDate.after_or_equal' => 'Tanggal estimasi harus sama dengan atau setelah hari ini',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+    
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)
+            ->withInput()
+            ->with('openModal', true)
+            ->with('reportId', $report->id);
+        }
+
         $report->update([
+            'priority' => $request->priority,
             'status' => "In Progress",
-            'lastUpdatedBy' => $currUser->name
+            'processedBy' => $currUser->id,
+            'lastUpdatedBy' => $currUser->name,
+            'processDate' => now(),
+            'processEstimationDate' => $request->processEstimationDate
         ]);
 
         $reportData = [

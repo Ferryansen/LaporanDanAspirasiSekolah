@@ -17,6 +17,7 @@ class Report extends Model
         'category_id',
         'name',
         'description',
+        'priority',
         'isUrgent',
         'isChatOpened',
         'processDate',

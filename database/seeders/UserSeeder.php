@@ -51,7 +51,7 @@ class UserSeeder extends Seeder
                     'staffType_id' => null,
                     'userNo' => 'USR000003',
                     'name' => 'Nelsen aja',
-                    'email' => 'nelsen@example.com',
+                    'email' => 'nelsenaja@example.com',
                     'password' => Hash::make('testing123'),
                     'phoneNumber' => '08123457689',
                     'birthDate' => Carbon::create('2000', '01', '01'),
@@ -123,7 +123,7 @@ class UserSeeder extends Seeder
                     'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
-                    'staffType_id' => 2,
+                    'staffType_id' => 4,
                     'userNo' => 'USR000008',
                     'name' => 'Sonny',
                     'email' => 'Sonny@example.com',
@@ -185,8 +185,8 @@ class UserSeeder extends Seeder
                 [
                     'staffType_id' => 3,
                     'userNo' => 'USR000012',
-                    'name' => 'Sonny',
-                    'email' => 'Sonny@example.com',
+                    'name' => 'Sandy',
+                    'email' => 'Sandy@example.com',
                     'password' => Hash::make('testing123'),
                     'phoneNumber' => '08123457689',
                     'birthDate' => Carbon::create('2000', '01', '01'),

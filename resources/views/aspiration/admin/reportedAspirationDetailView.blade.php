@@ -13,7 +13,7 @@ Detail Aspirasi Bermasalah
   <h1>Aspirasi Bermasalah</h1>
   <nav>
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ route('aspirations.manageAspirations') }}">Aspirasi</a></li>
+      <li class="breadcrumb-item"><a href="">Aspirasi</a></li>
       <li class="breadcrumb-item"><a href="{{ route('aspirations.reported') }}">Aspirasi Bermasalah</a></li>
       <li class="breadcrumb-item active">Detail Aspirasi Bermasalah</li>
     </ol>

@@ -120,11 +120,8 @@
                     </th>
                     <th data-type="date" data-format="YYYY/DD/MM">Tanggal dibuat</th>
                     <th>Status</th>
-                    @if (Auth::user()->role == "admin")
+                    <th>Prioritas</th>
                     <th></th>
-                    @else
-                      <th></th>
-                      @endif
                     </tr>
                   </thead>
                   <tbody>
@@ -149,6 +146,8 @@
                         @else
                           <td>{{ $report->status }} by {{ $report->lastUpdatedBy }}</td>
                         @endif
+
+                        <td>{{ $report->priority }}</td>
   
                         @if (Auth::user()->role == "admin")
                         <td style="text-align: right">
