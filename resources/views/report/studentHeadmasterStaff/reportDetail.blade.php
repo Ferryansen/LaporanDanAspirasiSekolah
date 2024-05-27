@@ -98,7 +98,7 @@ Detail Laporan
                       @csrf
                       @method('PATCH')
                         <div class="modal-body">
-                          <div class="col-sm-10">
+                          <div class="col-sm-12">
                             <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
                             @error('processEstimationDate')
                               <div class="invalid-feedback">{{ $message }}</div>
@@ -107,7 +107,7 @@ Detail Laporan
 
                           <br>
                           
-                          <div class="col-sm-10">
+                          <div class="col-sm-12">
                             <select class="form-select" aria-label="Default select example" required name="priority">
                               <option selected disabled value>Pilih Prioritas</option>
                               <option value="1">High</option>
@@ -177,10 +177,10 @@ Detail Laporan
 
               <div class="reportPIC">
                 <div class="reportProcess" style="color: black; font-weight: 700">
-                  Handled by: {{$report->processExecutor->name}}
+                  Ditangani oleh: {{$report->processExecutor->name}}
                 </div>
                 <div class="reportEstimation" style="color: black">
-                  Estimation: {{ \Carbon\Carbon::parse($report->processEstimationDate)->format('d/m/y') }}
+                  Estimasi: {{ \Carbon\Carbon::parse($report->processEstimationDate)->format('d/m/y') }}
                 </div>
               </div>
             </div>
@@ -192,7 +192,7 @@ Detail Laporan
                 <td>{{$report->description}}</td>
                 <br>
                 @if ($report->evidences->isEmpty())
-                    No evidence available
+                    Tidak ada bukti
                 @else
                       @foreach($report->evidences as $evidence)
                           @if (strpos($evidence->image, 'ListImage') === 0)
@@ -241,28 +241,29 @@ Detail Laporan
                 <i class="uil uil-check"></i>
               </div>
             @endif
-            <p class="text">Report Submitted</p>
+            <p class="text">Laporan terkirim</p>
+          </li>
+
+          <li>
+            <i class="icon uil uil-eye"></i>
+            @if ($report->status == "In review by staff" || $report->status == "In review to headmaster" || $report->status == "Approved" 
+            || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
+              <div class="progressing two active">
+                <p>2</p>
+                <i class="uil uil-eye"></i>
+              </div>
+            @else
+              <div class="progressing two">
+                <p>2</p>
+                <i class="uil uil-eye"></i>
+              </div>
+            @endif
+            <p class="text">Sedang ditinjau</p>
           </li>
   
           <li>
             <i class="icon uil uil-check"></i>
             @if ($report->status == "Approved" || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
-              <div class="progressing two active">
-                <p>2</p>
-                <i class="uil uil-check"></i>
-              </div>
-            @else
-              <div class="progressing two">
-                <p>2</p>
-                <i class="uil uil-check"></i>
-              </div>
-            @endif
-            <p class="text">Approved</p>
-          </li>
-  
-          <li>
-            <i class="icon uil uil-spinner-alt"></i>
-            @if ($report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
               <div class="progressing three active">
                 <p>3</p>
                 <i class="uil uil-check"></i>
@@ -273,12 +274,13 @@ Detail Laporan
                 <i class="uil uil-check"></i>
               </div>
             @endif
-            <p class="text">In Progress</p>
+            <p class="text">Disetujui</p>
           </li>
-  
+          
+
           <li>
-            <i class="icon uil uil-file-check-alt"></i>
-            @if($report->status == "Completed")
+            <i class="icon uil uil-spinner-alt"></i>
+            @if ($report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
               <div class="progressing four active">
                 <p>4</p>
                 <i class="uil uil-check"></i>
@@ -289,7 +291,23 @@ Detail Laporan
                 <i class="uil uil-check"></i>
               </div>
             @endif
-            <p class="text">Completed</p>
+            <p class="text">Sedang diproses</p>
+          </li>
+  
+          <li>
+            <i class="icon uil uil-file-check-alt"></i>
+            @if($report->status == "Completed")
+              <div class="progressing five active">
+                <p>5</p>
+                <i class="uil uil-check"></i>
+              </div>
+            @else
+              <div class="progressing five">
+                <p>5</p>
+                <i class="uil uil-check"></i>
+              </div>
+            @endif
+            <p class="text">Selesai</p>
           </li>
   
         </ul>
@@ -298,7 +316,7 @@ Detail Laporan
 
     <br>
 
-    @if ( $report->status == "Approved" || $report->status == "In review by staff" || $report->status == "In review to headmaster" || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
+    @if ($report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
       <a href="{{ $link }}"><button style="margin-bottom: 2rem" type="button" class="btn btn-primary">Chat</button></a>
     @endif
 
@@ -353,10 +371,10 @@ Detail Laporan
 
               <div class="reportPIC">
                 <div class="reportProcess" style="color: black; font-weight: 700">
-                  Handled by: {{$report->processExecutor->name}}
+                  Ditangani oleh: {{$report->processExecutor->name}}
                 </div>
                 <div class="reportEstimation" style="color: black">
-                  Estimation: {{ \Carbon\Carbon::parse($report->processEstimationDate)->format('d/m/y') }}
+                  Estimasi: {{ \Carbon\Carbon::parse($report->processEstimationDate)->format('d/m/y') }}
                 </div>
               </div>
             </div>
@@ -368,7 +386,7 @@ Detail Laporan
                   <td>{{$report->description}}</td>
                   <br>
                   @if ($report->evidences->isEmpty())
-                    No evidence available
+                    Tidak ada bukti
                   @else
                       @foreach($report->evidences as $evidence)
                           @if (strpos($evidence->image, 'ListImage') === 0)
