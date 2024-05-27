@@ -120,7 +120,7 @@
                     </th>
                     <th data-type="date" data-format="YYYY/DD/MM">Tanggal dibuat</th>
                     <th>Status</th>
-                    <th>Prioritas</th>
+                    <th>@sortablelink('priority', 'Prioritas')</th>
                     <th></th>
                     </tr>
                   </thead>
@@ -147,7 +147,15 @@
                           <td>{{ $report->status }} by {{ $report->lastUpdatedBy }}</td>
                         @endif
 
-                        <td>{{ $report->priority }}</td>
+                        @if($report->priority == "1")
+                          <td>High</td>
+                        @elseif($report->priority == "2")
+                          <td>Medium</td>
+                        @elseif($report->priority == "3")
+                          <td>Low</td>
+                        @else
+                          <td>Not set</td>
+                        @endif
   
                         @if (Auth::user()->role == "admin")
                         <td style="text-align: right">

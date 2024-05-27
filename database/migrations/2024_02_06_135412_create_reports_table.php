@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
             $table->string('name', 255);
             $table->string('description', 255);
-            $table->string('priority', 255);
+            $table->integer('priority');
             $table->boolean('isUrgent');
             $table->boolean('isChatOpened');
             $table->dateTime('processDate')->nullable();

@@ -46,9 +46,10 @@ class ReportController extends Controller
         $currUser = Auth::user();
         
         if (Auth::user()->role == "admin" || Auth::user()->role == "headmaster"){
-            $reports = Report::orderBy('isUrgent', 'desc') // Urgent reports first
-                     ->orderBy('created_at', 'desc') // Further order by creation date
-                     ->paginate(10); // Adjust pagination as needed
+
+            $reports = Report::sortable()->orderBy('isUrgent', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
         }
         else{
             // Get the staffType_id of the current user
@@ -56,11 +57,10 @@ class ReportController extends Controller
     
             // Use whereHas to filter categories based on staffType_id
             $categoriesFilter = Category::where('staffType_id', $staffType_id)->pluck('id');
-    
-            // Use whereIn to filter reports by category_id
-            $reports = Report::where('category_id', $staffType_id)->orderBy('isUrgent', 'desc') // Urgent reports first
-                     ->orderBy('created_at', 'desc') // Further order by creation date
-                     ->paginate(10); // Adjust pagination as needed
+
+            $reports = Report::sortable()->where('category_id', $staffType_id)->orderBy('isUrgent', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
         }
 
         $categories = Category::all();
@@ -186,7 +186,7 @@ class ReportController extends Controller
             'name' => $request->reportName,
             'category_id' => $request->reportCategory,
             'description' => $request->reportDescription,
-            'priority' => "Not set",
+            'priority' => 4,
             'isUrgent' => false,
             'isChatOpened' => false,
             'processDate' => null,
@@ -291,7 +291,7 @@ class ReportController extends Controller
                 'name' => $request->reportName,
                 'category_id' => $request->reportCategory,
                 'description' => $request->reportDescription,
-                'priority' => "Not set",
+                'priority' => 4,
                 'isUrgent' => true,
                 'isChatOpened' => false,
                 'processDate' => null,
