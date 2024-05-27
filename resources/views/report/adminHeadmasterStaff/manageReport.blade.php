@@ -139,22 +139,34 @@
                           <td>{{ $report->name }}</td>    
                         @endif
                         <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
-                        @if ($report->status == "Approved" || $report->status == "Rejected")
-                          <td>{{ $report->status }} by {{ $report->approvalBy }}</td>
-                        @elseif ($report->status == "Cancelled" || $report->status == "Freshly submitted")
-                          <td>{{ $report->status }}</td>
-                        @else
-                          <td>{{ $report->status }} by {{ $report->lastUpdatedBy }}</td>
+                        @if ($report->status == "Approved")
+                          <td>Disetujui oleh {{ $report->approvalBy }}</td>
+                        @elseif ($report->status == "Rejected")
+                          <td>Ditolak oleh {{ $report->approvalBy }}</td>  
+                        @elseif ($report->status == "Cancelled")
+                          <td>Dibatalkan</td>
+                        @elseif ($report->status == "Freshly submitted")
+                          <td>Terkirim</td>
+                        @elseif ($report->status == "In review by staff")
+                          <td>Sedang ditinjau oleh {{ $report->lastUpdatedBy }}</td>
+                        @elseif ($report->status == "In review to headmaster")
+                          <td>Menunggu persetujuan dari headmaster oleh {{ $report->lastUpdatedBy }}</td>
+                        @elseif ($report->status == "In Progress")
+                          <td>Sedang diproses oleh {{ $report->lastUpdatedBy }}</td>
+                        @elseif ($report->status == "Monitoring process")
+                          <td>Dalam pemantauan oleh {{ $report->lastUpdatedBy }}</td>
+                        @elseif ($report->status == "Completed")
+                          <td>Selesai oleh {{ $report->lastUpdatedBy }}</td>
                         @endif
 
                         @if($report->priority == "1")
-                          <td>High</td>
+                          <td><span style="background-color: #BB2D3B; color: white; padding: 5px; border-radius: 10%">High</span></td>
                         @elseif($report->priority == "2")
-                          <td>Medium</td>
+                          <td><span style="background-color: #FFC107; color: black; padding: 5px; border-radius: 10%">Medium</span></td>
                         @elseif($report->priority == "3")
-                          <td>Low</td>
+                          <td><span style="background-color: #198754; color: white; padding: 5px; border-radius: 10%">Low</span></td>
                         @else
-                          <td>Not set</td>
+                          <td><span style="background-color: #D9DADB; color: black; padding: 5px; border-radius: 10%">Not set</span></td>
                         @endif
   
                         @if (Auth::user()->role == "admin")

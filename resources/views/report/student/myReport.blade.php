@@ -60,7 +60,7 @@
 
                         <div class="table-container">
                             <!-- Default Table -->
-                            <table class="table">
+                            <table class="table" style="vertical-align: middle">
                                 <thead>
                                 <tr>
                                     <th>
@@ -80,21 +80,29 @@
                                 @foreach ($reports as $report)
                                 <tr>
                                     @if($report->isUrgent == true)
-                                        <td style="vertical-align: middle">{{ $report->name }} <i class="fa-sharp fa-solid fa-circle-exclamation fa-lg" style="color: #BB2D3B"></i></td>
+                                        <td>{{ $report->name }} <i class="fa-sharp fa-solid fa-circle-exclamation fa-lg" style="color: #BB2D3B"></i></td>
                                     @else
-                                        <td style="vertical-align: middle">{{ $report->name }}</td>    
+                                        <td>{{ $report->name }}</td>    
                                     @endif
     
-                                    <td style="vertical-align: middle">{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
-                                    @if ($report->status == "In review by staff" || $report->status == "In review to headmaster")
-                                        <td style="vertical-align: middle">Freshly submitted</td>
-                                    @elseif ($report->status == "Monitoring process")
-                                        <td style="vertical-align: middle">In Progress</td>
-                                    @else
-                                        <td style="vertical-align: middle">{{ $report->status }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
+                                    @if ($report->status == "Approved")
+                                        <td>Disetujui</td>
+                                    @elseif ($report->status == "Rejected")
+                                        <td>Ditolak</td>  
+                                    @elseif ($report->status == "Cancelled")
+                                        <td>Dibatalkan</td>
+                                    @elseif ($report->status == "Freshly submitted")
+                                        <td>Terkirim</td>
+                                    @elseif ($report->status == "In review by staff" || $report->status == "In review to headmaster")
+                                        <td>Sedang ditinjau</td>
+                                    @elseif ($report->status == "In Progress" || $report->status == "Monitoring process")
+                                        <td>Sedang diproses</td>
+                                    @elseif ($report->status == "Completed")
+                                        <td>Selesai</td>
                                     @endif
     
-                                    <td style="vertical-align: middle">
+                                    <td>
                                         <a href="{{ route('student.reportDetail', $report->id) }}">
                                             <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
                                         </a>
