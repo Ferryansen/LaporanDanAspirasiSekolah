@@ -110,9 +110,9 @@ Detail Laporan
                           <div class="col-sm-10">
                             <select class="form-select" aria-label="Default select example" required name="priority">
                               <option selected disabled value>Pilih Prioritas</option>
-                              <option value="High">High</option>
-                              <option value="Medium">Medium</option>
-                              <option value="Low">Low</option>
+                              <option value="1">High</option>
+                              <option value="2">Medium</option>
+                              <option value="3">Low</option>
                             </select>
                           </div>
                         </div>

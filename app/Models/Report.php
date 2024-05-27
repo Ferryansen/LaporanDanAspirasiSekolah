@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Kyslik\ColumnSortable\Sortable;
 
 class Report extends Model
 {
-    use HasFactory;
+    use HasFactory, Sortable;
 
     protected $table = 'reports';
 
@@ -29,6 +30,8 @@ class Report extends Model
         'deletedBy',
         'deleteReason'
     ];
+
+    public $sortable = ['priority'];
 
     public function user() {
         return $this->belongsTo(User::class, 'user_id');

@@ -65,11 +65,46 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         </li><!-- End Search Icon-->
 
         @if (Auth::user()->role == "student")
-          <li class="nav-item pe-3">
+          {{-- <li class="nav-item pe-3">
             <a class="nav-link nav-profile d-flex align-items-center pe-0" href="{{ route('student.urgentReportPage') }}">
               <i class="fa-sharp fa-solid fa-circle-exclamation fa-2xl" style="color: #BB2D3B"></i>
               <span class="d-none d-md-block ps-2" style="color: #BB2D3B">Urgent Report</span>
             </a>
+          </li> --}}
+
+          <li class="nav-item dropdown pe-3">
+
+            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+              <i class="fa-sharp fa-solid fa-circle-exclamation fa-2xl" style="color: #BB2D3B"></i>
+              <span class="d-none d-md-block dropdown-toggle ps-2" style="color: #BB2D3B">Urgent</span>
+            </a>
+  
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+              <li class="dropdown-header">
+                <h6>Urgent</h6>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+  
+              <li>
+                <a class="dropdown-item d-flex align-items-center" href="{{ route('student.urgentReportPage') }}">
+                  <i class="bi bi-camera"></i>
+                  <span>Camera</span>
+                </a>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+  
+              <li>
+                <a class="dropdown-item d-flex align-items-center" href="/report/sirine">
+                  <i class="bi bi-volume-up"></i>
+                  <span id="clickableLogout">Sirine</span>
+                </a>
+              </li>
+  
+            </ul>
           </li>
         @endif <!-- End Urgent Report -->
 

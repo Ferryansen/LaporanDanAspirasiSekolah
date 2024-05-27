@@ -213,7 +213,9 @@ Route::middleware(['isstudent'])->group(function () {
         Route::get('/urgent', [ReportController::class, 'urgentReportPage'])->name('student.urgentReportPage');
         Route::post('/create', [ReportController::class, 'createReport'])->name('student.createReport');
         Route::post('/createUrgent', [ReportController::class, 'createReportUrgent'])->name('student.createReportUrgent');
-        
+        Route::get('/sirine', function () {
+            return view('report.student.urgentSirine');
+        });
         // Route::get('/updateForm/{id}', [ReportController::class, 'updateReportForm'])->name('student.updateReportForm');
         // Route::patch('/update/{id}', [ReportController::class, 'updateReport'])->name('student.updateReport');
         Route::patch('/cancel/{id}', [ReportController::class, 'cancelReport'])->name('student.cancelReport');
