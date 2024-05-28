@@ -13,6 +13,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\AspirationReactionController;
 use App\Http\Controllers\ConsultationEventController;
+use App\Models\ConsultationEvent;
 use App\Models\Faq;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,7 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
+
 // Auths
 Route::get('/login', [UserController::class, 'showLoginForm'])->name('login.form');
 Route::post('/login', [UserController::class, 'login'])->name('login');
@@ -39,6 +41,7 @@ Route::post('/login', [UserController::class, 'login'])->name('login');
 Route::get('/urgentAccess/{urgentAccess}', [ReportController::class, 'urgentAccessForm'])->name('urgent.accessForm');
 Route::post('/urgentAccess/{urgentAccess}', [ReportController::class, 'urgentAccessCheck'])->name('urgent.accessCheck');
 Route::get('/urgentAccess/detail/{urgentAccess}', [ReportController::class, 'urgentAccessDetail'])->name('urgent.accessDetail');
+
 
 // Middlewares
 Route::middleware(['auth'])->group(function () {
@@ -73,25 +76,25 @@ Route::middleware(['isschool'])->group(function () {
         Route::get('/manage/{category_id}', [ReportController::class, 'manageReportFilterCategory'])->name('report.adminHeadmasterStaff.manageReportFilterCategory');
         Route::get('/manageBy/{status}', [ReportController::class, 'manageReportFilterStatus'])->name('report.adminHeadmasterStaff.manageReportFilterStatus');
     });
-
+    
     Route::prefix('/support/manage')->group(function(){
         Route::prefix('/FAQ')->group(function(){
             Route::get('/create', [FaqController::class, 'createFaqForm'])->name('faq.createForm');
             Route::post('/create', [FaqController::class, 'createFaq'])->name('faq.create');
-
+            
             Route::get('/update/{id}', [FaqController::class, 'updateFaqForm'])->name('faq.updateForm');
             Route::patch('/update/{id}', [FaqController::class, 'updateFaq'])->name('faq.update');
-
+            
             Route::delete('/delete/{id}', [FaqController::class, 'deleteFaq'])->name('faq.delete');
         });
-
+        
         Route::prefix('/downloadcenter')->group(function(){
             Route::get('/create', [DownloadContentController::class, 'createDownloadContentForm'])->name('downloadcontent.createForm');
             Route::post('/create', [DownloadContentController::class, 'createDownloadContent'])->name('downloadcontent.create');
-
+            
             Route::get('/update/{id}', [DownloadContentController::class, 'updateDownloadContentForm'])->name('downloadcontent.updateForm');
             Route::patch('/update/{id}', [DownloadContentController::class, 'updateDownloadContent'])->name('downloadcontent.update');
-
+            
             Route::delete('/delete/{id}', [DownloadContentController::class, 'deleteDownloadContent'])->name('downloadcontent.delete');
         });
     });
@@ -118,7 +121,7 @@ Route::middleware(['isheadandstaff'])->group(function () {
         
         Route::get('/manage/{aspiration_id}',[AspirationController::class, 'manageAspirationDetail'])->name('manage.aspiration.detail');
     });
-
+    
     Route::prefix('/report')->group(function(){
         Route::patch('/requestApproval/{id}', [ReportController::class, 'requestApprovalReport'])->name('staff.requestApprovalReport');
         Route::patch('/staffApprove/{id}', [ReportController::class, 'approveReport'])->name('staff.approveReport');
@@ -133,14 +136,17 @@ Route::middleware(['isheadandstaff'])->group(function () {
         Route::get('/report/pdf/convert', [PDFController::class, 'pdfGenerationAllReports'])->name('convertReport');
         Route::get('/report/pdf/convert/{category_id}', [PDFController::class, 'pdfGenerationReportsByCategory'])->name('convertCategoryReport');
     });
-
+    
     Route::prefix('/consultation/manage')->group(function() {
         Route::get('/', [ConsultationEventController::class, 'seeAllEvents'])->name('consultation.seeAll');
         Route::get('/all', [ConsultationEventController::class, 'fetchAllEvents'])->name('consultation.fetchAll');
         Route::get('/createConsultation', [ConsultationEventController::class, 'createEventForm'])->name('consultation.createForm');
         Route::post('/createConsultation', [ConsultationEventController::class, 'createEvent'])->name('consultation.create');
+        Route::get('/updateConsultation/{consultation_id}', [ConsultationEventController::class, 'updateEventForm'])->name('consultation.updateForm');
+        Route::patch('/updateConsultation/{consultation_id}', [ConsultationEventController::class, 'updateEvent'])->name('consultation.update');
+        Route::patch('/cancel/{consultation_id}', [ConsultationEventController::class, 'cancelEvent'])->name('consultation.cancel');
     });
-
+    
     Route::get('/dashboard', [UserController::class, 'getDashboard'])->name('dashboard');
     Route::get('/dashboard/filtered', [UserController::class, 'getDashboardddFiltered'])->name('dashboard.filtered');
 });

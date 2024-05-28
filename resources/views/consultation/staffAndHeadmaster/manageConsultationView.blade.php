@@ -99,16 +99,17 @@
                     var url = '/consultation/manage/createConsultation?start=' + encodeURIComponent(startDateStr) + '&end=' + encodeURIComponent(endDateStr);
                     window.location.href = url;
                 },
-                eventDidMount: function(info) {
-                    var attendees = info.event.extendedProps.attendees ? info.event.extendedProps.attendees.join(', ') : '';
-                    var consultant = info.event.extendedProps.consultant;
-                    var status = info.event.extendedProps.status;
-                    var location = info.event.extendedProps.location;
-                    var is_private = info.event.extendedProps.is_private ? 'Yes' : 'No';
-                    var is_online = info.event.extendedProps.is_online ? 'Yes' : 'No';
-                    var description = info.event.extendedProps.description;
+                eventClick: function(info) {
+                    var event = info.event;
+                    var eventId = event.id;
 
-                    var tooltip = `Consultant: ${consultant}\nAttendees: ${attendees}\nStatus: ${status}\nLocation: ${location}\nPrivate: ${is_private}\nOnline: ${is_online}\nDescription: ${description}`;
+                    var url = '/consultation/detail/' + eventId;
+                    window.location.href = url;
+                },
+                eventDidMount: function(info) {
+                    var status = info.event.extendedProps.status;
+
+                    var tooltip = `Status: ${status}`;
                     info.el.setAttribute('title', tooltip);
                 }
             });
