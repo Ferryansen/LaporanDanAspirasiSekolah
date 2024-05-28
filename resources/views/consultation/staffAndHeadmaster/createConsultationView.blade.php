@@ -19,13 +19,13 @@
 
 @section('sectionPage')
 <section class="section">
-    <form id="consultation-form" action="{{ route('consultation.create') }}" enctype="multipart/form-data" method="POST" novalidate>
+    <form id="consultation-form" action="{{ route('consultation.create') }}" enctype="multipart/form-data" method="POST">
         @csrf
 
         <div class="row mb-3">
             <label for="title" class="col-sm-2 col-form-label">Judul</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{ old('title') }}">
+                <input type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{ old('title') }}" required>
                 @error('title')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -35,7 +35,7 @@
         <div class="row mb-3">
             <label for="description" class="col-sm-2 col-form-label">Deskripsi</label>
             <div class="col-sm-10">
-                <textarea name="description" class="form-control @error('description') is-invalid @enderror" style="height: 100px">{{ old('description') }}</textarea>
+                <textarea name="description" class="form-control @error('description') is-invalid @enderror" style="height: 100px" required>{{ old('description') }}</textarea>
                 @error('description')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -45,7 +45,7 @@
         <div class="row mb-3">
             <label for="attendeeLimit" class="col-sm-2 col-form-label">Limit Peserta</label>
             <div class="col-sm-10">
-                <input type="number" class="form-control @error('attendeeLimit') is-invalid @enderror" name="attendeeLimit" value="{{ old('attendeeLimit') ? old('attendeeLimit') : '1' }}" min="1">
+                <input type="number" class="form-control @error('attendeeLimit') is-invalid @enderror" name="attendeeLimit" value="{{ old('attendeeLimit') ? old('attendeeLimit') : '1' }}" min="1" required>
                 @error('attendeeLimit')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -55,10 +55,21 @@
         <div class="row mb-3">
             <label for="startDateTime" class="col-sm-2 col-form-label">Jadwal</label>
             <div class="col-sm-10">
-                <div class="input-group">
-                    <input type="datetime-local" class="form-control" id="startDateTime" name="startDateTime" value="{{ $startDate ? $startDate : '' }}">
-                    <div class="input-group-text"><i class="bi bi-arrow-right"></i></div>
-                    <input type="datetime-local" class="form-control" id="endDateTime" name="endDateTime" value="{{ $endDate ? $endDate : '' }}">
+                <div id="dateTime-input" class="input-group">
+                    <div class="flex-grow-1">
+                        <input type="datetime-local" class="form-control @error('startDateTime') is-invalid @enderror" id="startDateTime" name="startDateTime" value="{{ $startDate ? $startDate : '' }}">
+                        @error('startDateTime')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <i id="arrow-right" class="bi bi-arrow-right" style="margin: 0 8px"></i>
+                    <i id="arrow-down" class="bi bi-arrow-down"></i>
+                    <div class="flex-grow-1">
+                        <input type="datetime-local" class="form-control @error('endDateTime') is-invalid @enderror" id="endDateTime" name="endDateTime" value="{{ $endDate ? $endDate : '' }}">
+                        @error('endDateTime')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
             </div>
         </div>
@@ -67,13 +78,13 @@
             <legend class="col-form-label col-sm-2 pt-0">Tipe</legend>
             <div class="col-sm-10">
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="consultationType" id="onlineConsultation" value="online" {{ old('consultationType') == 'online' ? 'checked' : '' }}>
+                    <input class="form-check-input" type="radio" name="consultationType" id="onlineConsultation" value="online" {{ old('consultationType') == 'online' ? 'checked' : '' }} required>
                     <label class="form-check-label" for="onlineConsultation">
                         Online
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="consultationType" id="offlineConsultation" value="offline" {{ old('consultationType') == 'offline' ? 'checked' : '' }}>
+                    <input class="form-check-input" type="radio" name="consultationType" id="offlineConsultation" value="offline" {{ old('consultationType') == 'offline' ? 'checked' : '' }} required>
                     <label class="form-check-label" for="offlineConsultation">
                         Offline
                     </label>
@@ -84,10 +95,13 @@
             @enderror
         </fieldset>
         
-        <div class="row mb-3" id="locationField" style="display: none;">
-            <label for="location" class="col-sm-2 col-form-label">Lokasi</label>
+        <div class="row mb-3" id="locationField">
+            <label for="location" id="location-label" class="col-sm-2 col-form-label">Lokasi (Opsional)</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="location" name="location" value="{{ old('location') }}">
+                <input type="text" class="form-control @error('location') is-invalid @enderror" id="location" name="location" value="{{ old('location') }}">
+                @error('location')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
         </div>
 
@@ -219,30 +233,35 @@
 @endsection
 
 @section('css')
+    <style>
+        #dateTime-input {
+            display: flex;
+            align-items: center;
+        }
+
+        #arrow-down {
+            display: none;
+        }
+
+        @media (max-width: 680px) {
+            #dateTime-input {
+                display: block;
+            }
+
+            #arrow-right {
+                display: none;
+            }
+
+            #arrow-down {
+                display: inline-block;
+                text-align: center
+            }
+        }
+    </style>
 @endsection
 
 @section('js')
     <script>
-        var onlineConsultationRadio = document.getElementById('onlineConsultation');
-        var offlineConsultationRadio = document.getElementById('offlineConsultation');
-        var locationField = document.getElementById('locationField');
-
-        onlineConsultationRadio.addEventListener('change', function() {
-            locationField.style.display = 'none';
-        });
-
-        offlineConsultationRadio.addEventListener('change', function() {
-            locationField.style.display = 'flex'; 
-        });
-
-        window.onload = function() {
-            if (offlineConsultationRadio.checked) {
-                locationField.style.display = 'flex';
-            } else {
-                locationField.style.display = 'none';
-            }
-        };
-
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('consultation-form');
             const submitBtn = document.getElementById('sub-btn');

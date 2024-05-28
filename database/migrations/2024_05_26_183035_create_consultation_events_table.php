@@ -16,12 +16,12 @@ return new class extends Migration
         Schema::create('consultation_events', function (Blueprint $table) {
             $table->id();
             $table->string('title', 255);
-            $table->string('description', 1000);
+            $table->string('description', 1005);
             $table->foreignId('consultant')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->json('attendees')->nullable();
             $table->integer('attendeeLimit');
-            $table->string('location')->nullable();
-            $table->string('status');
+            $table->string('location', 255)->nullable();
+            $table->string('status', 255);
             $table->dateTime('start');
             $table->dateTime('end');
             $table->boolean('is_online');
