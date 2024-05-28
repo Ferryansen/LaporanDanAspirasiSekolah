@@ -679,12 +679,23 @@
     var statusOptions = [
             'Freshly submitted',
             'In review',
+            'Request Approval',
             'Approved',
             'In Progress',
             'Monitoring',
             'Completed',
             'Rejected',
           ];
+    var statusOptionsView = [
+      'Terkirim',
+      'Sedang ditinjau',
+      'Menunggu persetujuan',
+      'Disetujui',
+      'Sedang diproses',
+      'Dalam pemantauan',
+      'Selesai',
+      'Ditolak',
+    ];
 
     function mapStatus(status){
       if(status.includes('In review')){
@@ -742,7 +753,7 @@
       },
       yAxis: {
         type: 'category',
-        data: statusOptions
+        data: statusOptionsView
       },
       series: [
         {

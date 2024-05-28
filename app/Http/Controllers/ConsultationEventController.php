@@ -14,6 +14,76 @@ class ConsultationEventController extends Controller
         return view('consultation.staffAndHeadmaster.manageConsultationView');
     }
 
+    public function sessionList() {
+        $consultations = ConsultationEvent::where('start', '>', now())->orderBy('start', 'asc')->paginate(10)->withQueryString();
+        $typeSorting ="";
+        return view('consultation.student.sessionList', compact('consultations', 'typeSorting'));
+    }
+
+    public function sessionListSorting($typeSorting) {
+        switch ($typeSorting) {
+            case 'UpComing':
+                $consultations = ConsultationEvent::where('start', '>', now())->orderBy('start', 'asc')->paginate(10)->withQueryString();
+                break;
+            case 'OnGoing':
+                $consultations = ConsultationEvent::where('start', '<=', now())->where('end', '>=', now())->orderBy('start', 'asc')->paginate(10)->withQueryString();
+                break;
+            default:
+                $consultations = ConsultationEvent::where('start', '>', now())->orderBy('start', 'asc')->paginate(10)->withQueryString();
+                break;
+        }
+        return view('consultation.student.sessionList', compact('consultations', 'typeSorting'));
+    }
+    
+
+    public function mySession() {
+        // Assuming the current user's ID is retrieved from the Auth facade
+        $userId = Auth::id();
+
+        // Filter consultations where the current user is an attendee
+        $consultations = ConsultationEvent::whereJsonContains('attendees', [$userId])->paginate(10)->withQueryString();
+        $typeSorting ="";
+
+        return view('consultation.student.mySession', compact('consultations', 'typeSorting'));
+    }
+
+    public function mySessionSorting($typeSorting) {
+        // Get the current user's ID
+        $userId = Auth::id();
+    
+        switch ($typeSorting) {
+            case 'UpComing':
+                $consultations = ConsultationEvent::where('start', '>', now())
+                    ->whereJsonContains('attendees', [$userId])
+                    ->orderBy('start', 'asc')
+                    ->paginate(10)
+                    ->withQueryString();
+                break;
+            case 'OnGoing':
+                $consultations = ConsultationEvent::where('start', '<=', now())
+                    ->where('end', '>=', now())
+                    ->whereJsonContains('attendees', [$userId])
+                    ->orderBy('start', 'asc')
+                    ->paginate(10)
+                    ->withQueryString();
+                break;
+            case 'End':
+                $consultations = ConsultationEvent::where('end', '<', now())
+                    ->whereJsonContains('attendees', [$userId])
+                    ->orderBy('start', 'asc')
+                    ->paginate(10)
+                    ->withQueryString();
+                break;
+            default:
+                $consultations = ConsultationEvent::whereJsonContains('attendees', [$userId])
+                    ->paginate(10)
+                    ->withQueryString();
+                break;
+        }
+    
+        return view('consultation.student.mySession', compact('consultations', 'typeSorting'));
+    }
+
     public function fetchAllEvents() {
         $events = ConsultationEvent::all();
 

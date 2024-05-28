@@ -26,7 +26,8 @@ class ConsultationEvent extends Model
         'attendees' => 'array',
     ];
 
-    public function consultedBy() {
+    public function consultBy()
+    {
         return $this->belongsTo(User::class, 'consultant');
     }
 }

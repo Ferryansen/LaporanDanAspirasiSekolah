@@ -40,6 +40,7 @@
                     <th>Deskripsi</th>
                     <th>Status</th>
                     <th>Tanggal dibuat</th>
+                    <th>Ditangani oleh</th>
                 </tr>
             </thead>
             <tbody>
@@ -50,8 +51,35 @@
                         <td>{{$report->reportNo}}</td>
                         <td>{{$report->name}}</td>
                         <td>{{$report->description}}</td>
-                        <td>{{$report->status}}</td>
-                        <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
+
+                        @if ($report->status == "Approved")
+                          <td>Disetujui</td>
+                        @elseif ($report->status == "Rejected")
+                          <td>Ditolak</td>  
+                        @elseif ($report->status == "Cancelled")
+                          <td>Dibatalkan</td>
+                        @elseif ($report->status == "Freshly submitted")
+                          <td>Terkirim</td>
+                        @elseif ($report->status == "In review by staff")
+                          <td>Sedang ditinjau</td>
+                        @elseif ($report->status == "In review to headmaster")
+                          <td>Menunggu persetujuan dari atasan</td>
+                        @elseif ($report->status == "In Progress")
+                          <td>Sedang diproses</td>
+                        @elseif ($report->status == "Monitoring process")
+                          <td>Dalam pemantauan</td>
+                        @elseif ($report->status == "Completed")
+                          <td>Selesai</td>
+                        @endif
+
+                        <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d F Y') }}</td>
+                        @if($report->processedBy == null)
+                            <td>Belum ditangani</td>
+                        @elseif($report->status == "In review by staff" || $report->status == "In review to headmaster" || $report->status == "Approved")
+                            <td>Belum ditangani</td>
+                        @else
+                            <td>{{ $report->processExecutor->name }}</td>
+                        @endif
                     </tr>
 
                 @endforeach

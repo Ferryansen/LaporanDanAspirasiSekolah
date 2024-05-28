@@ -44,6 +44,7 @@ class ReportController extends Controller
     public function manageReport()
     {
         $currUser = Auth::user();
+        $categories = Category::all();
         
         if (Auth::user()->role == "admin" || Auth::user()->role == "headmaster"){
 
@@ -57,13 +58,19 @@ class ReportController extends Controller
     
             // Use whereHas to filter categories based on staffType_id
             $categoriesFilter = Category::where('staffType_id', $staffType_id)->pluck('id');
-
-            $reports = Report::sortable()->where('category_id', $staffType_id)->orderBy('isUrgent', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            $idx = 0;
+            foreach ($categories as $category) {
+                if (strpos($category->name, "Lainnya") !== false){
+                    $idx = $category->id;
+                    break;
+                }
+            }
+            $reports = Report::sortable()->where(function ($query) use ($staffType_id, $idx) {
+                            $query->where('category_id', $staffType_id)
+                            ->orWhere('category_id', $idx);
+                        })->orderBy('isUrgent', 'desc')->orderBy('created_at', 'desc')->paginate(10);
         }
 
-        $categories = Category::all();
         $filterTitle = null;
 
         return view('report.adminHeadmasterStaff.manageReport', compact('reports', 'categories', 'filterTitle'));
