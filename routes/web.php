@@ -51,11 +51,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/FAQ', [FaqController::class, 'seeAllFaq'])->name('faq.seeall');
     Route::get('/downloadcenter', [DownloadContentController::class, 'seeAllDownloadContent'])->name('downloadcontent.seeall');
     Route::get('/publicAspirations', [AspirationController::class, 'publicAspiration'])->name('aspirations.publicAspirations');
+    Route::get('/publicAspirations/sorting/{typeSorting}', [AspirationController::class, 'publicAspirationSorting'])->name('aspirations.publicAspirations.sorting');
     Route::get('/publicAspirations/{category_id}', [AspirationController::class, 'publicAspirationFilterCategory'])->name('aspirations.publicAspirationsCategory');
     Route::post('/{aspiration}/react', [AspirationReactionController::class, 'react'])->name('aspirations.react');
     Route::post('/comments/{comment}/reply', [CommentController::class, 'reply'])->name('comments.reply');
     Route::post('/{aspiration}/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::post('/openChat', [ReportController::class, 'openChatNotification'])->name('openChat.notif');
+    Route::get('/consultation/detail/{consultation_id}', [ConsultationEventController::class, 'consultationDetail'])->name('consultation.detail');
 });
 
 Route::middleware(['isschool'])->group(function () {
@@ -228,6 +230,14 @@ Route::middleware(['isstudent'])->group(function () {
         // Route::patch('/update/{id}', [ReportController::class, 'updateReport'])->name('student.updateReport');
         Route::patch('/cancel/{id}', [ReportController::class, 'cancelReport'])->name('student.cancelReport');
     });
+
+    Route::prefix('/consultation')->group(function() {
+        Route::get('/sessionList', [ConsultationEventController::class, 'sessionList'])->name('consultation.sessionList');
+        Route::get('/sessionList/sorting/{typeSorting}', [ConsultationEventController::class, 'sessionListSorting'])->name('consultation.sessionList.sorting');
+        Route::get('/mySession', [ConsultationEventController::class, 'mySession'])->name('consultation.mySession');
+        Route::get('/mySession/sorting/{typeSorting}', [ConsultationEventController::class, 'mySessionSorting'])->name('consultation.mySession.sorting');
+    });
+
 
     Route::patch('/updateUrgentPhoneNum', [UserController::class, 'updateUrgentPhoneNum'])->name('student.updateUrgentPhoneNum');
 });

@@ -257,6 +257,24 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       @endif
 
       <li class="nav-item">
+        <a class="nav-link {{ request()->is('sessionList') || request()->is('mySession') ? '' : 'collapsed'}}" data-bs-target="#konsultasi-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-question-circle"></i><span>Konsultasi</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="konsultasi-nav" class="nav-content collapse {{ request()->is('sessionList') || request()->is('mySession') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('consultation.sessionList') }}" class="{{ request()->is('sessionList') ? 'active' : ''}}">
+              <i class="bi bi-circle"></i><span>Sesi konsultasi</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('consultation.mySession') }}" class="{{ request()->is('mySession') ? 'active' : ''}}">
+              <i class="bi bi-circle"></i><span>Sesi saya</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
         <a class="nav-link {{ request()->is('downloadcenter') || request()->is('FAQ') || request()->is('support/manage*') ? '' : 'collapsed'}}" data-bs-target="#supports-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-question-circle"></i><span>Bantuan</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>

@@ -26,4 +26,9 @@ class ConsultationEvent extends Model
     protected $casts = [
         'attendees' => 'array',
     ];
+
+    public function consultBy()
+    {
+        return $this->belongsTo(User::class, 'consultant');
+    }
 }
