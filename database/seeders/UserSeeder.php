@@ -35,8 +35,8 @@ class UserSeeder extends Seeder
                 [
                     'staffType_id' => null,
                     'userNo' => 'USR000002',
-                    'name' => 'John Antonius',
-                    'email' => 'johnantonius@example.com',
+                    'name' => 'John Antonius McStaffin',
+                    'email' => 'staff@example.com',
                     'password' => Hash::make('testing123'),
                     'phoneNumber' => '08123457689',
                     'birthDate' => Carbon::create('2000', '01', '01'),
