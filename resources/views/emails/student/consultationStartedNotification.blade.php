@@ -13,7 +13,7 @@
         <table>
             <tr>
                 <td>Jadwal Konsultasi</td>
-                <td>: {{ $consultationData['date'] }}</td>
+                <td>: {{ \Carbon\Carbon::parse($consultationData['date'])->format('d/m/Y, H:i') }}</td>
             </tr>
             <tr>
                 <td>Konsultan</td>

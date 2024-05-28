@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\CancelledConsultationStudentNotificationEmail;
+use App\Mail\RegisteredConsultationStudentNotificationEmail;
 use App\Mail\UpdateInfoConsultationStudentNotificationEmail;
 use App\Models\ConsultationEvent;
 use App\Models\User;
@@ -316,6 +317,14 @@ class ConsultationEventController extends Controller
 
         $consultations = ConsultationEvent::where('start', '>', now())->orderBy('start', 'asc')->paginate(10)->withQueryString();
         $typeSorting ="";
+
+        $consultationData = [
+            'title' => $event->title,
+            'date' => $event->start
+        ];
+
+        Mail::to(Auth::user()->email)->send(new RegisteredConsultationStudentNotificationEmail(Auth::user()->name, $consultationData));
+
         return view('consultation.student.sessionList', compact('consultations', 'typeSorting'));
     }
 
