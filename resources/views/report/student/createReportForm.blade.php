@@ -65,15 +65,27 @@
             </div>
             
             <div class="row mb-3">
-            <label class="col-sm-2 col-form-label">Kategori</label>
-            <div class="col-sm-10">
-                <select  name="reportCategory" class="form-select" aria-label="Default select example" required>
-                    <option selected disabled value>Pilih Kategori Laporan</option>
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
-            </div>
+                <label class="col-sm-2 col-form-label">Kategori</label>
+                <div class="col-sm-10">
+                    <select  name="reportCategory" class="form-select" aria-label="Default select example" required>
+                        <option selected disabled value>Pilih Kategori Laporan</option>
+                        @php
+                            $lainnyaCategory = null;
+                        @endphp
+                        @foreach ($categories as $category)
+                            @if (strpos($category->name, "Lainnya") !== false)
+                                @php
+                                    $lainnyaCategory = $category;
+                                @endphp
+                            @else
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endif
+                        @endforeach
+                        @if ($lainnyaCategory)
+                            <option value="{{ $lainnyaCategory->id }}">{{ $lainnyaCategory->name }}</option>
+                        @endif
+                    </select>
+                </div>
             </div>
 
             <div class="row mb-3">
