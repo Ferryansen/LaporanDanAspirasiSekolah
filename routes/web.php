@@ -12,6 +12,7 @@ use App\Http\Controllers\UserReportAspirationController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\AspirationReactionController;
+use App\Http\Controllers\ConsultationEventController;
 use App\Models\Faq;
 use Illuminate\Support\Facades\Route;
 
@@ -129,6 +130,13 @@ Route::middleware(['isheadandstaff'])->group(function () {
         Route::patch('/finish/{id}', [ReportController::class, 'finishReport'])->name('finishReport');
         // Route::get('/report/pdf/convert', [PDFController::class, 'pdfGenerationAllReports'])->name('convertReport');
         // Route::get('/report/pdf/convert/{category_id}', [PDFController::class, 'pdfGenerationReportsByCategory'])->name('convertCategoryReport');
+    });
+
+    Route::prefix('/consultation/manage')->group(function() {
+        Route::get('/', [ConsultationEventController::class, 'seeAllEvents'])->name('consultation.seeAll');
+        Route::get('/all', [ConsultationEventController::class, 'fetchAllEvents'])->name('consultation.fetchAll');
+        Route::get('/createConsultation', [ConsultationEventController::class, 'createEventForm'])->name('consultation.createForm');
+        Route::post('/createConsultation', [ConsultationEventController::class, 'createEvent'])->name('consultation.create');
     });
 
     Route::get('/dashboard', [UserController::class, 'getDashboard'])->name('dashboard');
