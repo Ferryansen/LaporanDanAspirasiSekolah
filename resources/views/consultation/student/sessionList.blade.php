@@ -1,7 +1,7 @@
 @extends('layouts.mainpage')
 
 @section('title')
-    Aspirasi Saya
+    Daftar Konsultasi
 @endsection
 
 @section('css')
@@ -42,28 +42,6 @@
             margin-top: 10px;
         }
 
-        .labelCompleted {
-          background: darkseagreen;
-          width: 100%;
-          display: block;
-          padding-left: 10px;
-          color: white;
-          border-color: yellowgreen;
-          margin-bottom: 10px;
-          border-radius: 4px 0px 100px 4px;
-        }
-
-        .labelInProg {
-          background: lightslategrey;
-          width: 100%;
-          display: block;
-          padding-left: 10px;
-          color: white;
-          border-color: yellowgreen;
-          margin-bottom: 10px;
-          border-radius: 4px 0px 100px 4px;
-        }
-
         .container {
             display: flex;
             justify-content: center;
@@ -78,8 +56,8 @@
   <h1>Aspirasi Saya</h1>
   <nav>
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Aspirasi</a></li>
-      <li class="breadcrumb-item active">Aspirasi Saya</li>
+      <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Kolsultasi</a></li>
+      <li class="breadcrumb-item active">Daftar sesi</li>
     </ol>
   </nav>
 </div>
@@ -95,26 +73,19 @@
                       <!-- Table with stripped rows -->
                       <table class="table">
                           <tbody>
-                              @if ($aspirations->count() == 0)
+                              @if ($consultaions->count() == 0)
                               <tr>
                                   <td colspan="3">
                                       <div class="container">
-                                          <span style="color: dimgray">Belum ada aspirasi</span>
+                                          <span style="color: dimgray">Belum sesi konsultasi yang tersedia</span>
                                       </div>
                                   </td>
                               </tr>
                               @else
-                              @foreach($aspirations as $aspiration)
+                              @foreach($consultaions as $consultaion)
                               <tr>
                                   <td>
                                       <div class="post">
-                                          @if (Auth::user()->role == "student")
-                                          @if ($aspiration->status == "Completed")
-                                          <span class="labelCompleted">Completed</span>
-                                          @elseif (in_array($aspiration->status, ['In Progress', 'Approved', 'Monitoring']))
-                                          <span class="labelInProg">In Progress</span>
-                                          @endif
-                                          @endif
                                           <div class="post-header">
                                               <div class="uploader-info">
                                                   <span class="uploader-name">You</span> 

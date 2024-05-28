@@ -25,25 +25,34 @@
     <div class="row mb-3">
       <label for="inputText" class="col-sm-2 col-form-label">Judul</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" name="aspirationName" required>
+        <input type="text" class="form-control @error('aspirationName') is-invalid @enderror" name="aspirationName" required>
+        @error('aspirationName')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
       </div>
     </div>
     <div class="row mb-3">
       <label for="inputPassword" class="col-sm-2 col-form-label">Deskripsi</label>
       <div class="col-sm-10">
-        <textarea class="form-control" style="height: 100px" name="aspirationDescription" required></textarea>
+        <textarea class="form-control @error('aspirationDescription') is-invalid @enderror" style="height: 100px" name="aspirationDescription" required></textarea>
+        @error('aspirationDescription')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
       </div>
     </div>
 
     <div class="row mb-3">
       <label class="col-sm-2 col-form-label">Kategori</label>
       <div class="col-sm-10">
-        <select class="form-select" aria-label="Default select example" name="aspirationCategory" required>
+        <select class="form-select @error('aspirationCategory') is-invalid @enderror" aria-label="Default select example" name="aspirationCategory" required>
           <option selected disabled value>Pilih Kategori Aspirasi</option>
           @foreach ($categories as $category)
             <option value={{ $category->id }}>{{ $category->name }}</option>
           @endforeach
         </select>
+        @error('aspirationCategory')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
       </div>
     </div>
 

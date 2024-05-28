@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+
 
 class AspirationController extends Controller
 {
@@ -266,11 +268,27 @@ class AspirationController extends Controller
     {
         $currUser = Auth::user();
 
-        $request->validate([
+        $rules = [
             'aspirationName' => 'required|max:50',
-            'aspirationDescription' => 'required|max:10000',
+            'aspirationDescription' => 'required|max:254',
             'aspirationCategory' => 'required',
-        ]);
+        ];
+
+        $messages = [
+            'aspirationName.required' => 'Jangan lupa masukin judul yaa',
+            'aspirationName.max' => 'Judul yang kamu masukin cuman bisa maksimal 50 karakter nih',
+            
+            'aspirationDescription.required' => 'Jangan lupa masukin deskripsi yaa',
+            'aspirationDescription.max' => 'Deskripsi yang kamu masukin cuman bisa maksimal 255 karakter nih',
+
+            'aspirationCategory.required' => 'Jangan lupa pilih kategori yaa',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+    
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         // if ($request->aspirationEvidence != null){
         //     $file = $request->file('aspirationEvidence');
@@ -323,11 +341,27 @@ class AspirationController extends Controller
 
     public function updateAspirationLogic(Request $request, $id)
     {
-        $request->validate([
+        $rules = [
             'aspirationName' => 'required|max:50',
             'aspirationDescription' => 'required|max:200',
             'aspirationCategory' => 'required',
-        ]);
+        ];
+
+        $messages = [
+            'aspirationName.required' => 'Jangan lupa masukin judul yaa',
+            'aspirationName.max' => 'Judul yang kamu masukin cuman bisa maksimal 50 karakter nih',
+            
+            'aspirationDescription.required' => 'Jangan lupa masukin deskripsi yaa',
+            'aspirationDescription.max' => 'Deskripsi yang kamu masukin cuman bisa maksimal 255 karakter nih',
+
+            'aspirationCategory.required' => 'Jangan lupa pilih kategori yaa',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+    
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         $aspiration = Aspiration::findOrFail($id);
 
