@@ -242,6 +242,8 @@ Route::middleware(['isstudent'])->group(function () {
         Route::get('/sessionList/sorting/{typeSorting}', [ConsultationEventController::class, 'sessionListSorting'])->name('consultation.sessionList.sorting');
         Route::get('/mySession', [ConsultationEventController::class, 'mySession'])->name('consultation.mySession');
         Route::get('/mySession/sorting/{typeSorting}', [ConsultationEventController::class, 'mySessionSorting'])->name('consultation.mySession.sorting');
+        Route::get('/sessionList/addAttendees/{consultation_id}', [ConsultationEventController::class, 'addAttendees'])->name('consultation.addAttendees');
+        Route::get('/sessionList/removeAttendees/{consultation_id}', [ConsultationEventController::class, 'removeAttendees'])->name('consultation.removeAttendees');
     });
 
 
