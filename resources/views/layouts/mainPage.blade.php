@@ -65,11 +65,46 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         </li><!-- End Search Icon-->
 
         @if (Auth::user()->role == "student")
-          <li class="nav-item pe-3">
+          {{-- <li class="nav-item pe-3">
             <a class="nav-link nav-profile d-flex align-items-center pe-0" href="{{ route('student.urgentReportPage') }}">
               <i class="fa-sharp fa-solid fa-circle-exclamation fa-2xl" style="color: #BB2D3B"></i>
               <span class="d-none d-md-block ps-2" style="color: #BB2D3B">Urgent Report</span>
             </a>
+          </li> --}}
+
+          <li class="nav-item dropdown pe-3">
+
+            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+              <i class="fa-sharp fa-solid fa-circle-exclamation fa-2xl" style="color: #BB2D3B"></i>
+              <span class="d-none d-md-block dropdown-toggle ps-2" style="color: #BB2D3B">Urgent</span>
+            </a>
+  
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+              <li class="dropdown-header">
+                <h6>Urgent</h6>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+  
+              <li>
+                <a class="dropdown-item d-flex align-items-center" href="{{ route('student.urgentReportPage') }}">
+                  <i class="bi bi-camera"></i>
+                  <span>Camera</span>
+                </a>
+              </li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+  
+              <li>
+                <a class="dropdown-item d-flex align-items-center" href="/report/sirine">
+                  <i class="bi bi-volume-up"></i>
+                  <span id="clickableLogout">Sirine</span>
+                </a>
+              </li>
+  
+            </ul>
           </li>
         @endif <!-- End Urgent Report -->
 
@@ -169,18 +204,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
             <a href="{{ route('aspirations.publicAspirations') }}" class="{{ request()->is('publicAspirations*') || request()->is('comments*') ? 'active' : ''}}">
               
               <i class="bi bi-circle"></i>
-              <span>
-                @if (Auth::user()->role == 'admin')
-                  Aspirasi Publik
-                @else
-                  Kelola Aspirasi
-                @endif
-              </span>
+              <span>Aspirasi Publik</span>
             </a>
           </li>
           @if  (in_array(Auth::user()->role, ['staff', 'headmaster']))
           <li>
-            <a href="{{ route('aspirations.manageAspiration') }}" class="{{ request()->is('aspirations/manageAspirations*') ? 'active' : ''}}">
+            <a href="{{ route('aspirations.manageAspiration') }}" class="{{ request()->is('aspirations/manageAspirations*') || request()->is('aspirations/manage*') ? 'active' : ''}}">
 
               <i class="bi bi-circle"></i><span>Kelola Aspirasi</span>
             </a>
@@ -258,7 +287,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       <div class="modal-dialog">
           <div class="modal-content">
               <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="staticBackdropLabel">Which project is it?</h1>
+                  <h1 class="modal-title fs-5" id="staticBackdropLabel">Mau cari apa nih?</h1>
                   <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
                   

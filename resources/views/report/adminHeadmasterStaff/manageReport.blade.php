@@ -6,6 +6,11 @@
 
 @section('css')
   <style>
+
+    .table-container {
+            overflow-x: auto;
+            max-width: 100%;
+        }
     table {
             width: 100%;
             border-collapse: collapse;
@@ -72,14 +77,27 @@
             @endif
 
           @else
-            <div class="row">
-              <div class="col-3">
-                <select class="form-select" aria-label="Default select example" name="categoryStaffType" required onchange="window.location.href=this.value;">
-                  <option selected disabled value>Pilih Kategori</option>
-                  @foreach ($categories as $category)
-                    <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterCategory', ['category_id' => $category->id]) }}">{{ $category->name }}</option>
-                  @endforeach
-                </select>
+            <div class="row d-flex justify-content-between align-items-center">
+              <div class="col-auto d-flex align-items-center" style="margin-top: 0.5rem">
+                  <select class="form-select" aria-label="Default select example" name="categoryStaffType" required onchange="window.location.href=this.value;">
+                      <option selected disabled value>Pilih Kategori</option>
+                      @foreach ($categories as $category)
+                      <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterCategory', ['category_id' => $category->id]) }}">{{ $category->name }}</option>
+                      @endforeach
+                  </select>
+              </div>
+              <div class="col-auto d-flex align-items-center">
+                  @if (Auth::user()->role == "headmaster")
+                  @if ($filterTitle == null)
+                  <a href="{{ route('convertReport') }}">
+                      <button type="button" class="btn btn-success">Export Data Laporan</button>
+                  </a>
+                  @else
+                  <a href="{{ route('convertCategoryReport', ['category_id' => $categoryNow]) }}">
+                      <button type="button" class="btn btn-success">Export Data Laporan</button>
+                  </a>
+                  @endif
+                  @endif
               </div>
             </div>
             
@@ -92,88 +110,108 @@
 
           <br>
 
-          <!-- Table with stripped rows -->
-          <table class="table">
-            <thead>
-                <tr>
-                  <th>
-                    <b>Judul</b>
-                  </th>
-                  <th data-type="date" data-format="YYYY/DD/MM">Tanggal dibuat</th>
-                  <th>Status</th>
-                  @if (Auth::user()->role == "admin")
-                  <th></th>
-                  @else
-                    <th></th>
-                    @endif
-                  </tr>
-                </thead>
-                <tbody>
-                
-                @if ($reports->count() == 0)
+          <div class="table-container">
+            <!-- Table with stripped rows -->
+            <table class="table" style="vertical-align: middle">
+              <thead>
                   <tr>
-                      <td class="container" colspan="4" style="color: dimgray">Belum ada laporan</td>
-                  </tr>
-                @endif
-                  @foreach($reports as $report)
-                    <tr>
-                      @if($report->isUrgent == true)
-                        <td style="vertical-align: middle">{{ $report->name }} <i class="fa-sharp fa-solid fa-circle-exclamation fa-lg" style="color: #BB2D3B"></i></td>
-                      @else
-                        <td style="vertical-align: middle">{{ $report->name }}</td>    
-                      @endif
-                      <td style="vertical-align: middle">{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
-                      @if ($report->status == "Approved" || $report->status == "Rejected")
-                        <td style="vertical-align: middle">{{ $report->status }} by {{ $report->approvalBy }}</td>
-                      @elseif ($report->status == "Cancelled" || $report->status == "Freshly submitted")
-                        <td style="vertical-align: middle">{{ $report->status }}</td>
-                      @else
-                        <td style="vertical-align: middle">{{ $report->status }} by {{ $report->lastUpdatedBy }}</td>
-                      @endif
-
-                      @if (Auth::user()->role == "admin")
-                      <td style="display: flex; justify-content: end;">
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#deleteReportModal_" . $report->id}}">
-                          <i class="bi bi-trash-fill"></i>
-                        </button>
-
-                        {{-- Modal --}}
-                        <div class="modal fade" id="{{"deleteReportModal_" . $report->id}}" tabindex="-1">
-                            <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header border-0">
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body" style="text-align: center;">
-                                <h5 class="modal-title" style="font-weight: 700">Yakin mau hapus laporan ini?</h5>
-                                Data yang udah terhapus akan sulit untuk dikembalikan seperti semula
-                                </div>
-                                <div class="modal-footer border-0" style="flex-wrap: nowrap;">
-                                <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Tidak</button>
-                                <form class="w-100" action="{{ route('admin.deleteReport', $report->id) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button type="submit" class="btn btn-secondary w-100">Ya, hapus</button>
-                                </form>
-                                </div>
-                            </div>
-                            </div>
-                        </div>
-                        </td>
-                      @else
-                        <td style="display: flex; justify-content: end;">
-
-                          <a href="{{ route('student.reportDetail', $report->id) }}">
-                              <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
-                          </a>
-                        </td>
-                      @endif
+                    <th>
+                      <b>Judul</b>
+                    </th>
+                    <th data-type="date" data-format="YYYY/DD/MM">Tanggal dibuat</th>
+                    <th>Status</th>
+                    <th>@sortablelink('priority', 'Prioritas')</th>
+                    <th></th>
                     </tr>
-                  @endforeach
-              </tbody>
+                  </thead>
+                  <tbody>
+                  
+                  @if ($reports->count() == 0)
+                    <tr>
+                        <td class="container" colspan="4" style="color: dimgray">Belum ada laporan</td>
+                    </tr>
+                  @endif
+                    @foreach($reports as $report)
+                      <tr>
+                        @if($report->isUrgent == true)
+                          <td>{{ $report->name }} <i class="fa-sharp fa-solid fa-circle-exclamation fa-lg" style="color: #BB2D3B"></i></td>
+                        @else
+                          <td>{{ $report->name }}</td>    
+                        @endif
+                        <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
+                        @if ($report->status == "Approved")
+                          <td>Disetujui oleh {{ $report->approvalBy }}</td>
+                        @elseif ($report->status == "Rejected")
+                          <td>Ditolak oleh {{ $report->approvalBy }}</td>  
+                        @elseif ($report->status == "Cancelled")
+                          <td>Dibatalkan</td>
+                        @elseif ($report->status == "Freshly submitted")
+                          <td>Terkirim</td>
+                        @elseif ($report->status == "In review by staff")
+                          <td>Sedang ditinjau oleh {{ $report->lastUpdatedBy }}</td>
+                        @elseif ($report->status == "In review to headmaster")
+                          <td>Menunggu persetujuan dari headmaster oleh {{ $report->lastUpdatedBy }}</td>
+                        @elseif ($report->status == "In Progress")
+                          <td>Sedang diproses oleh {{ $report->lastUpdatedBy }}</td>
+                        @elseif ($report->status == "Monitoring process")
+                          <td>Dalam pemantauan oleh {{ $report->lastUpdatedBy }}</td>
+                        @elseif ($report->status == "Completed")
+                          <td>Selesai oleh {{ $report->lastUpdatedBy }}</td>
+                        @endif
+
+                        @if($report->priority == "1")
+                          <td><span style="background-color: #BB2D3B; color: white; padding: 5px; border-radius: 10%">High</span></td>
+                        @elseif($report->priority == "2")
+                          <td><span style="background-color: #FFC107; color: black; padding: 5px; border-radius: 10%">Medium</span></td>
+                        @elseif($report->priority == "3")
+                          <td><span style="background-color: #198754; color: white; padding: 5px; border-radius: 10%">Low</span></td>
+                        @else
+                          <td><span style="background-color: #D9DADB; color: black; padding: 5px; border-radius: 10%">Not set</span></td>
+                        @endif
+  
+                        @if (Auth::user()->role == "admin")
+                        <td style="text-align: right">
+                          <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#deleteReportModal_" . $report->id}}">
+                            <i class="bi bi-trash-fill"></i>
+                          </button>
+  
+                          {{-- Modal --}}
+                          <div class="modal fade" id="{{"deleteReportModal_" . $report->id}}" tabindex="-1">
+                              <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                                  <div class="modal-header border-0">
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body" style="text-align: center;">
+                                  <h5 class="modal-title" style="font-weight: 700">Yakin mau hapus laporan ini?</h5>
+                                  Data yang udah terhapus akan sulit untuk dikembalikan seperti semula
+                                  </div>
+                                  <div class="modal-footer border-0" style="flex-wrap: nowrap;">
+                                  <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Tidak</button>
+                                  <form class="w-100" action="{{ route('admin.deleteReport', $report->id) }}" method="POST">
+                                      @csrf
+                                      @method('DELETE')
+  
+                                      <button type="submit" class="btn btn-secondary w-100">Ya, hapus</button>
+                                  </form>
+                                  </div>
+                              </div>
+                              </div>
+                          </div>
+                        </td>
+                        @else
+                          <td style="text-align: right">
+                            <a href="{{ route('student.reportDetail', $report->id) }}">
+                                <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
+                            </a>
+                          </td>
+                        @endif
+                      </tr>
+                    @endforeach
+                </tbody>
             </table>
             <!-- End Table with stripped rows -->
+          </div>
 
             @if ($reports->hasPages())
               <div class="row mt-5">
@@ -182,6 +220,21 @@
                 </div>
               </div>
             @endif
+
+            <br>
+
+            {{-- @if (Auth::user()->role == "headmaster")
+              @if ($filterTitle == null)
+                <a href="{{ route('convertReport') }}">
+                  <button type="button" class="btn btn-success">Export Data Laporan</button>
+                </a>
+              
+              @else
+                <a href="{{ route('convertCategoryReport', ['category_id' => $categoryNow]) }}">
+                  <button type="button" class="btn btn-success">Export Data Laporan</button>
+                </a>  
+              @endif
+            @endif --}}
           
         </div>
       </div>

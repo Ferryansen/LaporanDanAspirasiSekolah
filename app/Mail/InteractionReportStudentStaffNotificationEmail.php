@@ -27,7 +27,7 @@ class InteractionReportStudentStaffNotificationEmail extends Mailable
                     ->subject('Ada Respon Terkait Laporan "' . $this->reportData['title'] . '" nih!')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'mailData' => $this->reportData]
+                        'reportData' => $this->reportData]
                     );
     }
 }

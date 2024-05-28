@@ -6,6 +6,10 @@
 
 @section('css')
   <style>
+    .table-container {
+            overflow-x: auto;
+            max-width: 100%;
+    }
     table {
             width: 100%;
             border-collapse: collapse;
@@ -86,40 +90,43 @@
 
                         <br>
                         <br>
-                        <!-- Default Table -->
-                        <table class="table" style="vertical-align: middle;">
-                            <thead>
-                            <tr>
-                                <th scope="col">
-                                    <input class="form-check-input" id="select-all-checkboxes" type="checkbox">
-                                </th>
-                                <th scope="col">Nama</th>
-                                <th scope="col">Tanggal Bergabung</th>
-                                <th scope="col"></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @if ($users->count() == 0)
+
+                        <div class="table-container">
+                            <!-- Default Table -->
+                            <table class="table" style="vertical-align: middle;">
+                                <thead>
                                 <tr>
-                                    <td class="container" colspan="4" style="color: dimgray">Belum ada pengguna</td>
+                                    <th scope="col">
+                                        <input class="form-check-input" id="select-all-checkboxes" type="checkbox">
+                                    </th>
+                                    <th scope="col">Nama</th>
+                                    <th scope="col">Tanggal Bergabung</th>
+                                    <th scope="col"></th>
                                 </tr>
-                            @endif
-                            @foreach ($users as $user)
-                            <tr>
-                                <td>
-                                    <input class="form-check-input" type="checkbox" name="user_id[]" value="{{ $user->id }}">
-                                </td>
-                                <td>{{ $user->name }}</td>
-                                <td>{{ \Carbon\Carbon::parse($user->created_at)->format('d/m/Y') }}</td>
-                                <td style="display: flex; justify-content: end;">
-                                    <a href="{{ route('manage.users.detail', $user->id) }}">
-                                        <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                @if ($users->count() == 0)
+                                    <tr>
+                                        <td class="container" colspan="4" style="color: dimgray">Belum ada pengguna</td>
+                                    </tr>
+                                @endif
+                                @foreach ($users as $user)
+                                <tr>
+                                    <td>
+                                        <input class="form-check-input" type="checkbox" name="user_id[]" value="{{ $user->id }}">
+                                    </td>
+                                    <td>{{ $user->name }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($user->created_at)->format('d/m/Y') }}</td>
+                                    <td style="text-align: right">
+                                        <a href="{{ route('manage.users.detail', $user->id) }}">
+                                            <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
 
                         @if ($users->hasPages())
                             <div class="row mt-5">

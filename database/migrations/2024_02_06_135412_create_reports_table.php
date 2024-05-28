@@ -18,10 +18,11 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
             $table->string('name', 255);
             $table->string('description', 255);
+            $table->integer('priority');
             $table->boolean('isUrgent');
             $table->boolean('isChatOpened');
             $table->dateTime('processDate')->nullable();
-            $table->dateTime('processEstimationDate')->nullable();
+            $table->date('processEstimationDate')->nullable();
             $table->foreignId('processedBy')->nullable()->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('approvalBy', 255)->nullable();
             $table->string('lastUpdatedBy', 255)->nullable();

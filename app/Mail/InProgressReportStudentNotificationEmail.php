@@ -27,7 +27,7 @@ class InProgressReportStudentNotificationEmail extends Mailable
                     ->subject('Laporan "' . $this->reportData['title'] . '" Sedang Diproses')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'mailData' => $this->reportData]
+                        'reportData' => $this->reportData]
                     );
     }
 }

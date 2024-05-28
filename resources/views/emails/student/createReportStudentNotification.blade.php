@@ -13,15 +13,15 @@
         <table>
             <tr>
                 <td>No. Laporan</td>
-                <td>: {{ $mailData['reportNo'] }}</td>
+                <td>: {{ $reportData['reportNo'] }}</td>
             </tr>
             <tr>
                 <td>Judul</td>
-                <td>: {{ $mailData['title'] }}</td>
+                <td>: {{ $reportData['title'] }}</td>
             </tr>
             <tr>
                 <td>Tanggal Pengaduan</td>
-                <td>: {{ $mailData['date'] }}</td>
+                <td>: {{ $reportData['date'] }}</td>
             </tr>
         </table>
     </p>

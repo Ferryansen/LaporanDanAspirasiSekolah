@@ -27,7 +27,7 @@ class ApprovalReportStaffNotificationEmail extends Mailable
                     ->subject('Approval Proses Laporan "' . $this->reportData['title'] . '" Berhasil!')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'mailData' => $this->reportData]
+                        'reportData' => $this->reportData]
                     );
     }
 }

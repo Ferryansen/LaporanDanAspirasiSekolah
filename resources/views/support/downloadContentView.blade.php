@@ -6,6 +6,10 @@
 
 @section('css')
   <style>
+    .table-container {
+            overflow-x: auto;
+            max-width: 100%;
+    }
     table {
             width: 100%;
             border-collapse: collapse;
@@ -53,71 +57,74 @@
                             <br>
                             <br>
                         @endif
-                        <!-- Default Table -->
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th scope="col">Judul</th>
-                                <th scope="col">Deskripsi</th>
-                                <th scope="col"></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @if ($downloadContents->count() == 0)
+
+                        <div class="table-container">
+                            <!-- Default Table -->
+                            <table class="table" style="vertical-align: middle">
+                                <thead>
                                 <tr>
-                                    <td class="container" colspan="3" style="color: dimgray">Belum ada file</td>
+                                    <th scope="col">Judul</th>
+                                    <th scope="col">Deskripsi</th>
+                                    <th scope="col"></th>
                                 </tr>
-                            @endif
-                            @foreach ($downloadContents as $downloadContent)
-                            <tr>
-                                <td>{{ $downloadContent->title }}</td>
-                                <td>{{ $downloadContent->description }}</td>
-                                <td style="display: flex; justify-content: end;">
-                                    @if(file_exists(public_path().'\storage/'.$downloadContent->file))
-                                        <a href="{{ asset('storage/'.$downloadContent->file) }}" style="margin: 0 4px" download>
-                                            <button type="button" class="btn btn-primary"><i class="fa-solid fa-download"></i></button>
-                                        </a>
-                                    @else
-                                        <button type="button" class="btn btn-primary" style="margin: 0 4px" disabled>File Error</button>
-                                    @endif
-
-                                    @if (Auth::user()->role != 'student')
-                                        <a href="{{ route('downloadcontent.updateForm', $downloadContent->id) }}" style="margin: 0 4px">
-                                            <button type="button" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        </a>
-                                        <button style="margin: 0 4px" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#deleteDownloadContentModal_" . $downloadContent->id}}">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
-
-                                        {{-- Modal --}}
-                                        <div class="modal fade" id="{{"deleteDownloadContentModal_" . $downloadContent->id}}" tabindex="-1">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content">
-                                                <div class="modal-header border-0">
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </thead>
+                                <tbody>
+                                @if ($downloadContents->count() == 0)
+                                    <tr>
+                                        <td class="container" colspan="3" style="color: dimgray">Belum ada file</td>
+                                    </tr>
+                                @endif
+                                @foreach ($downloadContents as $downloadContent)
+                                <tr>
+                                    <td>{{ $downloadContent->title }}</td>
+                                    <td>{{ $downloadContent->description }}</td>
+                                    <td style="text-align: right">
+                                        @if(file_exists(public_path().'\storage/'.$downloadContent->file))
+                                            <a href="{{ asset('storage/'.$downloadContent->file) }}" style="margin: 0 4px" download>
+                                                <button type="button" class="btn btn-primary"><i class="fa-solid fa-download"></i></button>
+                                            </a>
+                                        @else
+                                            <button type="button" class="btn btn-primary" style="margin: 0 4px" disabled>File Error</button>
+                                        @endif
+    
+                                        @if (Auth::user()->role != 'student')
+                                            <a href="{{ route('downloadcontent.updateForm', $downloadContent->id) }}" style="margin: 0 4px">
+                                                <button type="button" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></button>
+                                            </a>
+                                            <button style="margin: 0 4px" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#deleteDownloadContentModal_" . $downloadContent->id}}">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+    
+                                            {{-- Modal --}}
+                                            <div class="modal fade" id="{{"deleteDownloadContentModal_" . $downloadContent->id}}" tabindex="-1">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header border-0">
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body" style="text-align: center;">
+                                                    <h5 class="modal-title" style="font-weight: 700">Yakin mau hapus file ini?</h5>
+                                                    Data yang udah terhapus akan sulit untuk dikembalikan seperti semula
+                                                    </div>
+                                                    <div class="modal-footer border-0" style="flex-wrap: nowrap;">
+                                                    <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Tidak</button>
+                                                    <form class="w-100" action="{{ route('downloadcontent.delete', ['id' => $downloadContent->id]) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+    
+                                                        <button type="submit" class="btn btn-secondary w-100">Ya, hapus</button>
+                                                    </form>
+                                                    </div>
                                                 </div>
-                                                <div class="modal-body" style="text-align: center;">
-                                                <h5 class="modal-title" style="font-weight: 700">Yakin mau hapus file ini?</h5>
-                                                Data yang udah terhapus akan sulit untuk dikembalikan seperti semula
-                                                </div>
-                                                <div class="modal-footer border-0" style="flex-wrap: nowrap;">
-                                                <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Tidak</button>
-                                                <form class="w-100" action="{{ route('downloadcontent.delete', ['id' => $downloadContent->id]) }}" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-
-                                                    <button type="submit" class="btn btn-secondary w-100">Ya, hapus</button>
-                                                </form>
                                                 </div>
                                             </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
 
                         @if ($downloadContents->hasPages())
                             <div class="row mt-5">

@@ -27,7 +27,7 @@ class RequestReportHeadmasterNotificationEmail extends Mailable
                     ->subject('Proses Laporan "' . $this->reportData['title'] . '" Butuh Approval')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'mailData' => $this->reportData]
+                        'reportData' => $this->reportData]
                     );
     }
 }

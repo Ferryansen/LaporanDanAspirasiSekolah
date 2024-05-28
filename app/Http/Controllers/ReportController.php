@@ -46,9 +46,10 @@ class ReportController extends Controller
         $currUser = Auth::user();
         
         if (Auth::user()->role == "admin" || Auth::user()->role == "headmaster"){
-            $reports = Report::orderBy('isUrgent', 'desc') // Urgent reports first
-                     ->orderBy('created_at', 'desc') // Further order by creation date
-                     ->paginate(10); // Adjust pagination as needed
+
+            $reports = Report::sortable()->orderBy('isUrgent', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
         }
         else{
             // Get the staffType_id of the current user
@@ -56,11 +57,10 @@ class ReportController extends Controller
     
             // Use whereHas to filter categories based on staffType_id
             $categoriesFilter = Category::where('staffType_id', $staffType_id)->pluck('id');
-    
-            // Use whereIn to filter reports by category_id
-            $reports = Report::where('category_id', $staffType_id)->orderBy('isUrgent', 'desc') // Urgent reports first
-                     ->orderBy('created_at', 'desc') // Further order by creation date
-                     ->paginate(10); // Adjust pagination as needed
+
+            $reports = Report::sortable()->where('category_id', $staffType_id)->orderBy('isUrgent', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
         }
 
         $categories = Category::all();
@@ -126,10 +126,10 @@ class ReportController extends Controller
             $report->status == "Completed") {
 
             if(Auth::user()->role == "staff"){
-                $link = url("/chatify/{$report->user_id}");
+                $link = url("/chat/{$report->user_id}");
             }
             else{
-                $link = url("/chatify/{$report->processedBy}");
+                $link = url("/chat/{$report->processedBy}");
             }
         }
     
@@ -142,10 +142,10 @@ class ReportController extends Controller
 
         if ($currUser->role == 'staff') {
             $receiver = $report->user;
-            $link = url("/chatify/{$report->user_id}");
+            $link = url("/chat/{$report->processedBy}");
         } elseif ($currUser->role == 'student') {
             $receiver = $report->processExecutor;
-            $link = url("/chatify/{$report->processedBy}");
+            $link = url("/chat/{$report->user_id}");
         }
 
         $reportData = [
@@ -186,6 +186,7 @@ class ReportController extends Controller
             'name' => $request->reportName,
             'category_id' => $request->reportCategory,
             'description' => $request->reportDescription,
+            'priority' => 4,
             'isUrgent' => false,
             'isChatOpened' => false,
             'processDate' => null,
@@ -290,6 +291,7 @@ class ReportController extends Controller
                 'name' => $request->reportName,
                 'category_id' => $request->reportCategory,
                 'description' => $request->reportDescription,
+                'priority' => 4,
                 'isUrgent' => true,
                 'isChatOpened' => false,
                 'processDate' => null,
@@ -492,7 +494,7 @@ class ReportController extends Controller
         Mail::to($rejectedUser->email)->send(new RejectReportStudentNotificationEmail($rejectedUser->name, $report->name));
 
 
-        return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Pengguna berhasil didaftarkan');
+        return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Laporan berhasil di-reject');
     }
 
     public function inReviewStaffReport(Request $request){
@@ -564,9 +566,32 @@ class ReportController extends Controller
         $report = Report::find($request->id);
         $currUser = Auth::user();
 
+        $rules = [
+          'processEstimationDate' => 'required|date|after_or_equal:today'
+        ];
+
+        $messages = [
+            'processEstimationDate.required' => 'Jangan lupa masukin tanggal estimasinya yaa', 
+            'processEstimationDate.date' => 'Yuk masukin tanggal estimasi dengan format yang benar',
+            'processEstimationDate.after_or_equal' => 'Tanggal estimasi harus sama dengan atau setelah hari ini',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+    
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)
+            ->withInput()
+            ->with('openModal', true)
+            ->with('reportId', $report->id);
+        }
+
         $report->update([
+            'priority' => $request->priority,
             'status' => "In Progress",
-            'lastUpdatedBy' => $currUser->name
+            'processedBy' => $currUser->id,
+            'lastUpdatedBy' => $currUser->name,
+            'processDate' => now(),
+            'processEstimationDate' => $request->processEstimationDate
         ]);
 
         $reportData = [

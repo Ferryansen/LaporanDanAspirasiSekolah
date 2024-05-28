@@ -24,8 +24,8 @@
       <div class="card">
         <div class="card-body">
         <br>
-
           <!-- Table with stripped rows -->
+         <div class="table-container" style="overflow-x:auto; max-width: 100%">
           <table class="table" style="overflow-x:auto">
             <thead>
                 <tr>
@@ -162,6 +162,7 @@
                   @endforeach
               </tbody>
             </table>
+           </div>
             <!-- End Table with stripped rows -->
 
 

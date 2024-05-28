@@ -12,6 +12,7 @@ use App\Http\Controllers\UserReportAspirationController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\AspirationReactionController;
+use App\Http\Controllers\ConsultationEventController;
 use App\Models\Faq;
 use Illuminate\Support\Facades\Route;
 
@@ -112,6 +113,8 @@ Route::middleware(['isheadandstaff'])->group(function () {
         Route::post('/update-status', [AspirationController::class, 'updateStatus'])->name('aspiration.updateStatus');
         Route::post('/assign', [AspirationController::class, 'assign'])->name('aspiration.assign');
         Route::post('/aspiration/update-processed-by', [AspirationController::class, 'updateProcessedBy'])->name('aspiration.updateProcessedBy');
+        
+        Route::get('/manage/{aspiration_id}',[AspirationController::class, 'manageAspirationDetail'])->name('manage.aspiration.detail');
     });
 
     Route::prefix('/report')->group(function(){
@@ -125,8 +128,15 @@ Route::middleware(['isheadandstaff'])->group(function () {
         Route::patch('/process/{id}', [ReportController::class, 'onProgReport'])->name('processReport');
         Route::patch('/monitoring/{id}', [ReportController::class, 'monitoringReport'])->name('monitoringReport');
         Route::patch('/finish/{id}', [ReportController::class, 'finishReport'])->name('finishReport');
-        // Route::get('/report/pdf/convert', [PDFController::class, 'pdfGenerationAllReports'])->name('convertReport');
-        // Route::get('/report/pdf/convert/{category_id}', [PDFController::class, 'pdfGenerationReportsByCategory'])->name('convertCategoryReport');
+        Route::get('/report/pdf/convert', [PDFController::class, 'pdfGenerationAllReports'])->name('convertReport');
+        Route::get('/report/pdf/convert/{category_id}', [PDFController::class, 'pdfGenerationReportsByCategory'])->name('convertCategoryReport');
+    });
+
+    Route::prefix('/consultation/manage')->group(function() {
+        Route::get('/', [ConsultationEventController::class, 'seeAllEvents'])->name('consultation.seeAll');
+        Route::get('/all', [ConsultationEventController::class, 'fetchAllEvents'])->name('consultation.fetchAll');
+        Route::get('/createConsultation', [ConsultationEventController::class, 'createEventForm'])->name('consultation.createForm');
+        Route::post('/createConsultation', [ConsultationEventController::class, 'createEvent'])->name('consultation.create');
     });
 
     Route::get('/dashboard', [UserController::class, 'getDashboard'])->name('dashboard');
@@ -211,7 +221,9 @@ Route::middleware(['isstudent'])->group(function () {
         Route::get('/urgent', [ReportController::class, 'urgentReportPage'])->name('student.urgentReportPage');
         Route::post('/create', [ReportController::class, 'createReport'])->name('student.createReport');
         Route::post('/createUrgent', [ReportController::class, 'createReportUrgent'])->name('student.createReportUrgent');
-        
+        Route::get('/sirine', function () {
+            return view('report.student.urgentSirine');
+        });
         // Route::get('/updateForm/{id}', [ReportController::class, 'updateReportForm'])->name('student.updateReportForm');
         // Route::patch('/update/{id}', [ReportController::class, 'updateReport'])->name('student.updateReport');
         Route::patch('/cancel/{id}', [ReportController::class, 'cancelReport'])->name('student.cancelReport');
@@ -222,10 +234,6 @@ Route::middleware(['isstudent'])->group(function () {
 
 
 // Route::prefix('/aspirations')->group(function(){
-    
-    Route::get('/chat', [PusherController::class, 'index']);
-    Route::post('/chat/broadcast', [PusherController::class, 'broadcast']);
-    Route::post('/chat/receive', [PusherController::class, 'receive']);
     
     
     

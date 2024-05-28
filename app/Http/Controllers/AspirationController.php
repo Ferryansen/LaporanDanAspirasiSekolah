@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\CompleteAspirationHeadmasterNotificationEmail;
+use App\Mail\CompleteAspirationStudentNotificationEmail;
+use App\Mail\RequestAspirationHeadmasterNotificationEmail;
 use App\Models\Aspiration;
 use App\Models\Category;
 // use App\Models\UserUpvoteAspiration;
@@ -9,6 +12,7 @@ use App\Models\User;
 // use App\Models\UserReportAspiration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -98,9 +102,35 @@ class AspirationController extends Controller
         
         // Find the aspiration
         $aspiration = Aspiration::find($request->aspiration_id);
-
+        $headmasters = User::where('role', 'headmaster')->get();
+        
+        $aspirationData = [
+            'aspirationID' => $aspiration->id,
+            'aspirationNo' => $aspiration->aspirationNo,
+            'title' => $aspiration->name,
+            'relatedStaff' => $aspiration->processedBy
+        ];
+        
+        if ($request->status == 'Request Approval') {
+            foreach ($headmasters as $headmaster) {
+                Mail::to($headmaster->email)->send(new RequestAspirationHeadmasterNotificationEmail($headmaster->name, $aspirationData));
+            }
+        }
+        
         if ($request->status == 'Approved'){
             $aspiration->approvedBy = Auth::user()->id;
+        }
+        
+        if ($request->status == 'Completed') {
+            $students = User::where('role', 'student')->get();
+
+            foreach ($students as $student) {
+                Mail::to($student->email)->send(new CompleteAspirationStudentNotificationEmail($student->name, $aspirationData));
+            }
+            
+            foreach ($headmasters as $headmaster) {
+                Mail::to($headmaster->email)->send(new CompleteAspirationHeadmasterNotificationEmail($headmaster->name, $aspirationData));
+            }
         }
 
         // Update the status field
@@ -476,43 +506,10 @@ class AspirationController extends Controller
         return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'message', 'statuses'));
     }
 
-    // public function upvote(Request $request){
-    //     $aspiration = Aspiration::find($request->id);
-    //     $currUserId = Auth::user()->id;
+    public function manageAspirationDetail($aspiration_id) {
+        $aspiration = Aspiration::findOrFail($aspiration_id);
 
-    //     $aspiration->update([
-    //         'upvote' => $aspiration->upvote + 1,
-    //     ]);
-
-    //     $userUpvote = new UserUpvoteAspiration();
-    //     $userUpvote->user_id = $currUserId;
-    //     $userUpvote->aspiration_id = $request->id;
-    //     $userUpvote->save();
-
-    //     return redirect()->route('aspirations.publicAspirations');
-    // }
-
-    // public function unUpvote(Request $request){
-    //     $aspiration = Aspiration::find($request->id);
-    //     $currUserId = Auth::user()->id;
-    
-    //     // Decrease the upvote count
-    //     $aspiration->update([
-    //         'upvote' => $aspiration->upvote - 1,
-    //     ]);
-    
-    //     // Remove the user's upvote record
-    //     $userUpvote = UserUpvoteAspiration::where('user_id', $currUserId)
-    //                                        ->where('aspiration_id', $request->id)
-    //                                        ->first();
-    
-    //     if ($userUpvote) {
-    //         $userUpvote->delete();
-    //     }
-    
-    //     return redirect()->route('aspirations.publicAspirations');
-    // }
-    
-
+        return view('aspiration.staffHeadmaster.manageAspirationDetailView', compact('aspiration'));
+    }
 
 }
