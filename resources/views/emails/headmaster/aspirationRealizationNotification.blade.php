@@ -26,8 +26,8 @@
         </table>
     </p>
     <p>
-        <a href="#" class="btn btn-primary" style="display: block; width: 100%; margin: 0 auto; padding: 10px 0; text-align: center; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">
-            Cek Realisasi "Rute masih ambigu"
+        <a href="{{ route('manage.aspiration.detail', $mailData['aspirationID']) }}" class="btn btn-primary" style="display: block; width: 100%; margin: 0 auto; padding: 10px 0; text-align: center; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">
+            Cek Realisasi
         </a>
     </p>
     <p>

@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\CancelledConsultationStudentNotificationEmail;
+use App\Mail\UpdateInfoConsultationStudentNotificationEmail;
 use App\Models\ConsultationEvent;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class ConsultationEventController extends Controller
@@ -104,6 +107,7 @@ class ConsultationEventController extends Controller
 
     public function updateEvent($consultation_id, Request $request) {
         $event = ConsultationEvent::findOrFail($consultation_id);
+        $consultationData = [];
 
         $rules = [
             'title' => 'required|max:250',
@@ -153,16 +157,33 @@ class ConsultationEventController extends Controller
             if($event->status == 'Belum dimulai' || $event != 'Sedang dimulai') {
                 $credentials['status'] = 'Pindah jadwal';
             }
-        }
 
+        }
+        
         if($request->location != null) {
             $credentials['location'] = $request->location;
+            $consultationData['location'] = $request->location;
+        }
+        
+        if ($request->startDateTime != $event->start) {
+            $consultationData['date'] = $request->startDateTime;
         }
 
         if($request->consultationType == 'online') {
             $credentials['is_online'] = true;
+            $consultationData['is_online'] = $request->consultationType;
         } elseif ($request->consultationType == 'offline') {
             $credentials['is_online'] = false;
+            $consultationData['is_online'] = $request->consultationType;
+        }
+
+        $attendees = $event->attendees;
+        $consultationData['title'] = $event->title;
+
+        foreach ($attendees as $attendee) {
+            $currAttendee = User::findOrFail($attendee);
+
+            Mail::to($currAttendee->email)->send(new UpdateInfoConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
         }
 
         $event->update($credentials);
@@ -254,10 +275,22 @@ class ConsultationEventController extends Controller
 
     public function cancelEvent($consultation_id) {
         $event = ConsultationEvent::findOrFail($consultation_id);
+        $attendees = json_decode($event->attendees, true);
 
         $credential = [
             'status' => 'Dibatalkan'
         ];
+
+        $consultationData = [
+            'title' => $event->title,
+        ];
+
+        foreach ($attendees as $attendee) {
+            $currAttendee = User::findOrFail($attendee);
+
+            Mail::to($currAttendee->email)->send(new CancelledConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
+        }
+
 
         $event->update($credential);
         return redirect()->route('consultation.seeAll')->with('successMessage', 'Sesi konsultasi berhasil dibatalkan');

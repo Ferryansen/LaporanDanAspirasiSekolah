@@ -2,9 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\StartedConsultationStudentNotificationEmail;
 use Illuminate\Console\Command;
 use App\Models\ConsultationEvent;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class UpdateStatusStartConsultation extends Command
 {
@@ -26,6 +29,21 @@ class UpdateStatusStartConsultation extends Command
 
         foreach ($records as $record) {
             $record->status = 'Sedang dimulai';
+            $attendees = $record->attendees;
+            $consultationData = [
+                'title' => $record->title,
+                'date' => $record->start,
+                'consultant' => $record->consultBy->name,
+                'is_online' => $record->is_online,
+                'location' => $record->location
+            ];
+
+            foreach ($attendees as $attendee) {
+                $currAttendee = User::findOrFail($attendee);
+
+                Mail::to($currAttendee->email)->send(new StartedConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
+            }
+
             $record->save();
         }
 
