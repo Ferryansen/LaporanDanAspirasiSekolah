@@ -41,6 +41,12 @@
             color: dimgrey;
         }
 
+        .warn {
+            margin-top: 15px;
+            font-size: smaller;
+            color: green;
+        }
+
         .post-footer {
             position: absolute;
             top: 50%;
@@ -92,34 +98,39 @@
                                   </td>
                               </tr>
                               @else
-                              @foreach($consultations as $consultation)
-                              <tr>
-                                  <td>
-                                      <div class="post">
-                                          <div class="post-header">
-                                              <div class="uploader-info">
-                                                  <span class="uploader-name">{{$consultation->title}}</span> 
-                                              </div>
-                                          </div>
-                                          <div class="post-body">
-                                                @php
-                                                $formattedDate = \Carbon\Carbon::parse($consultation->start)->locale('id')->translatedFormat('d F Y');
-                                                $formattedTimeStart = \Carbon\Carbon::parse($consultation->start)->format('H:i');
-                                                $formattedTimeEnd = \Carbon\Carbon::parse($consultation->end)->format('H:i');
-                                                @endphp
-                                              <div class="desc"><i class="bi bi-calendar" style="padding-right: 5px"></i> {{$formattedDate}}</div>
-                                              <div class="desc"><i class="bi bi-clock" style="padding-right: 5px"></i> {{$formattedTimeStart}} - {{$formattedTimeEnd}}</div>
-                                              <div class="desc"><i class="bi bi-person" style="padding-right: 5px"></i> {{$consultation->consultBy->name}}</div>
-                                          </div>
-                                          <div class="post-footer">
-                                            <a href="{{ route('consultation.detail', $consultation->id) }}" class="detail-button">
-                                                <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
-                                            </a>
-                                        </div>
-                                      </div>
-                                  </td>
-                              </tr>
-                              @endforeach
+                                @foreach($consultations as $consultation)
+                                    @if($consultation->status !== "Dibatalkan")
+                                    <tr>
+                                        <td>
+                                            <div class="post">
+                                                <div class="post-header">
+                                                    <div class="uploader-info">
+                                                        <span class="uploader-name">{{$consultation->title}}</span> 
+                                                    </div>
+                                                </div>
+                                                <div class="post-body">
+                                                        @php
+                                                            $formattedDate = \Carbon\Carbon::parse($consultation->start)->locale('id')->translatedFormat('d F Y');
+                                                            $formattedTimeStart = \Carbon\Carbon::parse($consultation->start)->format('H:i');
+                                                            $formattedTimeEnd = \Carbon\Carbon::parse($consultation->end)->format('H:i');
+                                                        @endphp
+                                                    <div class="desc"><i class="bi bi-calendar" style="padding-right: 5px"></i> {{$formattedDate}}</div>
+                                                    <div class="desc"><i class="bi bi-clock" style="padding-right: 5px"></i> {{$formattedTimeStart}} - {{$formattedTimeEnd}}</div>
+                                                    <div class="desc"><i class="bi bi-person" style="padding-right: 5px"></i> {{$consultation->consultBy->name}}</div>
+                                                    @if(in_array(Auth::id(), $consultation->attendees))
+                                                    <div class="warn">Anda sudah terdaftar dalam sesi ini.</div>
+                                                    @endif
+                                                </div>
+                                                <div class="post-footer">
+                                                    <a href="{{ route('consultation.detail', $consultation->id) }}" class="detail-button">
+                                                        <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endif
+                                @endforeach
                               @endif
                           </tbody>
                       </table>

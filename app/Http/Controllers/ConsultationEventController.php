@@ -225,6 +225,7 @@ class ConsultationEventController extends Controller
             'consultant' =>Auth::user()->id,
             'attendeeLimit' => $request->attendeeLimit,
             'status' => 'Belum dimulai',
+            'attendees' => [],
         ];
 
         if($request->location != null) {
@@ -261,5 +262,52 @@ class ConsultationEventController extends Controller
 
         $event->update($credential);
         return redirect()->route('consultation.seeAll')->with('successMessage', 'Sesi konsultasi berhasil dibatalkan');
+    }
+
+    public function addAttendees($consultation_id) {
+        $userId = Auth::id();
+        // Find the consultation event by ID
+        $event = ConsultationEvent::findOrFail($consultation_id);
+        // Get the existing attendees array
+        $attendees = $event->attendees ?? [];
+
+        // Check if the current user's ID is already in the attendees array
+        if (!in_array($userId, $attendees)) {
+            // Add the current user's ID to the attendees array
+            $attendees[] = $userId;
+            // Update the event's attendees attribute
+            $event->attendees = $attendees;
+            // Save the updated event
+            $event->save();
+        }
+
+        $consultations = ConsultationEvent::where('start', '>', now())->orderBy('start', 'asc')->paginate(10)->withQueryString();
+        $typeSorting ="";
+        return view('consultation.student.sessionList', compact('consultations', 'typeSorting'));
+    }
+
+    public function removeAttendees($consultation_id) {
+        // Get the current user's ID
+        $userId = Auth::id();
+        // Find the consultation event by ID
+        $event = ConsultationEvent::findOrFail($consultation_id);
+        // Get the existing attendees array, default to empty array if null
+        $attendees = $event->attendees ?? [];
+    
+        // Check if the current user's ID is in the attendees array
+        if (in_array($userId, $attendees)) {
+            // Remove the current user's ID from the attendees array
+            $attendees = array_diff($attendees, [$userId]);
+            // Re-index the array to ensure it's correctly formatted
+            $attendees = array_values($attendees);
+            // Update the event's attendees attribute
+            $event->attendees = $attendees;
+            // Save the updated event
+            $event->save();
+        }
+    
+        $consultations = ConsultationEvent::where('start', '>', now())->orderBy('start', 'asc')->paginate(10)->withQueryString();
+        $typeSorting ="";
+        return view('consultation.student.sessionList', compact('consultations', 'typeSorting'));
     }
 }

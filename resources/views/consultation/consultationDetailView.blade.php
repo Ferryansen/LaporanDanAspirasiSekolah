@@ -6,7 +6,7 @@
 
 @section('breadcrumb')
 <div class="pagetitle">
-  <h1>Detail Realisasi Aspirasi</h1>
+  <h1>Detail Konsultasi</h1>
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{{ route('consultation.seeAll') }}">Konsultasi</a></li>
@@ -60,6 +60,18 @@
                                 @endif
                             </tr>
                         </table>
+                        @if (Auth::user()->role == 'student')
+                            @if (in_array(Auth::id(), $event->attendees))
+                                <a href="{{ route('consultation.removeAttendees', ['consultation_id' => $event->id]) }}">
+                                    <button type="button" class="btn btn-danger" style="margin-top: 20px">Batal</button>
+                                </a>
+                            @else
+                                <a href="{{ route('consultation.addAttendees', ['consultation_id' => $event->id]) }}">
+                                    <button type="button" class="btn btn-primary" style="margin-top: 20px">Daftar</button>
+                                </a>
+                            @endif
+                        @endif
+                        
 
                         @if ((Auth::user()->role == 'staff' || Auth::user()->role == 'headmaster') && ($event->status == 'Belum dimulai' || $event->status == 'Pindah jadwal' || $event->status == 'Sedang dimulai'))
                             <div style="display:flex; margin-top: 16px;">
