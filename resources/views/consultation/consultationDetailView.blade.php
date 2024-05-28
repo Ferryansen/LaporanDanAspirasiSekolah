@@ -67,7 +67,11 @@
                                 </a>
                             @else
                                 <a href="{{ route('consultation.addAttendees', ['consultation_id' => $event->id]) }}">
-                                    <button type="button" class="btn btn-primary" style="margin-top: 20px">Daftar</button>
+                                    <button id="sub-btn" type="button" class="btn btn-primary" style="margin-top: 20px">
+                                        <span id="sub-text">Daftar</span>
+                                        <span id="load-animation" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+                                        <span id="load-text" style="display: none">Loading...</span>
+                                    </button>
                                 </a>
                             @endif
                         @endif
@@ -114,7 +118,19 @@
 @section('script')
 
 <script>
-    
+    document.addEventListener('DOMContentLoaded', function () {
+        const submitBtn = document.getElementById('sub-btn');
+        const buttonText = document.getElementById('sub-text');
+        const buttonSpinner = document.getElementById('load-animation');
+        const loadingText = document.getElementById('load-text');
+
+        submitBtn.addEventListener('click', function (event) {
+            submitBtn.disabled = true;
+            buttonText.style.display = 'none';
+            buttonSpinner.style.display = 'inline-block';
+            loadingText.style.display = 'inline-block';
+        });
+    });
 </script>
 
 @endsection

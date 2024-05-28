@@ -14,7 +14,7 @@
             @if ($consultationData['date'] != null)
                 <tr>
                     <td>Jadwal konsultasi</td>
-                    <td>: {{ $consultationData['date'] }}</td>
+                    <td>: {{ \Carbon\Carbon::parse($consultationData['date'])->format('d/m/Y, H:i') }}</td>
                 </tr>
             @endif
             @if ($consultationData['is_online'] != null)
