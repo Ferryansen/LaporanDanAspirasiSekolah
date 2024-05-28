@@ -37,7 +37,7 @@
                         <table>
                             <tr>
                                 <td class="col-5">Konsultan</td>
-                                <td>: {{ $event->consultedBy->name }}</td>
+                                <td>: {{ $event->consultBy->name }}</td>
                             </tr>
                             <tr>
                                 <td class="col-5">Tanggal Mulai</td>
