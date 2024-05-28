@@ -180,7 +180,7 @@ Detail Laporan
                   Ditangani oleh: {{$report->processExecutor->name}}
                 </div>
                 <div class="reportEstimation" style="color: black">
-                  Estimasi: {{ \Carbon\Carbon::parse($report->processEstimationDate)->format('d/m/y') }}
+                  Estimasi: {{ \Carbon\Carbon::parse($report->created_at)->format('d F Y') }}
                 </div>
               </div>
             </div>
