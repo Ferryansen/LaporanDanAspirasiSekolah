@@ -52,17 +52,33 @@
                                         @csrf
                                         <div>
                                             <select style="border: none; padding-left:0" name="status" id="status_{{ $aspiration->id }}" class="form-select" required onchange="document.getElementById('statusForm_{{ $aspiration->id }}').submit()">
-                                                <option value="Approved" {{ $aspiration->status == 'Approved' ? 'selected' : '' }}>Approved</option>
-                                                <option value="In Progress" {{ $aspiration->status == 'In Progress' ? 'selected' : '' }}>In Progress</option>
-                                                <option value="Monitoring" {{ $aspiration->status == 'Monitoring' ? 'selected' : '' }}>Monitoring</option>
-                                                <option value="Completed" {{ $aspiration->status == 'Completed' ? 'selected' : '' }}>Completed</option>
+                                                <option value="Approved" {{ $aspiration->status == 'Approved' ? 'selected' : '' }}>Disetujui</option>
+                                                <option value="In Progress" {{ $aspiration->status == 'In Progress' ? 'selected' : '' }}>Sedang diproses</option>
+                                                <option value="Monitoring" {{ $aspiration->status == 'Monitoring' ? 'selected' : '' }}>Dalam pemantauan</option>
+                                                <option value="Completed" {{ $aspiration->status == 'Completed' ? 'selected' : '' }}>Selesai</option>
                                             </select>
                                         </div>
                                         <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
                                     </form>
                                 </td>
                                 @else
-                                <td>{{ $aspiration->status }}</td>
+                                    @if ($aspiration->status == 'Freshly submitted')
+                                    <td>Terkirim</td>
+                                    @elseif ($aspiration->status == 'In review')
+                                    <td>Sedang ditinjau</td>
+                                    @elseif ($aspiration->status == 'Request Approval')
+                                    <td>Menunggu persetujuan</td>
+                                    @elseif ($aspiration->status == 'Approved')
+                                    <td>Disetujui</td>
+                                    @elseif ($aspiration->status == 'Rejected')
+                                    <td>Ditolak</td>
+                                    @elseif ($aspiration->status == 'In Progress')
+                                    <td>Sedang diproses</td>
+                                    @elseif ($aspiration->status == 'Monitoring')
+                                    <td>Dalam pemantauan</td>
+                                    @elseif ($aspiration->status == 'Completed')
+                                    <td>Selesai</td>
+                                    @endif
                                 @endif
 
                                 <td>
@@ -94,8 +110,8 @@
                                         <form action="{{ route('aspiration.updateStatus') }}" method="POST">
                                             @csrf
                                             <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
-                                            <button type="submit" name="status" value="Request Approval" class="btn btn-success">Request Approve</button>
-                                            <button type="submit" name="status" value="Rejected" class="btn btn-danger">Reject</button>
+                                            <button type="submit" name="status" value="Request Approval" class="btn btn-success">Ajukan persetujuan</button>
+                                            <button type="submit" name="status" value="Rejected" class="btn btn-danger">Tolak</button>
                                         </form>
                                     </td>
                                 @else
@@ -103,7 +119,23 @@
                                 @endif
 
                             @else
-                                <td>{{ $aspiration->status }}</td>
+                                @if ($aspiration->status == 'Freshly submitted')
+                                <td>Terkirim</td>
+                                @elseif ($aspiration->status == 'In review')
+                                <td>Sedang ditinjau</td>
+                                @elseif ($aspiration->status == 'Request Approval')
+                                <td>Menunggu persetujuan</td>
+                                @elseif ($aspiration->status == 'Approved')
+                                <td>Disetujui</td>
+                                @elseif ($aspiration->status == 'Rejected')
+                                <td>Ditolak</td>
+                                @elseif ($aspiration->status == 'In Progress')
+                                <td>Sedang diproses</td>
+                                @elseif ($aspiration->status == 'Monitoring')
+                                <td>Dalam pemantauan</td>
+                                @elseif ($aspiration->status == 'Completed')
+                                <td>Selesai</td>
+                                @endif
 
                                 @foreach($allUser as $user)
                                     @if($user->id == $aspiration->processedBy)
@@ -116,8 +148,8 @@
                                     <form action="{{ route('aspiration.updateStatus') }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
-                                        <button type="submit" name="status" value="Approved" class="btn btn-success">Approve</button>
-                                        <button type="submit" name="status" value="Rejected" class="btn btn-danger">Reject</button>
+                                        <button type="submit" name="status" value="Approved" class="btn btn-success">Setujui</button>
+                                        <button type="submit" name="status" value="Rejected" class="btn btn-danger">Tolak</button>
                                     </form>
                                     </td>
                                 @else
