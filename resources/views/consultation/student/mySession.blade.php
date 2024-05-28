@@ -63,7 +63,7 @@
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Konsultasi</a></li>
-      <li class="breadcrumb-item active">Daftar sesi</li>
+      <li class="breadcrumb-item active">Sesi yang diikuti</li>
     </ol>
   </nav>
 </div>
@@ -78,16 +78,17 @@
                   <div class="card-body" style="margin-top: 24px">
                       <!-- Table with stripped rows -->
                       <table class="table">
-                          <tbody  style="border: white">
+                          <tbody style="border: white">
                             <div class="d-grid gap-2 d-md-block d-flex" style="padding-left: 15px; margin-bottom: 20px">
-                                <a href="{{ route('consultation.sessionList.sorting', ['typeSorting' => 'UpComing']) }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'UpComing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'UpComing' ? '#fff' : '#8F8F8F' }}; border: 1; border-color: #8F8F8F; border-radius: 20px;">Akan datang</a>
-                                <a href="{{ route('consultation.sessionList.sorting', ['typeSorting' => 'OnGoing']) }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'OnGoing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'OnGoing' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px;">Berlangsung</a>
+                                <a href="{{ route('consultation.mySession.sorting', ['typeSorting' => 'UpComing']) }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'UpComing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'UpComing' ? '#fff' : '#8F8F8F' }}; border: 1; border-color: #8F8F8F; border-radius: 20px;">Akan datang</a>
+                                <a href="{{ route('consultation.mySession.sorting', ['typeSorting' => 'OnGoing']) }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'OnGoing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'OnGoing' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px;">Berlangsung</a>
+                                <a href="{{ route('consultation.mySession.sorting', ['typeSorting' => 'End']) }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'End' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'End' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px;">Berakhir</a>
                             </div>
                               @if ($consultations->count() == 0)
                               <tr>
                                   <td colspan="3">
                                       <div class="container">
-                                          <span style="color: dimgray">Belum ada sesi konseling yang tersedia</span>
+                                          <span style="color: dimgray">Belum ada sesi konseling</span>
                                       </div>
                                   </td>
                               </tr>
@@ -110,6 +111,11 @@
                                               <div class="desc"><i class="bi bi-calendar" style="padding-right: 5px"></i> {{$formattedDate}}</div>
                                               <div class="desc"><i class="bi bi-clock" style="padding-right: 5px"></i> {{$formattedTimeStart}} - {{$formattedTimeEnd}}</div>
                                               <div class="desc"><i class="bi bi-person" style="padding-right: 5px"></i> {{$consultation->consultBy->name}}</div>
+                                              @if ($consultation->is_online == 1)
+                                                <a href="{{ $consultation->location }}">
+                                                    <button type="button" class="btn btn-primary" style="margin-top: 10px"><i class="bi bi-door-open" style="margin-right: 8px"></i>Masuk ruangan</button>
+                                                </a>
+                                              @endif
                                           </div>
                                           <div class="post-footer">
                                             <a href="{{ route('consultation.detail', $consultation->id) }}" class="detail-button">

@@ -44,12 +44,19 @@
     <div class="row mb-3">
       <label class="col-sm-2 col-form-label">Kategori</label>
       <div class="col-sm-10">
-        <select class="form-select @error('aspirationCategory') is-invalid @enderror" aria-label="Default select example" name="aspirationCategory" required>
-          <option selected disabled value>Pilih Kategori Aspirasi</option>
-          @foreach ($categories as $category)
-            <option value={{ $category->id }}>{{ $category->name }}</option>
-          @endforeach
-        </select>
+      <select class="form-select @error('aspirationCategory') is-invalid @enderror" aria-label="Default select example" name="aspirationCategory" required>
+        <option selected disabled value>Pilih Kategori Aspirasi</option>
+        @foreach ($categories as $category)
+            @if (strpos($category->name, 'Lainnya') === false)
+                <option value={{ $category->id }}>{{ $category->name }}</option>
+            @endif
+        @endforeach
+        @foreach ($categories as $category)
+            @if (strpos($category->name, 'Lainnya') !== false)
+                <option value={{ $category->id }}>{{ $category->name }}</option>
+            @endif
+        @endforeach
+    </select>
         @error('aspirationCategory')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror

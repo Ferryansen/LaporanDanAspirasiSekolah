@@ -88,4 +88,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(AspirationReaction::class);
     }
+
+    public function consultationEvents()
+    {
+        return $this->hasMany(ConsultationEvent::class, 'consultant');
+    }
 }

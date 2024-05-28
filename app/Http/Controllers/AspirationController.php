@@ -41,6 +41,38 @@ class AspirationController extends Controller
 
     public function publicAspiration()
     {
+        $selectedCategoryId ="";
+        $currUser = Auth::user();
+        $message = null;
+        
+        if ($currUser->isSuspended == true) {
+            $message = 'Kamu tidak bisa mengakses fitur ini, kamu sedang ter-suspend!';
+    
+            return view('aspiration.all.listAspiration', compact('message'));
+        }
+
+        // $userUpvotes = UserUpvoteAspiration::all();
+        $categories = Category::all();
+        $statuses = [
+            'Freshly submitted',
+            'In review',
+            'Approved',
+            'In Progress',
+            'Monitoring',
+            'Completed',
+            'Rejected',
+        ];
+        $filterTitle = null;
+        $typeSorting = "";
+        // $aspirations = Aspiration::orderByDesc('upvote') // Sort in descending order based on upvote count
+        $aspirations = Aspiration::paginate(10)->withQueryString();
+
+        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'message', 'typeSorting', 'selectedCategoryId'));
+    }
+
+    public function publicAspirationSorting($typeSorting)
+    {
+        $selectedCategoryId = "";
         $currUser = Auth::user();
         $message = null;
         
@@ -63,33 +95,53 @@ class AspirationController extends Controller
         ];
         $filterTitle = null;
         // $aspirations = Aspiration::orderByDesc('upvote') // Sort in descending order based on upvote count
-        $aspirations = Aspiration::paginate(10)->withQueryString();
+        if($typeSorting == 'Paling Disukai') {
+            $aspirations = Aspiration::withCount(['reactions' => function ($query) {
+                $query->where('reaction', 'like');
+            }])->orderByDesc('reactions_count')->paginate(10)->withQueryString();
+        } else if ($typeSorting == 'Terpopuler') {
+            $aspirations = Aspiration::withCount('comments')->orderByDesc('comments_count')->paginate(10)->withQueryString();
+        } else {
+            $aspirations = Aspiration::paginate(10)->withQueryString();
+        }
 
-        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'message'));
+        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'message', 'typeSorting', 'selectedCategoryId'));
     }
     
     public function manageAspiration()
     {
         $currentUser = Auth::user();
         $allUser = User::all();
+        $selectedCategoryId = '';
 
         // Fetch users with the same staff_id as the current user
         $users = User::where('staffType_id', $currentUser->staffType_id)->get();
+
+        $categories = Category::all();
+            $idx = 0;
+        foreach ($categories as $category) {
+            if (strpos($category->name, "Lainnya") !== false){
+                $idx = $category->id;
+                break;
+            }
+        }
 
         if ($currentUser->role == 'headmaster') {
             // Fetch all aspirations if the user is a headmaster
             $aspirations = Aspiration::all();
         } else {
             // Fetch aspirations where the category's staffType_id matches the current user's staffType_id
-            $aspirations = Aspiration::whereHas('category', function ($query) use ($currentUser) {
-                $query->whereHas('staffType', function ($query) use ($currentUser) {
-                    $query->where('id', $currentUser->staffType_id);
-                });
+            $aspirations = Aspiration::where(function($query) use ($currentUser, $idx) {
+                $query->whereHas('category', function ($query) use ($currentUser) {
+                    $query->whereHas('staffType', function ($query) use ($currentUser) {
+                        $query->where('id', $currentUser->staffType_id);
+                    });
+                })->orWhere('category_id', $idx);
             })->get();
         }
 
         // Pass the users and aspirations to the view
-        return view('aspiration.staffHeadmaster.manageAspiration', compact('users', 'aspirations', 'allUser'));
+        return view('aspiration.staffHeadmaster.manageAspiration', compact('users', 'aspirations', 'allUser', 'categories', 'selectedCategoryId'));
     }
 
     public function updateStatus(Request $request)
@@ -185,6 +237,7 @@ class AspirationController extends Controller
 
     public function publicAspirationFilterCategory($category_id)
     {
+        $selectedCategoryId = $category_id;
         // $userUpvotes = UserUpvoteAspiration::all();
         $category = Category::findOrFail($category_id);
         // $aspirations = Aspiration::where("category_id", "like", $category_id)->orderByDesc('upvote')->paginate(10)->withQueryString();
@@ -202,12 +255,16 @@ class AspirationController extends Controller
             'Rejected',
         ];
 
+        $typeSorting = "";
+
         $data = [
             'aspirations' => $aspirations,
             'filterTitle' => $category->name,
             'categories' => $categories,
             'statuses' => $statuses,
-            'message' => $message
+            'message' => $message,
+            'typeSorting' => $typeSorting,
+            'selectedCategoryId' => $selectedCategoryId,
             // 'userUpvotes' => $userUpvotes
         ];
         
@@ -216,20 +273,19 @@ class AspirationController extends Controller
 
     public function manageAspirationFilterCategory($category_id)
     {
+        $currentUser = Auth::user();
+        $allUser = User::all();
+
+        $selectedCategoryId = $category_id;
+        // Fetch users with the same staff_id as the current user
+        $users = User::where('staffType_id', $currentUser->staffType_id)->get();
+
+        $categories = Category::all();
+            
         $category = Category::findOrFail($category_id);
         $aspirations = Aspiration::where("category_id", "like", $category_id)->paginate(10)->withQueryString();
-        $categories = Category::all();
-        $message = null;
-
-        $data = [
-            'aspirations' => $aspirations,
-            'filterTitle' => $category->name,
-            'categoryNow' => $category->id,
-            'categories' => $categories,
-            'message' => $message
-        ];
         
-        return view('aspiration.manageAspiration', $data);
+        return view('aspiration.staffHeadmaster.manageAspiration', compact('users', 'aspirations', 'allUser', 'categories', 'selectedCategoryId'));
     }
     
     public function manageAspirationFilterStatus($status)
