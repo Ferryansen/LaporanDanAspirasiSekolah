@@ -81,9 +81,21 @@
               <div class="col-auto d-flex align-items-center" style="margin-top: 0.5rem">
                   <select class="form-select" aria-label="Default select example" name="categoryStaffType" required onchange="window.location.href=this.value;">
                       <option selected disabled value>Pilih Kategori</option>
+                      @php
+                          $lainnyaCategory = null;
+                      @endphp
                       @foreach ($categories as $category)
-                      <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterCategory', ['category_id' => $category->id]) }}">{{ $category->name }}</option>
+                          @if (strpos($category->name, "Lainnya") !== false)
+                              @php
+                                  $lainnyaCategory = $category;
+                              @endphp
+                          @else
+                              <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterCategory', ['category_id' => $category->id]) }}">{{ $category->name }}</option>
+                          @endif
                       @endforeach
+                      @if ($lainnyaCategory)
+                          <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterCategory', ['category_id' => $lainnyaCategory->id]) }}">{{ $lainnyaCategory->name }}</option>
+                      @endif
                   </select>
               </div>
               <div class="col-auto d-flex align-items-center">
@@ -150,7 +162,7 @@
                         @elseif ($report->status == "In review by staff")
                           <td>Sedang ditinjau oleh {{ $report->lastUpdatedBy }}</td>
                         @elseif ($report->status == "In review to headmaster")
-                          <td>Menunggu persetujuan dari headmaster oleh {{ $report->lastUpdatedBy }}</td>
+                          <td>Menunggu persetujuan dari atasan oleh {{ $report->lastUpdatedBy }}</td>
                         @elseif ($report->status == "In Progress")
                           <td>Sedang diproses oleh {{ $report->lastUpdatedBy }}</td>
                         @elseif ($report->status == "Monitoring process")

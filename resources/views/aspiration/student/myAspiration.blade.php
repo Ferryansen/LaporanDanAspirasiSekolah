@@ -132,16 +132,16 @@
                                           @if ($aspiration->status == "Freshly submitted")
                                           <div class="post-footer">
                                               <div class="actions">
-                                                  <div class="row justify-content-start">
-                                                      <div class="col-3 col-md-1">
-                                                          <a href="{{ route('aspirations.updateForm', ['id' => $aspiration->id]) }}">
-                                                              <button type="button" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></button>
-                                                          </a>
-                                                      </div>
-                                                      <div class="col-3 col-md-1">
-                                                          <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#deleteAspirationModal_" . $aspiration->id}}">
-                                                              <i class="bi bi-trash-fill"></i>
-                                                          </button>
+                                                  <div class="col-3 col-md-2  d-flex">
+                                                    <div style="margin-right: 5px;">
+                                                        <a href="{{ route('aspirations.updateForm', ['id' => $aspiration->id]) }}">
+                                                            <button type="button" class="btn btn-warning" style="margin-right: 5px;"><i class="fa-solid fa-pen-to-square"></i></button>
+                                                        </a>
+                                                    </div>
+                                                    <div>
+                                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#deleteAspirationModal_" . $aspiration->id}}">
+                                                            <i class="bi bi-trash-fill"></i>
+                                                        </button>
                                                           {{-- Modal --}}
                                                           <div class="modal fade" id="{{"deleteAspirationModal_" . $aspiration->id}}" tabindex="-1">
                                                             <div class="modal-dialog modal-dialog-centered">
