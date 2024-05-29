@@ -784,6 +784,47 @@
             });
         });
     });
+
+    // Check session data and display popup if set
+    var aspirationId = <?php echo json_encode(session('aspiration_id', null)); ?>;
+
+// Check if the comment popup should be open and if aspirationId is not null
+// Check if the comment popup should be open and if aspirationId is not null
+if (aspirationId && <?php echo json_encode(session('comment_popup_open', false)); ?>) {
+    // Select the popup and overlay elements based on the aspiration ID
+    var currentlyOpenPopup = document.getElementById('popup-' + aspirationId);
+    var currentlyOpenOverlay = document.getElementById('overlay-' + aspirationId);
+
+    // Display the popup and overlay
+    currentlyOpenPopup.style.display = 'block';
+    currentlyOpenOverlay.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+
+
+    // Select the close button and overlay within the context of currentlyOpenPopup
+    var closeBtn = currentlyOpenPopup.querySelector('.close-btn');
+    var overlay = currentlyOpenOverlay;
+
+    // Add event listeners to the close button and overlay
+    closeBtn.addEventListener('click', function () {
+        currentlyOpenPopup.style.display = 'none';
+        currentlyOpenOverlay.style.display = 'none'; // Hide the overlay
+        document.body.style.overflow = ''; // Enable scrolling on the body
+    window.location.href = "{{ route('clear-session-data') }}";
+
+        // Send AJAX request to delete session data
+        
+    });
+
+    overlay.addEventListener('click', function () {
+        currentlyOpenPopup.style.display = 'none';
+        currentlyOpenOverlay.style.display = 'none'; // Hide the overlay
+        document.body.style.overflow = ''; // Enable scrolling on the body
+    window.location.href = "{{ route('clear-session-data') }}";
+
+      
+    });
+}
 });
 
 </script>

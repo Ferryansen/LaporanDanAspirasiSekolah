@@ -19,7 +19,13 @@ class ConsultationEventController extends Controller
     }
 
     public function sessionList() {
-        $consultations = ConsultationEvent::where('start', '>', now())->orderBy('start', 'asc')->paginate(10)->withQueryString();
+        $consultations = ConsultationEvent::where(function ($query) {
+            $query->where('start', '>', now())
+                  ->orWhere('end', '>', now());
+            })
+            ->orderBy('start', 'asc')
+            ->paginate(10)
+            ->withQueryString();
         $typeSorting ="";
         return view('consultation.student.sessionList', compact('consultations', 'typeSorting'));
     }
@@ -33,8 +39,14 @@ class ConsultationEventController extends Controller
                 $consultations = ConsultationEvent::where('start', '<=', now())->where('end', '>=', now())->orderBy('start', 'asc')->paginate(10)->withQueryString();
                 break;
             default:
-                $consultations = ConsultationEvent::where('start', '>', now())->orderBy('start', 'asc')->paginate(10)->withQueryString();
-                break;
+            $consultations = ConsultationEvent::where(function ($query) {
+                $query->where('start', '>', now())
+                      ->orWhere('end', '>', now());
+                })
+                ->orderBy('start', 'asc')
+                ->paginate(10)
+                ->withQueryString();
+            break;
         }
         return view('consultation.student.sessionList', compact('consultations', 'typeSorting'));
     }
