@@ -467,14 +467,14 @@
                                     <!-- <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#reportAspirationModal">
                                       Report Aspiration
                                     </button> -->
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#reportAspirationModal">
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="{{ "#reportAspirationModal_". $aspiration->id }}">
                                         <i style="font-size: medium" class="bi bi-exclamation-triangle"></i>
                                     </a>
                                     
                                     <br>
 
                                     <!-- Modal -->
-                                    <div class="modal fade" id="reportAspirationModal" tabindex="-1" role="dialog" aria-labelledby="reportAspirationModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="{{ "reportAspirationModal_". $aspiration->id }}" tabindex="-1" role="dialog" aria-labelledby="reportAspirationModalLabel" aria-hidden="true">
                                       <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                           <div class="modal-header">
@@ -671,14 +671,14 @@
                                     <!-- <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#reportAspirationModal">
                                       Report Aspiration
                                     </button> -->
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#reportAspirationModal">
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="{{ "#reportAspirationModal_". $aspiration->id }}">
                                         <i style="font-size: medium" class="bi bi-exclamation-triangle"></i>
                                     </a>
                                     
                                     <br>
 
                                     <!-- Modal -->
-                                    <div class="modal fade" id="reportAspirationModal" tabindex="-1" role="dialog" aria-labelledby="reportAspirationModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="{{ "reportAspirationModal_". $aspiration->id }}" tabindex="-1" role="dialog" aria-labelledby="reportAspirationModalLabel" aria-hidden="true">
                                       <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                           <div class="modal-header">

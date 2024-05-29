@@ -256,6 +256,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         </li>
       @endif
 
+      @if(Auth::user()->role == "staff" || Auth::user()->role == "headmaster" || Auth::user()->role == "student")
       <li class="nav-item">
         <a class="nav-link {{ request()->is('consultation/sessionList*') || request()->is('consultation/mySession*') || request()->is('consultation/manage*') || request()->is('consultation/detail*') ? '' : 'collapsed'}}" data-bs-target="#konsultasi-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-question-circle"></i><span>Konsultasi</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -272,7 +273,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                 <i class="bi bi-circle"></i><span>Sesi saya</span>
               </a>
             </li>
-          @else
+          @elseif(Auth::user()->role == "staff" || Auth::user()->role == "headmaster")
             <li>
               <a href="{{ route('consultation.seeAll') }}" class="{{ request()->is('consultation/manage*') ? 'active' : ''}}">
                 <i class="bi bi-circle"></i><span>Kelola konsultasi</span>
@@ -281,6 +282,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
           @endif
         </ul>
       </li>
+      @endif
 
       <li class="nav-item">
         <a class="nav-link {{ request()->is('downloadcenter') || request()->is('FAQ') || request()->is('support/manage*') ? '' : 'collapsed'}}" data-bs-target="#supports-nav" data-bs-toggle="collapse" href="#">

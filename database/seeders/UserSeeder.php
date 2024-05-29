@@ -171,7 +171,7 @@ class UserSeeder extends Seeder
                     'staffType_id' => null,
                     'userNo' => 'USR000011',
                     'name' => 'Kurzawa',
-                    'email' => 'Kagawa@example.com',
+                    'email' => 'Kurzawa@example.com',
                     'password' => Hash::make('testing123'),
                     'phoneNumber' => '08123457689',
                     'birthDate' => Carbon::create('2000', '01', '01'),
