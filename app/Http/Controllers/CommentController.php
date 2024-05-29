@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Aspiration;
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class CommentController extends Controller
 {
@@ -19,8 +20,10 @@ class CommentController extends Controller
             'user_id' => auth()->id(),
         ]);
 
+        session(['comment_popup_open' => true, 'aspiration_id' => $aspiration->id]); // Set session data
         return back();
     }
+
 
     public function reply(Request $request, Comment $comment)
     {
@@ -34,7 +37,15 @@ class CommentController extends Controller
             'aspiration_id' => $comment->aspiration_id,
         ]);
 
+        session(['comment_popup_open' => true, 'aspiration_id' => $comment->aspiration_id]); // Set session data
         return back();
+    }
+
+    public function clearSessionData()
+    {
+        Session::forget('comment_popup_open');
+        Session::forget('aspiration_id');
+        return redirect()->back();
     }
 }
 

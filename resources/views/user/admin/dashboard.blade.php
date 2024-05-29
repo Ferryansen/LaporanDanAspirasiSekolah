@@ -350,27 +350,47 @@
           <!-- Recent Activity -->
           <div class="card">
             <div class="card-body pb-0">
-                  <h5 class="card-title">Banyak di-upvote</h5>
+                  <h5 class="card-title">Aspirasi yang disukai</h5>
 
                   <table class="table table-borderless">
                     <thead>
                       <tr>
                         <th scope="col">Judul</th>
-                        <th scope="col">Upvote</th>
+                        <th scope="col">Like</th>
                         <th scope="col">status</th>
                       </tr>
                     </thead>
                     <tbody>
                     @php
-                        $filteredAspirations = $aspirations->filter(function($aspiration) {
-                            return $aspiration->upvote >= 1;
-                        })->take(10);
+                      $filteredAspirations = $aspirations->filter(function($aspiration) {
+                          return $aspiration->likes_count >= 1;
+                      });
+
+                      $sortedAspirations = $filteredAspirations->sortByDesc('likes_count');
+
+                      $topAspirations = $sortedAspirations->take(10);
                     @endphp
-                      @foreach($filteredAspirations as $aspiration)
+                      @foreach($topAspirations as $aspiration)
                       <tr>
-                        <td><a href="{{ route('aspirations.details', ['aspirationId' => $aspiration->id]) }}" class="text-primary fw-bold">{{ $aspiration->name }}</a></td>
-                        <td>{{ $aspiration->upvote }}</td>
-                        <td>{{ $aspiration->status }}</td>
+                        <td>{{ $aspiration->name }}</a></td>
+                        <td>{{ $aspiration->reactions()->where('reaction', 'like')->count()}}</td>
+                        @if ($aspiration->status == 'Freshly submitted')
+                          <td>Terkirim</td>
+                          @elseif ($aspiration->status == 'In review')
+                          <td>Sedang ditinjau</td>
+                          @elseif ($aspiration->status == 'Request Approval')
+                          <td>Menunggu persetujuan</td>
+                          @elseif ($aspiration->status == 'Approved')
+                          <td>Disetujui</td>
+                          @elseif ($aspiration->status == 'Rejected')
+                          <td>Ditolak</td>
+                          @elseif ($aspiration->status == 'In Progress')
+                          <td>Sedang diproses</td>
+                          @elseif ($aspiration->status == 'Monitoring')
+                          <td>Dalam pemantauan</td>
+                          @elseif ($aspiration->status == 'Completed')
+                          <td>Selesai</td>
+                        @endif
                       </tr>
                       @endforeach
                     </tbody>

@@ -24,7 +24,9 @@ class UserController extends Controller
 
         $categories = Category::all();
         $reports = Report::all()->sortByDesc('created_at');
-        $aspirations = Aspiration::all()->sortByDesc('upvote');
+        $aspirations = Aspiration::withCount(['likes'])
+                         ->orderBy('likes_count', 'desc')
+                         ->get();
         $users = User::all();
         $staffTypes = StaffType::all();
         $laporanForFilter =  Report::whereDate('created_at', Carbon::today())->get();

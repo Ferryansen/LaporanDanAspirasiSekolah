@@ -99,7 +99,7 @@
                               </tr>
                               @else
                                 @foreach($consultations as $consultation)
-                                    @if($consultation->status !== "Dibatalkan")
+                                    @if($consultation->status !== "Dibatalkan" && $consultation->status !== "Selesai")
                                     <tr>
                                         <td>
                                             <div class="post">
