@@ -111,7 +111,7 @@
       var reportEvidenceVideo = document.getElementById("reportEvidenceVideo");
             let size = reportEvidenceVideo.files[0].size; 
             if (size > 41943040) {
-                alert("Video Size is exceeding 40 Mb");
+                alert("Ukuran video tidak boleh melebihi 40 Mb yaa");
                 e.preventDefault(); 
             }
     });

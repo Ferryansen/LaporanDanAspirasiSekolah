@@ -36,16 +36,6 @@ Detail Aspirasi Bermasalah
   <div class="card-header">{{ $aspiration->aspirationNo }}</div>
   <div class="card-body">
     <h5 class="card-title">{{ $aspiration->name }}</h5>
-    @if ($aspiration->evidence == null)
-      [Tidak ada Evidence]
-    @else
-      @if(file_exists(public_path().'\storage/'.$aspiration->evidence))
-      <img src="{{ asset('storage/'.$aspiration->evidence) }}">
-      @else
-      <img src="{{ $aspiration->evidence }}">
-      @endif
-    @endif
-    <br>
     <td>{{ $aspiration->description }}</td>
 
     <br>

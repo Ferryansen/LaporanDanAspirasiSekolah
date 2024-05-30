@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('staffType_id')->references('id')->on('staff_types')->onUpdate('cascade')->onDelete('cascade');
             $table->string('name', 255);
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

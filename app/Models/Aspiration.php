@@ -10,9 +10,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Aspiration extends Model
 {
     use HasFactory;
-    use SoftDeletes;
-    
-    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'aspirationNo',
@@ -31,8 +28,6 @@ class Aspiration extends Model
         'problematicAspirationCount',
         'isPinned',
         'isChatOpened',
-        'deletedBy',
-        'deleteReason'
     ];
 
     public function user() {
@@ -76,5 +71,9 @@ class Aspiration extends Model
 
     public function isReportedByCurrentUser() {
         return $this->reportedByUsers()->where('user_id', Auth::id())->exists();
+    }
+
+    public function evidences() {
+        return $this->hasMany(Evidence::class);
     }
 }

@@ -33,9 +33,6 @@ Detail Laporan
 @if (Auth::user()->role == "headmaster" || Auth::user()->role == "staff")
 
 <div class="row">
-    {{-- @if (Auth::user()->role == "staff")
-    @endif --}}
-    
     @if (Auth::user()->role == "staff")
         @if ($report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
           <div class="col-3 col-md-1" align="start">
@@ -94,7 +91,7 @@ Detail Laporan
                       <h5 class="modal-title" style="font-weight: 700">Masukkan tanggal estimasi dan prioritas</h5>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form action="{{ route('processReport', $report->id) }}" method="POST">
+                    <form id="proof-form" action="{{ route('processReport', $report->id) }}" method="POST">
                       @csrf
                       @method('PATCH')
                         <div class="modal-body">
@@ -117,8 +114,12 @@ Detail Laporan
                           </div>
                         </div>
                         <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                          <button type="submit" class="btn btn-primary">Save</button>
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                          <button id="sub-btn-proof" type="submit" class="btn btn-primary">
+                            <span id="sub-text">Simpan</span>
+                            <span id="load-animation" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+                            <span id="load-text" style="display: none">Loading...</span>
+                          </button>
                         </div>
                     </form>
                   </div>
@@ -136,11 +137,54 @@ Detail Laporan
             </div>
         @elseif ($report->status == "Monitoring process")
           <div class="col-3 col-md-11" align="end">
-                  <form action="{{ route('finishReport', $report->id) }}" method="POST">
-                  @csrf
-                  @method('PATCH')
-                      <button type="submit" class="btn btn-success">Selesaikan</button>
-                  </form>
+              {{-- <form action="{{ route('finishReport', $report->id) }}" method="POST">
+              @csrf
+              @method('PATCH')
+                  <button type="submit" class="btn btn-success">Selesaikan</button>
+              </form> --}}
+
+              <button type="submit" class="btn btn-success" data-bs-toggle="modal" data-bs-target="{{"#completeReportModal_" . $report->id}}">Selesaikan</button>
+              {{-- Modal --}}
+              <div class="modal fade" id="{{"completeReportModal_" . $report->id}}" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" style="font-weight: 700">Masukkan bukti penyelesaian</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="proof2-form" action="{{ route('finishReport', $report->id) }}" method="POST" enctype="multipart/form-data">
+                      @csrf
+                      @method('PATCH')
+                        <div class="modal-body">
+                          <div class="col-sm-12">
+                            <input accept=".png,.jpg,.jpeg,.webp,.mp4,.avi,.quicktime" multiple class="form-control @error('reportEvidences') is-invalid @enderror" type="file" id="formFile" name="reportEvidences[]" required>
+                            @error('reportEvidences')
+                                <div class="invalid-feedback">
+                                    @if ($message == "validation.max.array")
+                                        {{ "Maksimal 5 gambar yang di upload" }}
+                                    @elseif ($message == "validation.mimes")
+                                        {{ "Format file tidak didukung. Hanya file PNG, JPG, JPEG, WEBP untuk gambar dan MP4, AVI, QuickTime untuk video yang diperbolehkan." }}
+                                    @elseif ($message == "validation.max")
+                                        {{ "Ukuran file tidak boleh melebihi 40 MB." }}
+                                    @else
+                                        {{ $message }}
+                                    @endif
+                                </div>
+                            @enderror
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                          <button id="sub-btn-proof2" type="submit" class="btn btn-primary">
+                            <span id="sub-text2">Simpan</span>
+                            <span id="load-animation2" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+                            <span id="load-text2" style="display: none">Loading...</span>
+                          </button>
+                        </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
           </div>
         @endif
 
@@ -191,10 +235,10 @@ Detail Laporan
                 <h5 class="card-title">{{$report->name}}</h5>
                 <td>{{$report->description}}</td>
                 <br>
-                @if ($report->evidences->isEmpty())
+                @if ($evidences->isEmpty())
                     Tidak ada bukti
                 @else
-                      @foreach($report->evidences as $evidence)
+                      @foreach($evidences as $evidence)
                           @if (strpos($evidence->image, 'ListImage') === 0)
                               <!-- Display image -->
                               <img style="max-width: 100%; margin-top: 20px" src="{{ asset('storage/'.$evidence->image) }}" alt="{{ $evidence->name }}">
@@ -385,10 +429,10 @@ Detail Laporan
                   <h5 class="card-title">{{$report->name}}</h5>
                   <td>{{$report->description}}</td>
                   <br>
-                  @if ($report->evidences->isEmpty())
+                  @if ($evidences->isEmpty())
                     Tidak ada bukti
                   @else
-                      @foreach($report->evidences as $evidence)
+                      @foreach($evidences as $evidence)
                           @if (strpos($evidence->image, 'ListImage') === 0)
                               <!-- Display image -->
                               <img style="max-width: 100%; margin-top: 20px" src="{{ asset('storage/'.$evidence->image) }}" alt="{{ $evidence->name }}">
@@ -412,17 +456,69 @@ Detail Laporan
 
 @endif
 
-
+@if ($report->status == 'Completed')
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Bukti Penyelesaian</h5>
+            @foreach($completionProofs as $proof)
+                @if (strpos($proof->image, 'ListImage') === 0)
+                    <img style="max-width: 100%;" src="{{ asset('storage/'.$proof->image) }}" alt="{{ $proof->name }}">
+                @elseif (strpos($proof->video, 'ListVideo') === 0)
+                    <video style="max-width: 100%;" controls>
+                        <source src="{{ asset('storage/'.$proof->video) }}" type="{{ getVideoMimeType($proof->video) }}">
+                        Your browser does not support the video tag.
+                    </video>
+                @endif
+            @endforeach
+        </div>
+      </div>
+    </div>
+  </div>
+@endif
 
 @endsection
 
 @section('script')
 <script>
       document.addEventListener('DOMContentLoaded', function () {
+        const reportStatus = "{{ $report->status }}";
+        
         @if($errors->any() && session('reportId') == $report->id)
           var modal = new bootstrap.Modal(document.getElementById('processReportModal_{{ $report->id }}'));
           modal.show();
         @endif
+
+        if (reportStatus === "Approved") {
+          const form = document.getElementById('proof-form');
+          const submitBtn = document.getElementById('sub-btn-proof');
+          const buttonText = document.getElementById('sub-text');
+          const buttonSpinner = document.getElementById('load-animation');
+          const loadingText = document.getElementById('load-text');
+          
+          form.addEventListener('submit', function () {
+            submitBtn.disabled = true;
+            buttonText.style.display = 'none';
+            buttonSpinner.style.display = 'inline-block';
+            loadingText.style.display = 'inline-block';
+          });
+        } else if (reportStatus === "Monitoring process") {
+          const form2 = document.getElementById('proof2-form');
+          const submitBtn2 = document.getElementById('sub-btn-proof2');
+          const buttonText2 = document.getElementById('sub-text2');
+          const buttonSpinner2 = document.getElementById('load-animation2');
+          const loadingText2 = document.getElementById('load-text2');
+          
+          form2.addEventListener('submit', function () {
+            submitBtn2.disabled = true;
+            buttonText2.style.display = 'none';
+            buttonSpinner2.style.display = 'inline-block';
+            loadingText2.style.display = 'inline-block';
+          });
+        }
+
+
       });
 
       const reportID = <?php echo json_encode($report->id); ?>;
@@ -448,7 +544,38 @@ Detail Laporan
           });
       });
 
+      document.getElementById("sub-btn").addEventListener("click", function(e) {
+        var files = document.getElementById("formFile").files;
+        var imageCount = 0;
+        var videoCount = 0;
 
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var extension = file.name.split('.').pop().toLowerCase();
+
+            if (['png', 'jpg', 'jpeg', 'webp'].includes(extension)) {
+                imageCount++;
+            } else if (['mp4', 'avi', 'quicktime'].includes(extension)) {
+                videoCount++;
+
+                if (file.size > 41943040) { // 40 MB
+                    alert("Ukuran video tidak boleh melebihi 40 Mb yaa");
+                    e.preventDefault();
+                    return;
+                }
+            }
+        }
+
+        if (imageCount > 5) {
+            alert("Maksimal 5 gambar yang di upload");
+            e.preventDefault();
+        }
+
+        if (videoCount > 1) {
+            alert("Maksimal 1 video yang di upload");
+            e.preventDefault();
+        }
+      });
 
     </script>
 @endsection
