@@ -172,25 +172,13 @@ class AspirationController extends Controller
         if ($request->status == 'Approved'){
             $aspiration->approvedBy = Auth::user()->id;
         }
-        
-        if ($request->status == 'Completed') {
-            $students = User::where('role', 'student')->get();
-
-            foreach ($students as $student) {
-                Mail::to($student->email)->send(new CompleteAspirationStudentNotificationEmail($student->name, $aspirationData));
-            }
-            
-            foreach ($headmasters as $headmaster) {
-                Mail::to($headmaster->email)->send(new CompleteAspirationHeadmasterNotificationEmail($headmaster->name, $aspirationData));
-            }
-        }
 
         // Update the status field
         $aspiration->status = $request->status;
         $aspiration->save();
 
         // Redirect back with a success message
-        return redirect()->back()->with('success', 'Aspirasi status telah diubah');
+        return redirect()->back()->with('successMessage', 'Status aspirasi telah diubah');
     }
 
     public function assign(Request $request)
@@ -509,11 +497,82 @@ class AspirationController extends Controller
 
     public function finishAspiration(Request $request){
         $aspiration = Aspiration::find($request->id);
+        $headmasters = User::where('role', 'headmaster')->get();
+        $students = User::where('role', 'student')->get();
 
-        $aspiration->update([
-            'status' => "Done",
+        $request->validate([
+            'aspirationEvidences.*' => 'file|mimes:png,jpg,jpeg,webp,mp4,avi,quicktime|max:40960',
+            'aspirationEvidences' => [
+                'required',
+                'array',
+                function ($attribute, $value, $fail) {
+                    $imageCount = 0;
+                    $videoCount = 0;
+    
+                    foreach ($value as $file) {
+                        if (in_array($file->getClientOriginalExtension(), ['mp4', 'avi', 'quicktime'])) {
+                            $videoCount++;
+                        } else {
+                            $imageCount++;
+                        }
+                    }
+    
+                    if ($imageCount > 5) {
+                        $fail('Maksimal 5 gambar yang di upload');
+                    }
+    
+                    if ($videoCount > 1) {
+                        $fail('Maksimal 1 video yang di upload');
+                    }
+                },
+            ],
         ]);
-        return redirect()->route('aspirations.manageAspirations');
+
+        if ($request->hasFile('aspirationEvidences')) {
+            foreach ($request->file('aspirationEvidences') as $file) {
+                if ($file instanceof \Illuminate\Http\UploadedFile) {
+                    $name = $file->getClientOriginalName();
+                    $filename = now()->timestamp . '_' . $name;
+                    $extension = $file->getClientOriginalExtension();
+    
+                    if (in_array($extension, ['mp4', 'avi', 'quicktime'])) {
+                        $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $file, $filename);
+                        $aspiration->evidences()->create([
+                            'video' => $videoUrl,
+                            'name' => $name,
+                            'context' => 'completion',
+                        ]);
+                    } else {
+                        $imageUrl = Storage::disk('public')->putFileAs('ListImage', $file, $filename);
+                        $aspiration->evidences()->create([
+                            'image' => $imageUrl,
+                            'name' => $name,
+                            'context' => 'completion',
+                        ]);
+                    }
+                }
+            }
+        }
+
+        $aspiration->status = 'Completed';
+        $aspiration->save();
+
+        $aspirationData = [
+            'aspirationID' => $aspiration->id,
+            'aspirationNo' => $aspiration->aspirationNo,
+            'title' => $aspiration->name,
+            'relatedStaff' => $aspiration->processedBy
+        ];
+
+        foreach ($students as $student) {
+            Mail::to($student->email)->send(new CompleteAspirationStudentNotificationEmail($student->name, $aspirationData));
+        }
+        
+        foreach ($headmasters as $headmaster) {
+            Mail::to($headmaster->email)->send(new CompleteAspirationHeadmasterNotificationEmail($headmaster->name, $aspirationData));
+        }
+
+        return redirect()->route('aspirations.manageAspiration')->with('successMessage', 'Aspirasi berhasil diselesaikan');
     }
 
     public function pinAspiration(Request $request){
@@ -564,8 +623,9 @@ class AspirationController extends Controller
 
     public function manageAspirationDetail($aspiration_id) {
         $aspiration = Aspiration::findOrFail($aspiration_id);
+        $evidences = $aspiration->evidences()->where('context', 'completion')->get();
 
-        return view('aspiration.staffHeadmaster.manageAspirationDetailView', compact('aspiration'));
+        return view('aspiration.staffHeadmaster.manageAspirationDetailView', compact('aspiration', 'evidences'));
     }
 
 }

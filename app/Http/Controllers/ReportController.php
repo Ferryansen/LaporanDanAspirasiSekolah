@@ -139,8 +139,14 @@ class ReportController extends Controller
                 $link = url("/chat/{$report->processedBy}");
             }
         }
+
+        $evidences = $report->evidences()->where('context', 'reporting')->get();
+        if ($report->status == 'Completed') {
+            $completionProofs = $report->evidences()->where('context', 'completion')->get();
+            return view('report.studentHeadmasterStaff.reportDetail', compact('report', 'link', 'evidences', 'completionProofs'));
+        }
     
-        return view('report.studentHeadmasterStaff.reportDetail', compact('report', 'link'));
+        return view('report.studentHeadmasterStaff.reportDetail', compact('report', 'link', 'evidences'));
     }
 
     public function openChatNotification(Request $request) {
@@ -211,47 +217,28 @@ class ReportController extends Controller
                 $name = $file->getClientOriginalName();
                 $filename = now()->timestamp . '_' . $name;
 
-                // Determine whether the file is an image or a video
-                // if ($file->getMimeType() == 'video/mp4' || $file->getMimeType() == 'video/avi' || $file->getMimeType() == 'video/quicktime') {
-                //     $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $file, $filename);
-                //     // Create evidence and associate it with the report
-                //     $report->evidences()->create([
-                //         'video' => $videoUrl,
-                //         'name' => $name
-                //     ]);
-                // } else {
-                    $imageUrl = Storage::disk('public')->putFileAs('ListImage', $file, $filename);
-                    // Create evidence and associate it with the report
-                    $report->evidences()->create([
-                        'image' => $imageUrl,
-                        'name' => $name
-                    ]);
-                // }
+                $imageUrl = Storage::disk('public')->putFileAs('ListImage', $file, $filename);
+                // Create evidence and associate it with the report
+                $report->evidences()->create([
+                    'image' => $imageUrl,
+                    'name' => $name,
+                    'context' => 'reporting',
+                ]);
             }
         }
 
         if ($request->hasFile('reportEvidenceVideo')) {
-            // foreach ($request->file('reportEvidenc') as $file) {
-                $name = $request->file('reportEvidenceVideo')->getClientOriginalName();
-                $filename = now()->timestamp . '_' . $name;
+            $name = $request->file('reportEvidenceVideo')->getClientOriginalName();
+            $filename = now()->timestamp . '_' . $name;
 
-                // Determine whether the file is an image or a video
-                // if ($file->getMimeType() == 'video/mp4' || $file->getMimeType() == 'video/avi' || $file->getMimeType() == 'video/quicktime') {
-                //     $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $file, $filename);
-                //     // Create evidence and associate it with the report
-                //     $report->evidences()->create([
-                //         'video' => $videoUrl,
-                //         'name' => $name
-                //     ]);
-                // } else {
-                    $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $request->file('reportEvidenceVideo'), $filename);
-                    // Create evidence and associate it with the report
-                    $report->evidences()->create([
-                        'video' => $videoUrl,
-                        'name' => $name
-                    ]);
-                // }
-            // }
+            
+            $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $request->file('reportEvidenceVideo'), $filename);
+            // Create evidence and associate it with the report
+            $report->evidences()->create([
+                'video' => $videoUrl,
+                'name' => $name,
+                'context' => 'reporting',
+            ]);
         }
 
         $reportData = [
@@ -325,14 +312,16 @@ class ReportController extends Controller
                 // Create evidence and associate it with the report
                 $report->evidences()->create([
                     'video' => $videoUrl,
-                    'name' => $name
+                    'name' => $name,
+                    'context' => 'reporting',
                 ]);
             } else {
                 $imageUrl = Storage::disk('public')->putFileAs('ListImage', $mediaFile, $filename);
                 // Create evidence and associate it with the report
                 $report->evidences()->create([
                     'image' => $imageUrl,
-                    'name' => $name
+                    'name' => $name,
+                    'context' => 'reporting',
                 ]);
             }
 
@@ -353,9 +342,9 @@ class ReportController extends Controller
             if ($currUser->urgentPhoneNumber != null) {
                 $toUrgentContact = '+62' . substr($currUser->urgentPhoneNumber, 1);
                 $messageUrgentContact = 'Ada kejadian urgent yang dilaporkan oleh ' . $currUser->name . '!!
-                - Kejadian: ' . $report->name . '
-                - Detail: ' .  route('urgent.accessForm', $urgentAccess) . '
-                - Kode akses: ' . $urgentAccess->accessCode;
+- Kejadian: ' . $report->name . '
+- Detail: ' .  route('urgent.accessForm', $urgentAccess) . '
+- Kode akses: ' . $urgentAccess->accessCode;
                 
                 $smsService->sendSms($toUrgentContact, $messageUrgentContact);
             }
@@ -624,6 +613,60 @@ class ReportController extends Controller
 
     public function finishReport(Request $request){
         $report = Report::find($request->id);
+        $request->validate([
+            'reportEvidences.*' => 'file|mimes:png,jpg,jpeg,webp,mp4,avi,quicktime|max:40960',
+            'reportEvidences' => [
+                'required',
+                'array',
+                function ($attribute, $value, $fail) {
+                    $imageCount = 0;
+                    $videoCount = 0;
+    
+                    foreach ($value as $file) {
+                        if (in_array($file->getClientOriginalExtension(), ['mp4', 'avi', 'quicktime'])) {
+                            $videoCount++;
+                        } else {
+                            $imageCount++;
+                        }
+                    }
+    
+                    if ($imageCount > 5) {
+                        $fail('Maksimal 5 gambar yang di upload');
+                    }
+    
+                    if ($videoCount > 1) {
+                        $fail('Maksimal 1 video yang di upload');
+                    }
+                },
+            ],
+        ]);
+
+        if ($request->hasFile('reportEvidences')) {
+            foreach ($request->file('reportEvidences') as $file) {
+                if ($file instanceof \Illuminate\Http\UploadedFile) {
+                    $name = $file->getClientOriginalName();
+                    $filename = now()->timestamp . '_' . $name;
+                    $extension = $file->getClientOriginalExtension();
+    
+                    if (in_array($extension, ['mp4', 'avi', 'quicktime'])) {
+                        $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $file, $filename);
+                        $report->evidences()->create([
+                            'video' => $videoUrl,
+                            'name' => $name,
+                            'context' => 'completion',
+                        ]);
+                    } else {
+                        $imageUrl = Storage::disk('public')->putFileAs('ListImage', $file, $filename);
+                        $report->evidences()->create([
+                            'image' => $imageUrl,
+                            'name' => $name,
+                            'context' => 'completion',
+                        ]);
+                    }
+                }
+            }
+        }
+
         $currUser = Auth::user();
         $relatedHeadmasters = User::where('role', 'headmaster')->get();
 

@@ -15,10 +15,15 @@ class Evidence extends Model
         'report_id',
         'image',
         'video',
-        'name'
+        'name',
+        'context',
     ];
 
     public function report() {
         return $this->belongsTo(Report::class);
+    }
+
+    public function aspiration() {
+        return $this->belongsTo(Aspiration::class);
     }
 }

@@ -27,10 +27,7 @@ return new class extends Migration
             $table->string('approvalBy', 255)->nullable();
             $table->string('lastUpdatedBy', 255)->nullable();
             $table->string('status', 255);
-            $table->string('deletedBy', 255)->nullable();
-            $table->string('deleteReason', 255)->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

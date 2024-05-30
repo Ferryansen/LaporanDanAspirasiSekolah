@@ -27,10 +27,7 @@ return new class extends Migration
             $table->integer('likeCount')->nullable();
             $table->integer('dislikeCount')->nullable();
             $table->integer('problematicAspirationCount')->nullable();
-            $table->string('deletedBy', 255)->nullable();
-            $table->string('deleteReason', 255)->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
