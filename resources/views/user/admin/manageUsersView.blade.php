@@ -10,18 +10,53 @@
             overflow-x: auto;
             max-width: 100%;
     }
+
     table {
             width: 100%;
             border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+    }
+
+    .container {
+        text-align: center; /* Center the text within the td */
+        color: dimgray;
+    }
+
+    .upload-icon {
+        font-weight: bold;
+    }
+    
+    #actions-user {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    @media screen and (max-width: 600px) {
+        #actions-user {
+            display: block;
         }
-        th, td {
-            padding: 8px;
-            text-align: left;
+
+        #search-user {
+            margin-bottom: 16px;
         }
-        .container {
-            text-align: center; /* Center the text within the td */
-            color: dimgray;
+
+        #action-button-user {
+            display: flex;
+            justify-content: space-evenly;
         }
+
+        .action-button {
+            width: 72px;
+        }
+
+        .action-button-text {
+            display: none;
+        }
+    }
   </style>
 @endsection
 
@@ -50,7 +85,7 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body" style="margin-top: 24px">
-                        <div id="actions-user" style="display: flex; justify-content: space-between;">
+                        <div id="actions-user" class="action-user">
                             <div id="search-user" class="search-bar">
                                 <form class="input-group" action="{{ route('manage.users.search') }}">
                                     <input type="text" name="userName" class="form-control" placeholder="Cari pengguna" title="Enter search keyword" value="{{ isset($searchNameParam) ? $searchNameParam : '' }}">
@@ -59,14 +94,14 @@
                             </div>
                             <div id="action-button-user">
                                 <a href="{{ route('manage.users.register') }}">
-                                    <button type="button" class="btn btn-primary"><i class="bi bi-person-plus-fill" style="margin-right: 4px;"></i> Tambah Pengguna Baru</button>
+                                    <button type="button" class="btn btn-primary action-button"><i class="bi bi-person-plus-fill" style="margin-right: 4px;"></i><span class="action-button-text">Tambah Pengguna Baru</span></button>
                                 </a>
 
                                 <a href="{{ route('manage.users.importstudents') }}">
-                                    <button type="button" class="btn btn-primary"><i class="fa-solid fa-upload" style="margin-right: 4px; font-size: 13px;"></i> Import Murid</button>
+                                    <button type="button" class="btn btn-primary action-button"><i class="fa-solid fa-upload" style="margin-right: 4px; font-size: 13px;"></i><span class="action-button-text">Import Murid</span></button>
                                 </a>
 
-                                <button type="button" id="delete-user-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUsersModal" disabled><i class="bi bi-trash-fill" style="margin-right: 4px;"></i> Hapus</button>
+                                <button type="button" id="delete-user-button" class="btn btn-danger action-button" data-bs-toggle="modal" data-bs-target="#deleteUsersModal" disabled><i class="bi bi-trash-fill" style="margin-right: 4px;"></i><span class="action-button-text">Hapus</span></button>
                                 {{-- Modal --}}
                                 <div class="modal fade" id="deleteUsersModal" tabindex="-1">
                                     <div class="modal-dialog modal-dialog-centered">
@@ -141,28 +176,6 @@
             </div>
         </div>
     </section>  
-@endsection
-
-@section('css')
-    <style>
-        @media screen and (max-width: 600px) {
-            #actions-user {
-                display: block !important;
-            }
-
-            #action-button-user {
-                margin-top: 12px;
-            }
-        }
-    </style>
-@endsection
-
-@section('css')
-    <style>
-        .upload-icon {
-            font-weight: bold;
-        }
-    </style>
 @endsection
 
 @section('script')
