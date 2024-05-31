@@ -110,9 +110,9 @@
                                       <div class="post">
                                           @if (Auth::user()->role == "student")
                                           @if ($aspiration->status == "Completed")
-                                          <span class="labelCompleted">Completed</span>
-                                          @elseif (in_array($aspiration->status, ['In Progress', 'Approved', 'Monitoring']))
-                                          <span class="labelInProg">In Progress</span>
+                                          <span class="labelCompleted">Selesai</span>
+                                          @elseif (in_array($aspiration->status, ['In Progress', 'Monitoring']))
+                                          <span class="labelInProg">Sedang diproses</span>
                                           @endif
                                           @endif
                                           <div class="post-header">

@@ -27,8 +27,6 @@ class Report extends Model
         'approvalBy',
         'lastUpdatedBy',
         'status',
-        'deletedBy',
-        'deleteReason'
     ];
 
     public $sortable = ['priority'];

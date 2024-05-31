@@ -164,7 +164,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
       <li class="nav-item">
         <a class="nav-link {{ request()->is('report/*') ? '' : 'collapsed'}}" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-menu-button-wide"></i><span>Laporan</span><i class="bi bi-chevron-down ms-auto"></i>
+          <i class="fa-regular fa-file-lines" style="margin-left: 3px"></i><span style="margin-left: 5px">Laporan</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="report-nav" class="nav-content collapse {{ request()->is('report/*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
           @if (Auth::user()->role == "student")
@@ -185,7 +185,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       
       <li class="nav-item">
         <a class="nav-link {{ request()->is('aspirations/*') || request()->is('publicAspirations*') ? '' : 'collapsed'}}" data-bs-target="#aspiration-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-menu-button-wide"></i><span>Aspirasi</span><i class="bi bi-chevron-down ms-auto"></i>
+          <i class="fa-regular fa-lightbulb" style="margin-left: 3px"></i><span style="margin-left: 5px">Aspirasi</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="aspiration-nav" class="nav-content collapse {{ request()->is('aspirations/*') || request()->is('publicAspirations*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
           @if (Auth::user()->role == "student")
@@ -234,7 +234,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       @if (Auth::user()->role == "admin")
         <li class="nav-item">
           <a class="nav-link {{ request()->is('manage/users*') || request()->is('staffType/*') || request()->is('categories/*') ? '' : 'collapsed'}}" data-bs-target="#users-nav" data-bs-toggle="collapse" href="#">
-            <i class="bi bi-person"></i><span>Pengguna</span><i class="bi bi-chevron-down ms-auto"></i>
+            <i class="fa-regular fa-user" style="margin-left: 2px"></i><span style="margin-left: 3px">Pengguna</span><i class="bi bi-chevron-down ms-auto"></i>
           </a>
           <ul id="users-nav" class="nav-content collapse {{ request()->is('manage/users*') || request()->is('staffType/*') || request()->is('categories/*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
             <li>
@@ -259,7 +259,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       @if(Auth::user()->role == "staff" || Auth::user()->role == "headmaster" || Auth::user()->role == "student")
       <li class="nav-item">
         <a class="nav-link {{ request()->is('consultation/sessionList*') || request()->is('consultation/mySession*') || request()->is('consultation/manage*') || request()->is('consultation/detail*') ? '' : 'collapsed'}}" data-bs-target="#konsultasi-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-question-circle"></i><span>Konsultasi</span><i class="bi bi-chevron-down ms-auto"></i>
+          <i class="fa-regular fa-comments"></i><span>Konsultasi</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="konsultasi-nav" class="nav-content collapse {{ request()->is('consultation/sessionList*') || request()->is('consultation/mySession*') || request()->is('consultation/manage*') || request()->is('consultation/detail*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
           @if (Auth::user()->role == 'student')
@@ -286,7 +286,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
       <li class="nav-item">
         <a class="nav-link {{ request()->is('downloadcenter') || request()->is('FAQ') || request()->is('support/manage*') ? '' : 'collapsed'}}" data-bs-target="#supports-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-question-circle"></i><span>Bantuan</span><i class="bi bi-chevron-down ms-auto"></i>
+          <i class="fa-regular fa-circle-question"></i><span style="margin-left: 3px">Bantuan</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="supports-nav" class="nav-content collapse {{ request()->is('downloadcenter') || request()->is('FAQ') || request()->is('support/manage*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
           <li>

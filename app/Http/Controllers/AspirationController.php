@@ -577,6 +577,7 @@ class AspirationController extends Controller
 
     public function pinAspiration(Request $request){
         $aspiration = Aspiration::find($request->id);
+        $selectedCategoryId = "";
 
         $aspiration->update([
             'isPinned' => true,
@@ -595,11 +596,12 @@ class AspirationController extends Controller
             'Completed',
             'Rejected',
         ];
-        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'message', 'statuses'));
+        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'message', 'statuses', 'selectedCategoryId'));
     }
 
     public function unpinAspiration(Request $request){
         $aspiration = Aspiration::find($request->id);
+        $selectedCategoryId = "";
 
         $aspiration->update([
             'isPinned' => false,
@@ -618,7 +620,7 @@ class AspirationController extends Controller
             'Completed',
         ];
         $message = "unpin sukses";
-        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'message', 'statuses'));
+        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'message', 'statuses', 'selectedCategoryId'));
     }
 
     public function manageAspirationDetail($aspiration_id) {

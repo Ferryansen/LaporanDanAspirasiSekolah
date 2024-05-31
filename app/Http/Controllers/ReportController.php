@@ -543,8 +543,9 @@ class ReportController extends Controller
             'reportID' => $report->id,
             'title' => $report->name,
         ];
-
-        Mail::to($processExecutor->email)->send(new ApprovalReportStaffNotificationEmail($processExecutor->name, $reportData));
+        if(Auth::user()->role == "headmaster"){
+            Mail::to($processExecutor->email)->send(new ApprovalReportStaffNotificationEmail($processExecutor->name, $reportData));
+        } 
 
         return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }

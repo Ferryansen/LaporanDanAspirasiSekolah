@@ -134,7 +134,7 @@
               </div>
 
               <div class="card-body pb-0">
-                <h5 class="card-title">Status <span>| {{$laporanCategoryFilter}}</span></h5>
+                <h5 class="card-title">Status</h5>
 
                 <div id="aspirationStatusChart" style="min-height: 300px;" class="echart"></div>
               </div>
@@ -278,7 +278,7 @@
                       <tr>
                         <th scope="col">Judul</th>
                         <th scope="col">Tanggal dibuat</th>
-                        <th scope="col">status</th>
+                        <th scope="col">Status</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -286,7 +286,25 @@
                       <tr>
                         <td><a href="{{ route('student.reportDetail', $report->id) }}" class="text-primary fw-bold">{{ $report->name }}</a></td>
                         <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
-                        <td>{{ $report->status }}</td>
+                        @if ($report->status == "Approved")
+                          <td>Disetujui</td>
+                        @elseif ($report->status == "Rejected")
+                          <td>Ditolak</td>  
+                        @elseif ($report->status == "Cancelled")
+                          <td>Dibatalkan</td>
+                        @elseif ($report->status == "Freshly submitted")
+                          <td>Terkirim</td>
+                        @elseif ($report->status == "In review by staff")
+                          <td>Sedang ditinjau</td>
+                        @elseif ($report->status == "In review to headmaster")
+                          <td>Menunggu persetujuan dari atasan</td>
+                        @elseif ($report->status == "In Progress")
+                          <td>Sedang diproses</td>
+                        @elseif ($report->status == "Monitoring process")
+                          <td>Dalam pemantauan</td>
+                        @elseif ($report->status == "Completed")
+                          <td>Selesai</td>
+                        @endif
                       </tr>
                       @endforeach
                     </tbody>
@@ -320,7 +338,7 @@
               <div class="card-body pb-0">
                 <h5 class="card-title">Laporan per kategori <span>| {{$laporanCategoryFilter}}</span></h5>
 
-                <div id="laporanKategori" style="min-height: 300px;" class="echart"></div>
+                <div id="laporanKategori" style="min-height: 450px; margin-bottom: -5rem" class="echart"></div>
               </div>
             </div><!-- End Website Traffic -->
 
@@ -342,7 +360,7 @@
               <div class="card-body pb-0">
                 <h5 class="card-title">Aspirasi per kategori <span>| {{$aspirasiCategoryFilter}}</span></h5>
 
-                <div id="aspirasiKategori" style="min-height: 300px;" class="echart"></div>
+                <div id="aspirasiKategori" style="min-height: 450px; margin-bottom: -5rem;" class="echart"></div>
               </div>
             </div>
         

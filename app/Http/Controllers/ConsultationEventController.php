@@ -7,6 +7,7 @@ use App\Mail\RegisteredConsultationStudentNotificationEmail;
 use App\Mail\UpdateInfoConsultationStudentNotificationEmail;
 use App\Models\ConsultationEvent;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -166,11 +167,16 @@ class ConsultationEventController extends Controller
             'attendeeLimit' => $request->attendeeLimit,
         ];
 
-        if ($request->startDateTime != $event->start || $request->endDateTime != $event->end) {
-            if($event->status == 'Belum dimulai' || $event != 'Sedang dimulai') {
+        $startDateTimeRequest = Carbon::parse($request->startDateTime);
+        $endDateTimeRequest = Carbon::parse($request->endDateTime);
+
+        $startDateTimeEvent = Carbon::parse($event->start);
+        $endDateTimeEvent = Carbon::parse($event->end);
+
+        if (!$startDateTimeRequest->eq($startDateTimeEvent) || !$endDateTimeRequest->eq($endDateTimeEvent)) {
+            if ($event->status == 'Belum dimulai' || $event->status == 'Sedang dimulai') {
                 $credentials['status'] = 'Pindah jadwal';
             }
-
         }
         
         if($request->location != null) {
@@ -289,7 +295,7 @@ class ConsultationEventController extends Controller
 
     public function cancelEvent($consultation_id) {
         $event = ConsultationEvent::findOrFail($consultation_id);
-        $attendees = json_decode($event->attendees, true);
+        $attendees = $event->attendees;
 
         $credential = [
             'status' => 'Dibatalkan'

@@ -312,11 +312,11 @@
                       <div class="post">
                               @if ($aspiration->status == "Completed")
                               <div class="col-9 col-md-3">
-                                    <span class="labelCompleted" >Completed</span>
+                                    <span class="labelCompleted" >Selesai</span>
                               </div>
-                              @elseif (in_array($aspiration->status, ['In Progress', 'Approved', 'Monitoring']))
+                              @elseif (in_array($aspiration->status, ['In Progress', 'Monitoring']))
                               <div class="col-9 col-md-3">
-                                    <span class="labelInProg" >In Progress</span>
+                                    <span class="labelInProg" >Sedang diproses</span>
                               </div>
                               @endif
                             <div class="post-header">
@@ -352,7 +352,7 @@
                                   <form action="{{ route('aspiration.updateProcessedBy') }}" method="POST">
                                       @csrf
                                       <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
-                                      <button type="submit" class="btn btn-primary">Process</button>
+                                      <button type="submit" class="btn btn-primary">Kelola aspirasi ini</button>
                                   </form>
                                 </div>
                               @endif
@@ -517,11 +517,11 @@
                           <div class="post">
                               @if ($aspiration->status == "Completed")
                               <div class="col-9 col-md-3">
-                                    <span class="labelCompleted" >Completed</span>
+                                    <span class="labelCompleted" >Selesai</span>
                               </div>
-                              @elseif (in_array($aspiration->status, ['In Progress', 'Approved', 'Monitoring']))
+                              @elseif (in_array($aspiration->status, ['In Progress', 'Monitoring']))
                               <div class="col-9 col-md-3">
-                                    <span class="labelInProg" >In Progress</span>
+                                    <span class="labelInProg" >Sedang diproses</span>
                               </div>
                               @endif
                             <div class="post-header">
