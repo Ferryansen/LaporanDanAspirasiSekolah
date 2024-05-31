@@ -84,7 +84,7 @@
                         <button type="button" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></button>
                       </a>
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#deleteCategoryModal_" . $category->id}}" style="display: inline; margin: 0 4px;">
-                            <i class="bi bi-trash"></i>
+                          <i class="bi bi-trash-fill"></i>
                         </button>
   
                         {{-- Modal --}}

@@ -622,6 +622,7 @@ class UserController extends Controller
     public function searchUserList(Request $request)
     {
         $userListFounded = User::where("name", "like", "%$request->userName%")
+                                    ->where('role', '!=', 'admin')
                                     ->orderBy('created_at', 'desc')
                                     ->paginate(10)
                                     ->withQueryString();
