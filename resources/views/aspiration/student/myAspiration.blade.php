@@ -112,7 +112,7 @@
                                           @if ($aspiration->status == "Completed")
                                           <span class="labelCompleted">Selesai</span>
                                           @elseif (in_array($aspiration->status, ['In Progress', 'Monitoring']))
-                                          <span class="labelInProg">Sedang diproses</span>
+                                          <span class="labelInProg">Sedang ditindaklanjuti</span>
                                           @endif
                                           @endif
                                           <div class="post-header">

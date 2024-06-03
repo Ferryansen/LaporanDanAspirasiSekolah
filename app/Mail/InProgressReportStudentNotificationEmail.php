@@ -24,7 +24,7 @@ class InProgressReportStudentNotificationEmail extends Mailable
     public function build()
     {
         return $this->view('emails.student.reportInProgressNotification')
-                    ->subject('Laporan "' . $this->reportData['title'] . '" Sedang Diproses')
+                    ->subject('Laporan "' . $this->reportData['title'] . '" Sedang ditindaklanjuti')
                     ->with([
                         'receiverName' => $this->receiverName,
                         'reportData' => $this->reportData]

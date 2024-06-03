@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
+use DateInterval;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -31,9 +32,15 @@ class ReportController extends Controller
     public function myReport()
     {
         $currUser = Auth::user();
-        $reports = Report::where('user_id', $currUser->id)->orderBy('isUrgent', 'desc') // Urgent reports first
-                     ->orderBy('created_at', 'desc') // Further order by creation date
-                     ->paginate(10); // Adjust pagination as needed
+        $currUser_id = $currUser->id;
+        // $reports = Report::where('user_id', $currUser->id)->orderBy('isUrgent', 'desc') 
+        //              ->orderBy('created_at', 'desc') 
+        //              ->paginate(10); 
+
+        $reports = Report::sortable()->where(function ($query) use ($currUser_id) {
+                    $query->where('user_id', $currUser_id);
+                    })->orderBy('isUrgent', 'desc')->orderBy('created_at', 'desc')->paginate(10);
+        
         $data = [
             'reports' => $reports,
         ];
@@ -72,6 +79,8 @@ class ReportController extends Controller
         }
 
         $filterTitle = null;
+        Session::put('selected_status', "Semua status");
+        Session::put('selected_category', "Semua kategori");
 
         return view('report.adminHeadmasterStaff.manageReport', compact('reports', 'categories', 'filterTitle'));
     }
@@ -88,6 +97,8 @@ class ReportController extends Controller
             'categoryNow' => $category->id,
             'categories' => $categories
         ];
+
+        Session::put('selected_category', $category->name);
         
         return view('report.adminHeadmasterStaff.manageReport', $data);
     }
@@ -114,10 +125,10 @@ class ReportController extends Controller
 
         $data = [
             'reports' => $reports,
-            'filterTitle' => $status,
             'statusNow' => $status,
         ];
 
+        Session::put('selected_status', $status);
         return view('report.adminHeadmasterStaff.manageReport', $data);
     }
 
@@ -207,6 +218,7 @@ class ReportController extends Controller
             'approvalBy'=> null,
             'lastUpdatedBy'=> null,
             'status' => "Freshly submitted",
+            'rejectReason' => null,
             'deletedBy' => null,
             'deleteReason' => null,
         ]);
@@ -293,6 +305,7 @@ class ReportController extends Controller
                 'approvalBy'=> null,
                 'lastUpdatedBy'=> null,
                 'status' => "Freshly submitted",
+                'rejectReason' => null,
                 'deletedBy' => null,
                 'deleteReason' => null,
             ]);
@@ -484,6 +497,7 @@ class ReportController extends Controller
 
         $report->update([
             'status' => "Rejected",
+            'rejectReason' => $request->rejectReason,
             'approvalBy' => $currUser->name
         ]);
 
@@ -563,23 +577,36 @@ class ReportController extends Controller
         $report = Report::find($request->id);
         $currUser = Auth::user();
 
-        $rules = [
-          'processEstimationDate' => 'required|date|after_or_equal:today'
-        ];
+        // $rules = [
+        //   'processEstimationDate' => 'required|date|after_or_equal:today'
+        // ];
 
-        $messages = [
-            'processEstimationDate.required' => 'Jangan lupa masukin tanggal estimasinya yaa', 
-            'processEstimationDate.date' => 'Yuk masukin tanggal estimasi dengan format yang benar',
-            'processEstimationDate.after_or_equal' => 'Tanggal estimasi harus sama dengan atau setelah hari ini',
-        ];
+        // $messages = [
+        //     'processEstimationDate.required' => 'Jangan lupa masukin tanggal estimasinya yaa', 
+        //     'processEstimationDate.date' => 'Yuk masukin tanggal estimasi dengan format yang benar',
+        //     'processEstimationDate.after_or_equal' => 'Tanggal estimasi harus sama dengan atau setelah hari ini',
+        // ];
 
-        $validator = Validator::make($request->all(), $rules, $messages);
+        // $validator = Validator::make($request->all(), $rules, $messages);
     
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)
-            ->withInput()
-            ->with('openModal', true)
-            ->with('reportId', $report->id);
+        // if ($validator->fails()) {
+        //     return redirect()->back()->withErrors($validator)
+        //     ->withInput()
+        //     ->with('openModal', true)
+        //     ->with('reportId', $report->id);
+        // }
+
+        if($request->priority == 1){
+            $reportCreatedAt = $report->created_at->add(new DateInterval('P3D'));
+            $processEstimationDate = $reportCreatedAt->format('Y-m-d');
+        }
+        else if($request->priority == 2){
+            $reportCreatedAt = $report->created_at->add(new DateInterval('P7D'));
+            $processEstimationDate = $reportCreatedAt->format('Y-m-d');
+        }
+        else if($request->priority == 3){
+            $reportCreatedAt = $report->created_at->add(new DateInterval('P10D'));
+            $processEstimationDate = $reportCreatedAt->format('Y-m-d');
         }
 
         $report->update([
@@ -588,7 +615,7 @@ class ReportController extends Controller
             'processedBy' => $currUser->id,
             'lastUpdatedBy' => $currUser->name,
             'processDate' => now(),
-            'processEstimationDate' => $request->processEstimationDate
+            'processEstimationDate' => $processEstimationDate
         ]);
 
         $reportData = [

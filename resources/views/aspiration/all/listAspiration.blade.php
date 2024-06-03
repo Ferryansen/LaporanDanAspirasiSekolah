@@ -316,7 +316,7 @@
                               </div>
                               @elseif (in_array($aspiration->status, ['In Progress', 'Monitoring']))
                               <div class="col-9 col-md-3">
-                                    <span class="labelInProg" >Sedang diproses</span>
+                                    <span class="labelInProg" >Sedang ditindaklanjuti</span>
                               </div>
                               @endif
                             <div class="post-header">
@@ -521,7 +521,7 @@
                               </div>
                               @elseif (in_array($aspiration->status, ['In Progress', 'Monitoring']))
                               <div class="col-9 col-md-3">
-                                    <span class="labelInProg" >Sedang diproses</span>
+                                    <span class="labelInProg" >Sedang ditindaklanjuti</span>
                               </div>
                               @endif
                             <div class="post-header">

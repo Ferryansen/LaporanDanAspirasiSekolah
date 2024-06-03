@@ -136,7 +136,7 @@
                                     </th>
                                     <th scope="col">Nama</th>
                                     <th scope="col">Tanggal Bergabung</th>
-                                    <th scope="col"></th>
+                                    <th scope="col" style="text-align: right">Detail</th>
                                 </tr>
                                 </thead>
                                 <tbody>

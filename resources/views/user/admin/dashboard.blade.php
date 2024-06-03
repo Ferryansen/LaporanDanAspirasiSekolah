@@ -299,7 +299,7 @@
                         @elseif ($report->status == "In review to headmaster")
                           <td>Menunggu persetujuan dari atasan</td>
                         @elseif ($report->status == "In Progress")
-                          <td>Sedang diproses</td>
+                          <td>Sedang ditindaklanjuti</td>
                         @elseif ($report->status == "Monitoring process")
                           <td>Dalam pemantauan</td>
                         @elseif ($report->status == "Completed")
@@ -403,7 +403,7 @@
                           @elseif ($aspiration->status == 'Rejected')
                           <td>Ditolak</td>
                           @elseif ($aspiration->status == 'In Progress')
-                          <td>Sedang diproses</td>
+                          <td>Sedang ditindaklanjuti</td>
                           @elseif ($aspiration->status == 'Monitoring')
                           <td>Dalam pemantauan</td>
                           @elseif ($aspiration->status == 'Completed')
@@ -729,7 +729,7 @@
       'Sedang ditinjau',
       'Menunggu persetujuan',
       'Disetujui',
-      'Sedang diproses',
+      'Sedang ditindaklanjuti',
       'Dalam pemantauan',
       'Selesai',
       'Ditolak',

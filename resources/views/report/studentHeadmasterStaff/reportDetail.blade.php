@@ -34,7 +34,7 @@ Detail Laporan
 
 <div class="row">
     @if (Auth::user()->role == "staff")
-        @if ($report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
+        @if ($report->status == "In review by staff" || $report->status == "In review to headmaster" ||$report->status == "Approved" || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
           <div class="col-3 col-md-1" align="start">
             <a href="{{ $link }}"><button type="button" id="chat-btn" class="btn btn-primary">Chat</button></a>
           </div>
@@ -55,15 +55,48 @@ Detail Laporan
                 </form>
             </div>
             <div class="col-3 col-md-1" align="end">
-                <form action="{{ route('staff.rejectReport', $report->id) }}" method="POST">
-                @csrf
-                @method('PATCH')
-                    <button type="submit" class="btn btn-danger">Reject</button>
-                </form>
+                <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#rejectReportModal_" . $report->id}}">Reject</button>
+                {{-- Modal --}}
+                <div class="modal fade" id="{{"rejectReportModal_" . $report->id}}" tabindex="-1">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" style="font-weight: 700">Masukkan alasan penolakan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <form id="proof-form" action="{{ route('staff.rejectReport', $report->id) }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                          <div class="modal-body">
+                            {{-- <div class="col-sm-12">
+                              <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
+                              @error('processEstimationDate')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                              @enderror
+                            </div> --}}
+
+                            {{-- <br> --}}
+                            
+                            <div class="col-sm-12">
+                              <textarea class="form-control" style="height: 100px" required name="rejectReason"></textarea>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button id="sub-btn-proof" type="submit" class="btn btn-primary">
+                              <span id="sub-text">Simpan</span>
+                              <span id="load-animation" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+                              <span id="load-text" style="display: none">Loading...</span>
+                            </button>
+                          </div>
+                      </form>
+                    </div>
+                  </div>
+                </div><!-- End Vertically centered Modal-->
             </div>
 
         @elseif ($report->status == "In review by staff")
-          <div class="col-6 col-md-11" align="end">
+          <div class="col-6 col-md-10" align="end">
             <form action="{{ route('headmaster.reviewReport', $report->id) }}" method="POST">
             @csrf
             @method('PATCH')
@@ -71,17 +104,58 @@ Detail Laporan
             </form>
           </div>
 
-          <div class="col-3 col-md-1" align="end">
+          {{-- <div class="col-3 col-md-1" align="end">
             <form action="{{ route('staff.approveReport', $report->id) }}" method="POST">
             @csrf
             @method('PATCH')
                 <button type="submit" class="btn btn-success">Approve</button>
             </form>
+          </div> --}}
+
+          <div class="col-3 col-md-1" align="end">
+            <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#rejectReportModal_" . $report->id}}">Reject</button>
+            {{-- Modal --}}
+            <div class="modal fade" id="{{"rejectReportModal_" . $report->id}}" tabindex="-1">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" style="font-weight: 700">Masukkan alasan penolakan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <form id="proof-form" action="{{ route('staff.rejectReport', $report->id) }}" method="POST">
+                    @csrf
+                    @method('PATCH')
+                      <div class="modal-body">
+                        {{-- <div class="col-sm-12">
+                          <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
+                          @error('processEstimationDate')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                          @enderror
+                        </div> --}}
+
+                        {{-- <br> --}}
+                        
+                        <div class="col-sm-12">
+                          <textarea class="form-control" style="height: 100px" required name="rejectReason"></textarea>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button id="sub-btn-proof" type="submit" class="btn btn-primary">
+                          <span id="sub-text">Simpan</span>
+                          <span id="load-animation" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+                          <span id="load-text" style="display: none">Loading...</span>
+                        </button>
+                      </div>
+                  </form>
+                </div>
+              </div>
+            </div><!-- End Vertically centered Modal-->
           </div>
 
         @endif
         @if ($report->status == "Approved")
-            <div class="col-3 col-md-12" align="end">
+            <div class="col-3 col-md-11" align="end">
               <button type="submit" class="btn btn-success" data-bs-toggle="modal" data-bs-target="{{"#processReportModal_" . $report->id}}">Mulai Proses</button>
               {{-- Modal --}}
               <div class="modal fade" id="{{"processReportModal_" . $report->id}}" tabindex="-1">
@@ -95,14 +169,14 @@ Detail Laporan
                       @csrf
                       @method('PATCH')
                         <div class="modal-body">
-                          <div class="col-sm-12">
+                          {{-- <div class="col-sm-12">
                             <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
                             @error('processEstimationDate')
                               <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                          </div>
+                          </div> --}}
 
-                          <br>
+                          {{-- <br> --}}
                           
                           <div class="col-sm-12">
                             <select class="form-select" aria-label="Default select example" required name="priority">
@@ -198,11 +272,44 @@ Detail Laporan
                 </form>
             </div>
             <div class="col-3 col-md-1" align="end">
-                <form action="{{ route('headmaster.rejectReport', $report->id) }}" method="POST">
-                @csrf
-                @method('PATCH')
-                    <button type="submit" class="btn btn-danger">Reject</button>
-                </form>
+              <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#rejectReportModal_" . $report->id}}">Reject</button>
+              {{-- Modal --}}
+              <div class="modal fade" id="{{"rejectReportModal_" . $report->id}}" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" style="font-weight: 700">Masukkan alasan penolakan</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="proof-form" action="{{ route('staff.rejectReport', $report->id) }}" method="POST">
+                      @csrf
+                      @method('PATCH')
+                        <div class="modal-body">
+                          {{-- <div class="col-sm-12">
+                            <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
+                            @error('processEstimationDate')
+                              <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                          </div> --}}
+
+                          {{-- <br> --}}
+                          
+                          <div class="col-sm-12">
+                            <textarea class="form-control" style="height: 100px" required name="rejectReason"></textarea>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                          <button id="sub-btn-proof" type="submit" class="btn btn-primary">
+                            <span id="sub-text">Simpan</span>
+                            <span id="load-animation" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+                            <span id="load-text" style="display: none">Loading...</span>
+                          </button>
+                        </div>
+                    </form>
+                  </div>
+                </div>
+              </div><!-- End Vertically centered Modal-->
             </div>
         @endif
     @endif
@@ -224,7 +331,7 @@ Detail Laporan
                   Ditangani oleh: {{$report->processExecutor->name}}
                 </div>
                 <div class="reportEstimation" style="color: black">
-                  Estimasi: {{ \Carbon\Carbon::parse($report->created_at)->format('d F Y') }}
+                  Estimasi selesai: {{ \Carbon\Carbon::parse($report->processEstimationDate)->format('d F Y') }}
                 </div>
               </div>
             </div>
@@ -267,6 +374,8 @@ Detail Laporan
     @if ($report->status == "Rejected")
       <br>
       <h3 style="color: #dc3545; font-weight: bold">Maaf, Laporan Anda Ditolak</h3>
+      <br>
+      <p><strong>Alasan penolakan:</strong> <br> <span>{{ $report->rejectReason }}</span></p>
     @else 
       {{-- Laporan di terima (Progress Bar) --}}
       <div class="progress-bar">
@@ -289,17 +398,17 @@ Detail Laporan
           </li>
 
           <li>
-            <i class="icon uil uil-eye"></i>
+            <i class="icon uil uil-search"></i>
             @if ($report->status == "In review by staff" || $report->status == "In review to headmaster" || $report->status == "Approved" 
             || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
               <div class="progressing two active">
                 <p>2</p>
-                <i class="uil uil-eye"></i>
+                <i class="uil uil-search"></i>
               </div>
             @else
               <div class="progressing two">
                 <p>2</p>
-                <i class="uil uil-eye"></i>
+                <i class="uil uil-search"></i>
               </div>
             @endif
             <p class="text">Sedang ditinjau</p>
@@ -335,7 +444,7 @@ Detail Laporan
                 <i class="uil uil-check"></i>
               </div>
             @endif
-            <p class="text">Sedang diproses</p>
+            <p class="text">Sedang ditindaklanjuti</p>
           </li>
   
           <li>
@@ -360,7 +469,7 @@ Detail Laporan
 
     <br>
 
-    @if ($report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
+    @if ($report->status == "In review by staff" || $report->status == "In review to headmaster" ||$report->status == "Approved" || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
       <a href="{{ $link }}"><button style="margin-bottom: 2rem" type="button" class="btn btn-primary">Chat</button></a>
     @endif
 
@@ -418,7 +527,7 @@ Detail Laporan
                   Ditangani oleh: {{$report->processExecutor->name}}
                 </div>
                 <div class="reportEstimation" style="color: black">
-                  Estimasi: {{ \Carbon\Carbon::parse($report->processEstimationDate)->format('d/m/y') }}
+                  Estimasi selesai: {{ \Carbon\Carbon::parse($report->processEstimationDate)->format('d F Y') }}
                 </div>
               </div>
             </div>

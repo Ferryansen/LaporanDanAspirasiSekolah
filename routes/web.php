@@ -125,7 +125,7 @@ Route::middleware(['isheadandstaff'])->group(function () {
     
     Route::prefix('/report')->group(function(){
         Route::patch('/requestApproval/{id}', [ReportController::class, 'requestApprovalReport'])->name('staff.requestApprovalReport');
-        Route::patch('/staffApprove/{id}', [ReportController::class, 'approveReport'])->name('staff.approveReport');
+        // Route::patch('/staffApprove/{id}', [ReportController::class, 'approveReport'])->name('staff.approveReport');
         Route::patch('/staffReject/{id}', [ReportController::class, 'rejectReport'])->name('staff.rejectReport');
         Route::patch('/headApprove/{id}', [ReportController::class, 'approveReport'])->name('headmaster.approveReport');
         Route::patch('/headReject/{id}', [ReportController::class, 'rejectReport'])->name('headmaster.rejectReport');
