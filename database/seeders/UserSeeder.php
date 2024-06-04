@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
                     'updated_at' => \Carbon\Carbon::now()
                 ],
                 [
-                    'staffType_id' => null,
+                    'staffType_id' => 1,
                     'userNo' => 'USR000002',
                     'name' => 'John Antonius McStaffin',
                     'email' => 'staff@example.com',
@@ -41,7 +41,7 @@ class UserSeeder extends Seeder
                     'phoneNumber' => '08123457689',
                     'birthDate' => Carbon::create('2000', '01', '01'),
                     'gender' => 'Male',
-                    'role' => 'student',
+                    'role' => 'staff',
                     'isSuspended' => false,
                     'suspendReason' => '',
                     'created_at' => \Carbon\Carbon::now(),

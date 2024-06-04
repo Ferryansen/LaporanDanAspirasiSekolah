@@ -69,6 +69,30 @@
             cursor: pointer;
             background-color: #e7f1ff
         }
+
+        .event-status-selesai {
+            background-color: #198754 !important;
+            color: white !important;
+            border-color: green !important;
+        }
+
+        .event-status-sedang-dimulai {
+            background-color: #FFC107 !important; 
+            color: black !important;
+            border-color: yellow !important;
+        }
+
+        .event-status-menunggu {
+            background-color: #D9DADB !important;
+            color: black !important;
+            border-color: yellow !important;
+        }
+
+        .event-status-dibatalkan {
+            background-color: #BB2D3B !important; 
+            color: white !important;
+            border-color: red !important;
+        }
     </style>
 @endsection
 
@@ -107,10 +131,21 @@
                     window.location.href = url;
                 },
                 eventDidMount: function(info) {
+                    var title = info.event.title;
                     var status = info.event.extendedProps.status;
+                    var tooltip = `Judul: ${title}\nStatus: ${status}`;
 
-                    var tooltip = `Status: ${status}`;
                     info.el.setAttribute('title', tooltip);
+
+                    if (status === 'Selesai') {
+                        info.el.classList.add('event-status-selesai');
+                    } else if (status === 'Sedang dimulai') {
+                        info.el.classList.add('event-status-sedang-dimulai');
+                    } else if ((status === 'Belum dimulai' || status === 'Pindah jadwal')) {
+                        info.el.classList.add('event-status-menunggu');
+                    } else if (status === 'Dibatalkan') {
+                        info.el.classList.add('event-status-dibatalkan');
+                    }
                 }
             });
 
