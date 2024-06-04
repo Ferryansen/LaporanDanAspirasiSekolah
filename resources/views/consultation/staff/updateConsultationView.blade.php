@@ -43,10 +43,31 @@
             </div>
         </div>
 
+        <fieldset class="row mb-3 @error('consultationVisibility') is-invalid @enderror">
+            <legend class="col-form-label col-sm-2 pt-0">Visibilitas</legend>
+            <div class="col-sm-10">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="consultationVisibility" id="publicConsultation" value="public" {{ old('consultationVisibility') != null ? (old('consultationVisibility') == 'public' ? 'checked' : '') : ($event->is_private == '0' ? 'checked' : '') }} required>
+                    <label class="form-check-label" for="publicConsultation">
+                        Publik
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="consultationVisibility" id="privateConsultation" value="private" {{ old('consultationVisibility') != null ? (old('consultationVisibility') == 'private' ? 'checked' : '') : ($event->is_private == '1' ? 'checked' : '') }} required>
+                    <label class="form-check-label" for="privateConsultation">
+                        Tersembunyi
+                    </label>
+                </div>
+            </div>
+            @error('consultationVisibility')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </fieldset>
+
         <div class="row mb-3">
             <label for="attendeeLimit" class="col-sm-2 col-form-label">Limit Peserta</label>
             <div class="col-sm-10">
-                <input type="number" class="form-control @error('attendeeLimit') is-invalid @enderror" name="attendeeLimit" value="{{ old('attendeeLimit') != null ? old('attendeeLimit') : $event->attendeeLimit }}" min="1" required>
+                <input type="number" class="form-control @error('attendeeLimit') is-invalid @enderror" name="attendeeLimit" value="{{ old('attendeeLimit') != null ? old('attendeeLimit') : $event->attendeeLimit }}" min="{{ count($event->attendees) > 1 ? count($event->attendees) : '1' }}" required>
                 @error('attendeeLimit')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -144,6 +165,18 @@
                 display: inline-block;
                 text-align: center
             }
+        }
+
+        .form-control.attendees + .select2-container--default .select2-selection--multiple {
+            border-color: #ced4da;
+        }
+
+        .form-control.attendees + .select2-container--default .select2-selection--multiple:focus {
+            border-color: #86b7fe; 
+        }
+
+        .form-control.attendees + .select2-container--default .select2-dropdown {
+            border-color: #ced4da;
         }
     </style>
 @endsection
