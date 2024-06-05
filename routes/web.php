@@ -62,7 +62,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/clear-session-data', [CommentController::class, 'clearSessionData'])->name('clear-session-data');
     Route::get('/clear-loading', [CommentController::class, 'clearLoading'])->name('clear-loading');
     Route::post('/openChat', [ReportController::class, 'openChatNotification'])->name('openChat.notif');
-    Route::get('/consultation/detail/{consultation_id}', [ConsultationEventController::class, 'consultationDetail'])->name('consultation.detail');
 });
 
 Route::middleware(['isschool'])->group(function () {
@@ -217,7 +216,7 @@ Route::middleware(['isstaff'])->group(function() {
 });
 
 Route::middleware(['isstaffandstudent'])->group(function() {
-
+    Route::get('/consultation/detail/{consultation_id}', [ConsultationEventController::class, 'consultationDetail'])->name('consultation.detail');
 });
 
 
