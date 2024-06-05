@@ -94,7 +94,7 @@
                                         <td>Dibatalkan</td>
                                     @elseif ($report->status == "Freshly submitted")
                                         <td>Terkirim</td>
-                                    @elseif ($report->status == "In review by staff" || $report->status == "In review to headmaster")
+                                    @elseif ($report->status == "In review by staff" || $report->status == "Request Approval")
                                         <td>Sedang ditinjau</td>
                                     @elseif ($report->status == "In Progress" || $report->status == "Monitoring process")
                                         <td>Sedang ditindaklanjuti</td>

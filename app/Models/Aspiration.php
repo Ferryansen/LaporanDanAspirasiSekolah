@@ -28,6 +28,7 @@ class Aspiration extends Model
         'problematicAspirationCount',
         'isPinned',
         'isChatOpened',
+        'rejectReason'
     ];
 
     public function user() {

@@ -62,7 +62,7 @@
                   <option value="{{ route('report.adminHeadmasterStaff.manageReport') }}" {{ $selectedStatus == 'Semua status' ? 'selected' : '' }}>Semua status</option>
                   <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Freshly submitted']) }}" {{ $selectedStatus == 'Freshly submitted' ? 'selected' : '' }}>Terkirim</option>
                   <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'In review by staff']) }}" {{ $selectedStatus == 'In review by staff' ? 'selected' : '' }}>Sedang ditinjau</option>
-                  <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'In review to headmaster']) }}" {{ $selectedStatus == 'In review to headmaster' ? 'selected' : '' }}>Menunggu persetujuan dari atasan</option>
+                  <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Request Approval']) }}" {{ $selectedStatus == 'Request Approval' ? 'selected' : '' }}>Menunggu persetujuan dari atasan</option>
                   <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Approved']) }}" {{ $selectedStatus == 'Approved' ? 'selected' : '' }}>Disetujui</option>
                   <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Rejected']) }}" {{ $selectedStatus == 'Rejected' ? 'selected' : '' }}>Ditolak</option>
                   <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Cancelled']) }}" {{ $selectedStatus == 'Cancelled' ? 'selected' : '' }}>Dibatalkan</option>
@@ -162,7 +162,7 @@
                           <td>Terkirim</td>
                         @elseif ($report->status == "In review by staff")
                           <td>Sedang ditinjau oleh {{ $report->lastUpdatedBy }}</td>
-                        @elseif ($report->status == "In review to headmaster")
+                        @elseif ($report->status == "Request Approval")
                           <td>Menunggu persetujuan dari atasan oleh {{ $report->lastUpdatedBy }}</td>
                         @elseif ($report->status == "In Progress")
                           <td>Sedang ditindaklanjuti oleh {{ $report->lastUpdatedBy }}</td>

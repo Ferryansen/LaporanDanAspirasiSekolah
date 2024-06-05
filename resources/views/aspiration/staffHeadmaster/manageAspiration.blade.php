@@ -32,25 +32,28 @@
         <div class="card-body">
         <br>
           <!-- Table with stripped rows -->
-         <div class="table-container" style="overflow-x:auto; max-width: 100%">
+         <div class="table-container" style="overflow-x:auto; max-width: 100%;">
           <table class="table" style="overflow-x:auto">
           @if (Auth::user()->role == "headmaster")
           <div class="col-auto d-flex align-items-center col-7 col-md-3" style="margin-top: 0.5rem">
-          <select class="form-select" aria-label="Default select example" name="categoryStaffType" required onchange="window.location.href=this.value;">
-            <option selected disabled>Pilih Kategori</option>
-            @foreach ($categories as $category)
-                @if (strpos($category->name, 'Lainnya') === false)
-                    <option value="{{ route('aspirations.viewFilterCategory', ['category_id' => $category->id]) }}" {{ $category->id == $selectedCategoryId ? 'selected' : '' }}>{{ $category->name }}</option>
-                @endif
-            @endforeach
-            @foreach ($categories as $category)
-                @if (strpos($category->name, 'Lainnya') !== false)
-                    <option value="{{ route('aspirations.viewFilterCategory', ['category_id' => $category->id]) }}" {{ $category->id == $selectedCategoryId ? 'selected' : '' }}>{{ $category->name }}</option>
-                @endif
-            @endforeach
-        </select>
-              </div>
-              <br>
+            <select class="form-select" aria-label="Default select example" name="categoryStaffType" required onchange="window.location.href=this.value;">
+                @php
+                    $selectedCategory = session('selected_category', 'Semua kategori');
+                @endphp
+                <option value="{{ route('aspirations.manageAspiration') }}" {{ $selectedCategory == 'Semua kategori' ? 'selected' : '' }}>Semua kategori</option>
+                @foreach ($categories as $category)
+                    @if (strpos($category->name, 'Lainnya') === false)
+                        <option value="{{ route('aspirations.viewFilterCategory', ['category_id' => $category->id]) }}" {{ $category->id == $selectedCategoryId ? 'selected' : '' }}>{{ $category->name }}</option>
+                    @endif
+                @endforeach
+                @foreach ($categories as $category)
+                    @if (strpos($category->name, 'Lainnya') !== false)
+                        <option value="{{ route('aspirations.viewFilterCategory', ['category_id' => $category->id]) }}" {{ $category->id == $selectedCategoryId ? 'selected' : '' }}>{{ $category->name }}</option>
+                    @endif
+                @endforeach
+            </select>
+          </div>
+            <br>
             @endif
           
             <thead>
@@ -64,6 +67,21 @@
                 </tr>
             </thead>
                 <tbody>
+                    @php
+                        $count = 0;
+                    @endphp
+                    @foreach($aspirations as $aspiration)
+                        @if($aspiration->status != 'Freshly submitted')
+                            @php
+                                $count++;
+                            @endphp
+                        @endif
+                    @endforeach
+                    @if ($count == 0)
+                        <tr>
+                            <td class="container" colspan="4" style="color: dimgray;">Belum ada aspirasi yang dikelola</td>
+                        </tr>
+                    @endif
                   @foreach($aspirations as $aspiration)
                     @if ($aspiration->status != 'Freshly submitted')
                         <tr style="vertical-align: middle">
