@@ -2,9 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\DailyConsultationConfirmationStaffNotificationEmail;
 use App\Models\ConsultationEvent;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
 
 class CreateDailyConsultation extends Command
 {
@@ -43,6 +46,12 @@ class CreateDailyConsultation extends Command
                 ];
                 ConsultationEvent::create($credentials);
             }
+        }
+
+        $staffs = User::where('role', 'LIKE', 'staff')->get();
+
+        foreach ($staffs as $staff) {
+            Mail::to($staff->email)->send(new DailyConsultationConfirmationStaffNotificationEmail($staff->name));
         }
 
         $this->info('Consultations scheduled successfully.');

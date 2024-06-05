@@ -24,7 +24,7 @@ class ApprovalReportStaffNotificationEmail extends Mailable
     public function build()
     {
         return $this->view('emails.staff.reportApprovalNotification')
-                    ->subject('Approval Proses Laporan "' . $this->reportData['title'] . '" Berhasil!')
+                    ->subject('Tindak Lanjut Laporan "' . $this->reportData['title'] . '" Disetujui!')
                     ->with([
                         'receiverName' => $this->receiverName,
                         'reportData' => $this->reportData]

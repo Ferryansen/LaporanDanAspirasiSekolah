@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\CancelledConsultationStudentNotificationEmail;
+use App\Mail\InvitationConsultationStudentNotificationEmail;
 use App\Mail\RegisteredConsultationStudentNotificationEmail;
 use App\Mail\UpdateInfoConsultationStudentNotificationEmail;
 use App\Models\ConsultationEvent;
@@ -310,7 +311,24 @@ class ConsultationEventController extends Controller
         }
 
         
-        ConsultationEvent::create($credentials);
+        $event = ConsultationEvent::create($credentials);
+
+        if ($request->attendees != null) {
+            $consultationData = [
+                'ID' => $event->id,
+                'title' => $event->title,
+                'date' => $event->start,
+                'endDate' => $event->end,
+                'consultant' => $event->consultBy->name,
+            ];
+
+            foreach ($request->attendees as $attendee) {
+                $currAttendee = User::findOrFail($attendee);
+
+                Mail::to($currAttendee->email)->send(new InvitationConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
+            }
+        }
+
         return redirect()->route('consultation.seeAll')->with('successMessage', 'Sesi konsultasi berhasil ditambahkan');
     }
 

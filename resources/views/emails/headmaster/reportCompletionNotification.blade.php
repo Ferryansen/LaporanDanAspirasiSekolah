@@ -1,7 +1,7 @@
 @extends('layouts.email')
 
 @section('title')
-    Proses Laporan Selesai!
+    Tindak Lanjut Laporan Selesai!
 @endsection
 
 @section('content')

@@ -1,13 +1,13 @@
 @extends('layouts.email')
 
 @section('title')
-    Request Proses Laporan
+    Request Tindak Lanjut Laporan
 @endsection
 
 @section('content')
     <p>Halo <b>{{ $receiverName }}</b>,</p>
     <p>
-        Ada request proses laporan baru nih yang butuh approval kamu.
+        Ada request tindak lanjut laporan baru nih yang butuh persetujuan kamu.
     </p>
     <p>
         <table>
