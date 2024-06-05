@@ -315,19 +315,22 @@
 
               <div class="row">
                 <div class="col-7 col-md-3">
-                <select class="form-select" aria-label="Default select example" name="categoryStaffType" required onchange="window.location.href=this.value;">
-                  <option disabled selected value>Pilih Kategori</option>
-                  @foreach ($categories as $category)
-                      @if (strpos($category->name, 'Lainnya') === false)
-                          <option value="{{ route('aspirations.publicAspirationsCategory', ['category_id' => $category->id]) }}" {{ $selectedCategoryId == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                      @endif
-                  @endforeach
-                  @foreach ($categories as $category)
-                      @if (strpos($category->name, 'Lainnya') !== false)
-                          <option value="{{ route('aspirations.publicAspirationsCategory', ['category_id' => $category->id]) }}" {{ $selectedCategoryId == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                      @endif
-                  @endforeach
-              </select>
+                  <select class="form-select" aria-label="Default select example" name="categoryStaffType" required onchange="window.location.href=this.value;">
+                    @php
+                        $selectedCategory = session('selected_category', 'Semua kategori');
+                    @endphp
+                    <option value="{{ route('aspirations.publicAspirations') }}" {{ $selectedCategory == 'Semua kategori' ? 'selected' : '' }}>Semua kategori</option>
+                    @foreach ($categories as $category)
+                        @if (strpos($category->name, 'Lainnya') === false)
+                            <option value="{{ route('aspirations.publicAspirationsCategory', ['category_id' => $category->id]) }}" {{ $category->id == $selectedCategoryId ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endif
+                    @endforeach
+                    @foreach ($categories as $category)
+                        @if (strpos($category->name, 'Lainnya') !== false)
+                            <option value="{{ route('aspirations.publicAspirationsCategory', ['category_id' => $category->id]) }}" {{ $category->id == $selectedCategoryId ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endif
+                    @endforeach
+                  </select>
                 </div>
                 @if (Auth::user()->role == "student")
                 <div class="col-5 col-md-9 d-flex justify-content-end align-items-center">
@@ -342,10 +345,15 @@
               <!-- Table with stripped rows -->
               <table class="table">
                   <tbody>
-                  <div class="d-grid gap-2 d-md-block d-flex" style="margin-bottom: 20px">
-                                <a href="{{ route('aspirations.publicAspirations.sorting', ['typeSorting' => 'Paling Disukai']) }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'Paling Disukai' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'Paling Disukai' ? '#fff' : '#8F8F8F' }}; border: 1; border-color: #8F8F8F; border-radius: 20px;">Paling Disukai</a>
-                                <a href="{{ route('aspirations.publicAspirations.sorting', ['typeSorting' => 'Terpopuler']) }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'Terpopuler' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'Terpopuler' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px;">Terpopuler</a>
-                            </div>
+                    <div class="d-grid gap-2 d-md-block d-flex" style="margin-bottom: 20px">
+                        <a href="{{ $typeSorting !== 'Paling Disukai' ? route('aspirations.publicAspirations.sorting', ['typeSorting' => 'Paling Disukai']) : route('aspirations.publicAspirations') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'Paling Disukai' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'Paling Disukai' ? '#fff' : '#8F8F8F' }}; border: 1; border-color: #8F8F8F; border-radius: 20px;">Paling Disukai</a>
+                        <a href="{{ $typeSorting !== 'Terpopuler' ? route('aspirations.publicAspirations.sorting', ['typeSorting' => 'Terpopuler']) : route('aspirations.publicAspirations') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'Terpopuler' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'Terpopuler' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px;">Terpopuler</a>
+                    </div>
+                  
+                  {{-- <div class="d-grid gap-2 d-md-block d-flex" style="margin-bottom: 20px">
+                    <a href="{{ route('aspirations.publicAspirations.sorting', ['typeSorting' => $typeSorting === 'Paling Disukai' ? null : 'Paling Disukai']) }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'Paling Disukai' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'Paling Disukai' ? '#fff' : '#8F8F8F' }}; border: 1; border-color: #8F8F8F; border-radius: 20px;">Paling Disukai</a>
+                    <a href="{{ route('aspirations.publicAspirations.sorting', ['typeSorting' => $typeSorting === 'Terpopuler' ? null : 'Terpopuler']) }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'Terpopuler' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'Terpopuler' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px;">Terpopuler</a>
+                </div> --}}
                     @if ($aspirations->count() == 0)
                     <div class="container">
                         <span style="color: dimgray">Belum ada aspirasi</span>

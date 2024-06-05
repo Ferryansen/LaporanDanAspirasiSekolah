@@ -34,7 +34,7 @@ Detail Laporan
 
 <div class="row">
     @if (Auth::user()->role == "staff")
-        @if ($report->status == "In review by staff" || $report->status == "In review to headmaster" ||$report->status == "Approved" || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
+        @if ($report->status == "In review by staff" || $report->status == "Request Approval" ||$report->status == "Approved" || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
           <div class="col-3 col-md-1" align="start">
             <a href="{{ $link }}"><button type="button" id="chat-btn" class="btn btn-primary">Chat</button></a>
           </div>
@@ -156,49 +156,58 @@ Detail Laporan
         @endif
         @if ($report->status == "Approved")
             <div class="col-3 col-md-11" align="end">
-              <button type="submit" class="btn btn-success" data-bs-toggle="modal" data-bs-target="{{"#processReportModal_" . $report->id}}">Mulai Proses</button>
-              {{-- Modal --}}
-              <div class="modal fade" id="{{"processReportModal_" . $report->id}}" tabindex="-1">
-                <div class="modal-dialog modal-dialog-centered">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" style="font-weight: 700">Masukkan tanggal estimasi dan prioritas</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form id="proof-form" action="{{ route('processReport', $report->id) }}" method="POST">
-                      @csrf
-                      @method('PATCH')
-                        <div class="modal-body">
-                          {{-- <div class="col-sm-12">
-                            <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
-                            @error('processEstimationDate')
-                              <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                          </div> --}}
+              @if($report->isUrgent == false)
+                <button type="submit" class="btn btn-success" data-bs-toggle="modal" data-bs-target="{{"#processReportModal_" . $report->id}}">Mulai Proses</button>
+                  {{-- Modal --}}
+                  <div class="modal fade" id="{{"processReportModal_" . $report->id}}" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" style="font-weight: 700">Masukkan tanggal estimasi dan prioritas</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form id="proof-form" action="{{ route('processReport', $report->id) }}" method="POST">
+                          @csrf
+                          @method('PATCH')
+                            <div class="modal-body">
+                              {{-- <div class="col-sm-12">
+                                <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
+                                @error('processEstimationDate')
+                                  <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                              </div> --}}
 
-                          {{-- <br> --}}
-                          
-                          <div class="col-sm-12">
-                            <select class="form-select" aria-label="Default select example" required name="priority">
-                              <option selected disabled value>Pilih Prioritas</option>
-                              <option value="1">High</option>
-                              <option value="2">Medium</option>
-                              <option value="3">Low</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                          <button id="sub-btn-proof" type="submit" class="btn btn-primary">
-                            <span id="sub-text">Simpan</span>
-                            <span id="load-animation" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
-                            <span id="load-text" style="display: none">Loading...</span>
-                          </button>
-                        </div>
-                    </form>
-                  </div>
-                </div>
-              </div><!-- End Vertically centered Modal-->
+                              {{-- <br> --}}
+                              
+                              <div class="col-sm-12">
+                                <select class="form-select" aria-label="Default select example" required name="priority">
+                                  <option selected disabled value>Pilih Prioritas</option>
+                                  <option value="1">High</option>
+                                  <option value="2">Medium</option>
+                                  <option value="3">Low</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                              <button id="sub-btn-proof" type="submit" class="btn btn-primary">
+                                <span id="sub-text">Simpan</span>
+                                <span id="load-animation" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+                                <span id="load-text" style="display: none">Loading...</span>
+                              </button>
+                            </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div><!-- End Vertically centered Modal-->
+              @else
+                <form action="{{ route('processReport', $report->id) }}" method="POST">
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" class="btn btn-success">Mulai Proses</button>
+                </form>
+              @endif
+
             </div>
 
         @elseif ($report->status == "In Progress")
@@ -263,7 +272,7 @@ Detail Laporan
         @endif
 
     @elseif (Auth::user()->role == "headmaster")
-        @if ($report->status == "In review to headmaster")
+        @if ($report->status == "Request Approval")
             <div class="col-3 col-md-11" align="end">
                 <form action="{{ route('headmaster.approveReport', $report->id) }}" method="POST">
                 @csrf
@@ -383,7 +392,7 @@ Detail Laporan
   
           <li>
             <i class="icon uil uil-clipboard-notes"></i>
-            @if ($report->status == "Freshly submitted" || $report->status == "Approved" || $report->status == "In review by staff" || $report->status == "In review to headmaster" || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
+            @if ($report->status == "Freshly submitted" || $report->status == "Approved" || $report->status == "In review by staff" || $report->status == "Request Approval" || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
               <div class="progressing one active">
                   <p>1</p>
                   <i class="uil uil-check"></i>
@@ -399,7 +408,7 @@ Detail Laporan
 
           <li>
             <i class="icon uil uil-search"></i>
-            @if ($report->status == "In review by staff" || $report->status == "In review to headmaster" || $report->status == "Approved" 
+            @if ($report->status == "In review by staff" || $report->status == "Request Approval" || $report->status == "Approved" 
             || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
               <div class="progressing two active">
                 <p>2</p>
@@ -469,7 +478,7 @@ Detail Laporan
 
     <br>
 
-    @if ($report->status == "In review by staff" || $report->status == "In review to headmaster" ||$report->status == "Approved" || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
+    @if ($report->status == "In review by staff" || $report->status == "Request Approval" ||$report->status == "Approved" || $report->status == "In Progress" || $report->status == "Monitoring process" || $report->status == "Completed")
       <a href="{{ $link }}"><button style="margin-bottom: 2rem" type="button" class="btn btn-primary">Chat</button></a>
     @endif
 

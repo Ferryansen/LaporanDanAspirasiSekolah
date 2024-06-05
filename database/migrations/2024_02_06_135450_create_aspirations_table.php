@@ -27,6 +27,7 @@ return new class extends Migration
             $table->integer('likeCount')->nullable();
             $table->integer('dislikeCount')->nullable();
             $table->integer('problematicAspirationCount')->nullable();
+            $table->string('rejectReason', 255)->nullable();
             $table->timestamps();
         });
     }
