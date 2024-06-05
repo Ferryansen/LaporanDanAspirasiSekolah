@@ -59,8 +59,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       <ul class="d-flex align-items-center">
 
         <li class="nav-item d-block d-lg-none">
-          <a class="nav-link nav-icon search-bar-toggle " href="#">
-            <i class="bi bi-search"></i>
+          <a class="nav-link nav-icon " href="#">
+            <i class="bi bi-search" id="search-input-icon"></i>
           </a>
         </li><!-- End Search Icon-->
 
@@ -416,6 +416,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
   <script src="{{ asset('template_assets/js/main.js') }}"></script>
   <script>
         document.getElementById('search-input').addEventListener('click', function () {
+            const searchModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+            searchModal.show();
+        });
+  </script>
+  <script>
+        document.getElementById('search-input-icon').addEventListener('click', function () {
             const searchModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
             searchModal.show();
         });

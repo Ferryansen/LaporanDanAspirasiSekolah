@@ -24,6 +24,8 @@ class ConsultationEvent extends Model
 
     protected $casts = [
         'attendees' => 'array',
+        'start' => 'datetime',
+        'end' => 'datetime',
     ];
 
     public function consultBy()

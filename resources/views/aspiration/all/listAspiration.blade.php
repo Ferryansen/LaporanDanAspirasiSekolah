@@ -225,6 +225,39 @@
             justify-content: center;
             align-items: center;
         }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+        }
+
+        .warn {
+            margin-top: 15px;
+            font-size: smaller;
+            color: green;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 @endsection
 
@@ -241,7 +274,7 @@
   </h1>
   <nav>
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Aspirasi</a></li>
+      <li class="breadcrumb-item"><a href="{{ route('aspirations.publicAspirations') }}">Aspirasi</a></li>
       <li class="breadcrumb-item active">
         @php
             if (Auth::user()->role == 'student' || Auth::user()->role == 'admin') {
@@ -258,6 +291,20 @@
 
 @section('sectionPage')
   @if (Auth::user()->isSuspended == false)
+
+    @if(session('loading', false))
+      <div class="loading-screen">
+          <div class="loading-spinner"></div>
+      </div>
+    @endif
+
+    @if($failMessage)
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          {{ $failMessage }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    @endif
+
     <section class="section">
       <div class="row">
         <div class="col-lg-12">
@@ -346,15 +393,20 @@
                             <div class="post-title">{{$aspiration->name}}</div>
                                 <p>{{$aspiration->description}}</p>
                             </div>
-                            @if  (in_array(Auth::user()->role, ['staff']))
-                              @if ($aspiration->status == 'Freshly submitted')
-                                <div class="col-9 col-md-3">
-                                  <form action="{{ route('aspiration.updateProcessedBy') }}" method="POST">
-                                      @csrf
-                                      <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
-                                      <button type="submit" class="btn btn-primary">Kelola aspirasi ini</button>
-                                  </form>
-                                </div>
+                            @if (in_array(Auth::user()->role, ['staff']))
+                              @if($aspiration->category->staffType_id == Auth::user()->staffType_id || strpos($aspiration->category->name, "Lainnya") !== false)
+                                @if ($aspiration->status == 'Freshly submitted')
+                                  <div class="col-9 col-md-3">
+                                    <form action="{{ route('aspiration.updateProcessedBy') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
+                                        <button type="submit" class="btn btn-primary">Kelola aspirasi ini</button>
+                                    </form>
+                                  </div>
+                                @endif
+                                @if ($aspiration->processedBy == Auth::user()->id)
+                                  <div class="warn">Anda sedang memproses aspirasi ini.</div>
+                                  @endif
                               @endif
                             @endif
                             <div class="post-footer">
@@ -549,8 +601,8 @@
                                 <p>{{$aspiration->description}}</p>
                             </div>
                             @if (in_array(Auth::user()->role, ['staff']))
-                              @if ($aspiration->status == 'Freshly submitted')
-                                @if($aspiration->category->staffType_id == Auth::user()->staffType_id || strpos($aspiration->category->name, "Lainnya") !== false)
+                              @if($aspiration->category->staffType_id == Auth::user()->staffType_id || strpos($aspiration->category->name, "Lainnya") !== false)
+                                @if ($aspiration->status == 'Freshly submitted')
                                   <div class="col-9 col-md-3">
                                     <form action="{{ route('aspiration.updateProcessedBy') }}" method="POST">
                                         @csrf
@@ -559,6 +611,9 @@
                                     </form>
                                   </div>
                                 @endif
+                                @if ($aspiration->processedBy == Auth::user()->id)
+                                  <div class="warn">Anda sedang memproses aspirasi ini.</div>
+                                  @endif
                               @endif
                             @endif
                             <div class="post-footer">
@@ -795,10 +850,13 @@ if (aspirationId && <?php echo json_encode(session('comment_popup_open', false))
     var currentlyOpenPopup = document.getElementById('popup-' + aspirationId);
     var currentlyOpenOverlay = document.getElementById('overlay-' + aspirationId);
 
-    // Display the popup and overlay
-    currentlyOpenPopup.style.display = 'block';
-    currentlyOpenOverlay.style.display = 'block';
-    document.body.style.overflow = 'hidden';
+    setTimeout(delayedPopup, 1500);
+
+    function delayedPopup() {
+      currentlyOpenPopup.style.display = 'block';
+      currentlyOpenOverlay.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
 
 
     // Select the close button and overlay within the context of currentlyOpenPopup
@@ -810,7 +868,7 @@ if (aspirationId && <?php echo json_encode(session('comment_popup_open', false))
         currentlyOpenPopup.style.display = 'none';
         currentlyOpenOverlay.style.display = 'none'; // Hide the overlay
         document.body.style.overflow = ''; // Enable scrolling on the body
-    window.location.href = "{{ route('clear-session-data') }}";
+        window.location.href = "{{ route('clear-session-data') }}";
 
         // Send AJAX request to delete session data
         
@@ -820,7 +878,7 @@ if (aspirationId && <?php echo json_encode(session('comment_popup_open', false))
         currentlyOpenPopup.style.display = 'none';
         currentlyOpenOverlay.style.display = 'none'; // Hide the overlay
         document.body.style.overflow = ''; // Enable scrolling on the body
-    window.location.href = "{{ route('clear-session-data') }}";
+        window.location.href = "{{ route('clear-session-data') }}";
 
       
     });

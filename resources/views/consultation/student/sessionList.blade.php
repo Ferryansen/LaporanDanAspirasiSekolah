@@ -68,7 +68,7 @@
   <h1>Konsultasi</h1>
   <nav>
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Konsultasi</a></li>
+      <li class="breadcrumb-item"><a href="{{ route('consultation.sessionList') }}">Konsultasi</a></li>
       <li class="breadcrumb-item active">Daftar sesi</li>
     </ol>
   </nav>
@@ -85,21 +85,28 @@
                       <!-- Table with stripped rows -->
                       <table class="table">
                           <tbody  style="border: white">
-                            <div class="d-grid gap-2 d-md-block d-flex" style="padding-left: 15px; margin-bottom: 20px">
-                                <a href="{{ route('consultation.sessionList.sorting', ['typeSorting' => 'UpComing']) }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'UpComing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'UpComing' ? '#fff' : '#8F8F8F' }}; border: 1; border-color: #8F8F8F; border-radius: 20px;">Akan datang</a>
-                                <a href="{{ route('consultation.sessionList.sorting', ['typeSorting' => 'OnGoing']) }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'OnGoing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'OnGoing' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px;">Berlangsung</a>
+                          <div class="d-flex justify-content-between align-items-center" style="padding-left: 15px; margin-bottom: 20px">
+                            <div class="btn-group">
+                                <a href="{{ route('consultation.sessionList.sorting', ['typeSorting' => 'UpComing']) }}" class="btn btn-secondary me-2" style="background-color: {{ $typeSorting === 'UpComing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'UpComing' ? '#fff' : '#8F8F8F' }}; border: 1px solid #8F8F8F; border-radius: 20px;">Akan datang</a>
+                                <a href="{{ route('consultation.sessionList.sorting', ['typeSorting' => 'OnGoing']) }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'OnGoing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'OnGoing' ? '#fff' : '#8F8F8F' }}; border: 1px solid #8F8F8F; border-radius: 20px;">Berlangsung</a>
                             </div>
-                              @if ($consultations->count() == 0)
-                              <tr>
-                                  <td colspan="3">
-                                      <div class="container">
-                                          <span style="color: dimgray">Belum ada sesi konseling yang tersedia</span>
-                                      </div>
-                                  </td>
-                              </tr>
-                              @else
-                                @foreach($consultations as $consultation)
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <input type="text" id="datepicker" class="form-control" placeholder="Pilih tanggal" value="{{ request('date') }}">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-calendar"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            @php $consultationsShown = false; @endphp
+                            @foreach($consultations as $consultation)
+
+                                @if (!request('date') || ($consultation->start->format('d-m-Y') == request('date')))
                                     @if($consultation->status !== "Dibatalkan" && $consultation->status !== "Selesai")
+                                    @php $consultationsShown = true; @endphp
                                     <tr>
                                         <td>
                                             <div class="post">
@@ -130,8 +137,18 @@
                                         </td>
                                     </tr>
                                     @endif
-                                @endforeach
-                              @endif
+                                @endif
+                            @endforeach
+
+                            @if (!$consultationsShown)
+                                <tr>
+                                  <td colspan="3">
+                                      <div class="container">
+                                          <span style="color: dimgray">Belum ada sesi konseling yang tersedia</span>
+                                      </div>
+                                  </td>
+                              </tr>
+                            @endif
                           </tbody>
                       </table>
                       <!-- End Table with stripped rows -->
@@ -165,7 +182,25 @@
 @endsection
 
 @section('js')
-    
+<script>
+    $(function() {
+        $("#datepicker").datepicker({
+            dateFormat: 'dd-mm-yy',
+            onSelect: function(dateText) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('date', dateText);
+                window.location.href = url.toString();
+            }
+        });
+
+        // Pre-fill the datepicker with the selected date if present
+        const selectedDate = "{{ request('date') }}";
+        if (selectedDate) {
+            $("#datepicker").datepicker("setDate", selectedDate);
+        }
+    });
+</script>
+
 @endsection
 
 @section('js')
