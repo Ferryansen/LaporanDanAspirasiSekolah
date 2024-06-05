@@ -62,7 +62,7 @@
   <h1>Konsultasi</h1>
   <nav>
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Konsultasi</a></li>
+      <li class="breadcrumb-item"><a href="{{ route('consultation.mySession') }}">Konsultasi</a></li>
       <li class="breadcrumb-item active">Sesi yang diikuti</li>
     </ol>
   </nav>
@@ -111,7 +111,7 @@
                                               <div class="desc"><i class="bi bi-clock" style="padding-right: 5px"></i> {{$formattedTimeStart}} - {{$formattedTimeEnd}}</div>
                                               <div class="desc"><i class="bi bi-person" style="padding-right: 5px"></i> {{$consultation->consultBy->name}}</div>
                                               @if ($consultation->is_online == 1)
-                                                <a href="{{ $consultation->location }}">
+                                                <a href="{{ $consultation->location }}" target="_blank">
                                                     <button type="button" class="btn btn-primary" style="margin-top: 10px"><i class="bi bi-door-open" style="margin-right: 8px"></i>Masuk ruangan</button>
                                                 </a>
                                               @endif

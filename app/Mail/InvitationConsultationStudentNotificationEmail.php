@@ -9,25 +9,25 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class CompleteReportHeadmasterNotificationEmail extends Mailable
+class InvitationConsultationStudentNotificationEmail extends Mailable
 {
     use Queueable, SerializesModels;
-    protected $receiverName, $reportData;
+    protected $receiverName, $consultationData;
 
     
-    public function __construct($receiverName, $reportData)
+    public function __construct($receiverName, $consultationData)
     {
         $this->receiverName = $receiverName;
-        $this->reportData = $reportData;
+        $this->consultationData = $consultationData;
     }
 
     public function build()
     {
-        return $this->view('emails.headmaster.reportCompletionNotification')
-                    ->subject('Tindak Lanjut Laporan "' . $this->reportData['title'] . '" Sudah Selesai')
+        return $this->view('emails.student.consultationInvitationNotification')
+                    ->subject('Ajakan Sesi Konsultasi "' . $this->consultationData['title'])
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'reportData' => $this->reportData]
+                        'consultationData' => $this->consultationData]
                     );
     }
 }

@@ -24,7 +24,7 @@ class RequestReportHeadmasterNotificationEmail extends Mailable
     public function build()
     {
         return $this->view('emails.headmaster.reportRequestNotification')
-                    ->subject('Proses Laporan "' . $this->reportData['title'] . '" Butuh Approval')
+                    ->subject('Tindak Lanjut Laporan "' . $this->reportData['title'] . '" Butuh Persetujuanmu')
                     ->with([
                         'receiverName' => $this->receiverName,
                         'reportData' => $this->reportData]

@@ -9,7 +9,7 @@
   <h1>Detail Realisasi Aspirasi</h1>
   <nav>
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Aspirasi</a></li>
+      <li class="breadcrumb-item"><a href="{{ route('aspirations.manageAspiration') }}">Aspirasi</a></li>
       <li class="breadcrumb-item"><a href="{{ route('aspirations.manageAspiration') }}">Kelola Aspirasi</a></li>
       <li class="breadcrumb-item active">{{ $aspiration->name }}</li>
     </ol>

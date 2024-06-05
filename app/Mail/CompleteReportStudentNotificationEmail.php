@@ -24,7 +24,7 @@ class CompleteReportStudentNotificationEmail extends Mailable
     public function build()
     {
         return $this->view('emails.student.reportCompletionNotification')
-                    ->subject('Proses Laporan "' . $this->reportData['title'] . '" Sudah Selesai')
+                    ->subject('Tindak Lanjut Laporan "' . $this->reportData['title'] . '" Sudah Selesai')
                     ->with([
                         'receiverName' => $this->receiverName,
                         'reportData' => $this->reportData]

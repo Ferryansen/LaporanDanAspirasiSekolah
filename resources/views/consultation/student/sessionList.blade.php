@@ -68,7 +68,7 @@
   <h1>Konsultasi</h1>
   <nav>
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Konsultasi</a></li>
+      <li class="breadcrumb-item"><a href="{{ route('consultation.sessionList') }}">Konsultasi</a></li>
       <li class="breadcrumb-item active">Daftar sesi</li>
     </ol>
   </nav>
@@ -88,17 +88,23 @@
                                 <a href="{{ $typeSorting !== 'UpComing' ? route('consultation.sessionList.sorting', ['typeSorting' => 'UpComing']) : route('consultation.sessionList') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'UpComing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'UpComing' ? '#fff' : '#8F8F8F' }}; border: 1; border-color: #8F8F8F; border-radius: 20px;">Akan datang</a>
                                 <a href="{{ $typeSorting !== 'OnGoing' ? route('consultation.sessionList.sorting', ['typeSorting' => 'OnGoing']) : route('consultation.sessionList') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'OnGoing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'OnGoing' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px;">Berlangsung</a>
                             </div>
-                              @if ($consultations->count() == 0)
-                              <tr>
-                                  <td colspan="3">
-                                      <div class="container">
-                                          <span style="color: dimgray">Belum ada sesi konseling yang tersedia</span>
-                                      </div>
-                                  </td>
-                              </tr>
-                              @else
-                                @foreach($consultations as $consultation)
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <input type="text" id="datepicker" class="form-control" placeholder="Pilih tanggal" value="{{ request('date') }}">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-calendar"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            @php $consultationsShown = false; @endphp
+                            @foreach($consultations as $consultation)
+
+                                @if (!request('date') || ($consultation->start->format('d-m-Y') == request('date')))
                                     @if($consultation->status !== "Dibatalkan" && $consultation->status !== "Selesai")
+                                    @php $consultationsShown = true; @endphp
                                     <tr>
                                         <td>
                                             <div class="post">
@@ -115,7 +121,7 @@
                                                         @endphp
                                                     <div class="desc"><i class="bi bi-calendar" style="padding-right: 5px"></i> {{$formattedDate}}</div>
                                                     <div class="desc"><i class="bi bi-clock" style="padding-right: 5px"></i> {{$formattedTimeStart}} - {{$formattedTimeEnd}}</div>
-                                                    <div class="desc"><i class="bi bi-person" style="padding-right: 5px"></i> {{$consultation->consultBy->name}}</div>
+                                                    {{-- <div class="desc"><i class="bi bi-person" style="padding-right: 5px"></i> {{$consultation->consultBy->name}}</div> --}}
                                                     @if(in_array(Auth::id(), $consultation->attendees))
                                                     <div class="warn">Anda sudah terdaftar dalam sesi ini.</div>
                                                     @endif
@@ -129,8 +135,18 @@
                                         </td>
                                     </tr>
                                     @endif
-                                @endforeach
-                              @endif
+                                @endif
+                            @endforeach
+
+                            @if (!$consultationsShown)
+                                <tr>
+                                  <td colspan="3">
+                                      <div class="container">
+                                          <span style="color: dimgray">Belum ada sesi konseling yang tersedia</span>
+                                      </div>
+                                  </td>
+                              </tr>
+                            @endif
                           </tbody>
                       </table>
                       <!-- End Table with stripped rows -->
@@ -153,7 +169,25 @@
 @endsection
 
 @section('js')
-    
+<script>
+    $(function() {
+        $("#datepicker").datepicker({
+            dateFormat: 'dd-mm-yy',
+            onSelect: function(dateText) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('date', dateText);
+                window.location.href = url.toString();
+            }
+        });
+
+        // Pre-fill the datepicker with the selected date if present
+        const selectedDate = "{{ request('date') }}";
+        if (selectedDate) {
+            $("#datepicker").datepicker("setDate", selectedDate);
+        }
+    });
+</script>
+
 @endsection
 
 @section('js')

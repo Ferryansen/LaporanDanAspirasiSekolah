@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('title', 255);
             $table->string('description', 1005);
-            $table->foreignId('consultant')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('consultant')->nullable()->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->json('attendees')->nullable();
             $table->integer('attendeeLimit');
             $table->string('location', 255)->nullable();
@@ -25,6 +25,8 @@ return new class extends Migration
             $table->dateTime('start');
             $table->dateTime('end');
             $table->boolean('is_online');
+            $table->boolean('is_private');
+            $table->boolean('is_confirmed');
             $table->timestamps();
         });
     }

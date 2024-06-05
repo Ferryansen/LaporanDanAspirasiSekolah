@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\CancelledConsultationStudentNotificationEmail;
+use App\Mail\InvitationConsultationStudentNotificationEmail;
 use App\Mail\RegisteredConsultationStudentNotificationEmail;
 use App\Mail\UpdateInfoConsultationStudentNotificationEmail;
 use App\Models\ConsultationEvent;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\Validator;
 class ConsultationEventController extends Controller
 {
     public function seeAllEvents() {
-        return view('consultation.staffAndHeadmaster.manageConsultationView');
+        return view('consultation.staff.manageConsultationView');
     }
 
     public function sessionList() {
@@ -110,13 +111,19 @@ class ConsultationEventController extends Controller
     public function consultationDetail($consultation_id) {
         $event = ConsultationEvent::findOrFail($consultation_id);
 
+        if (Auth::user()->role == 'staff') {
+            $attendees = User::whereIn('id', $event->attendees)->get();
+            
+            return view('consultation.consultationDetailView', compact('event', 'attendees'));
+        }
+
         return view('consultation.consultationDetailView', compact('event'));
     }
 
     public function updateEventForm($consultation_id) {
         $event = ConsultationEvent::findOrFail($consultation_id);
 
-        return view('consultation.staffAndHeadmaster.updateConsultationView', compact('event'));
+        return view('consultation.staff.updateConsultationView', compact('event'));
     }
 
     public function updateEvent($consultation_id, Request $request) {
@@ -168,12 +175,10 @@ class ConsultationEventController extends Controller
         ];
 
         $startDateTimeRequest = Carbon::parse($request->startDateTime);
-        $endDateTimeRequest = Carbon::parse($request->endDateTime);
 
         $startDateTimeEvent = Carbon::parse($event->start);
-        $endDateTimeEvent = Carbon::parse($event->end);
 
-        if (!$startDateTimeRequest->eq($startDateTimeEvent) || !$endDateTimeRequest->eq($endDateTimeEvent)) {
+        if (!$startDateTimeRequest->eq($startDateTimeEvent)) {
             if ($event->status == 'Belum dimulai' || $event->status == 'Sedang dimulai') {
                 $credentials['status'] = 'Pindah jadwal';
             }
@@ -213,10 +218,21 @@ class ConsultationEventController extends Controller
         $startDate = $request->input('start');
         $endDate = $request->input('end');
     
-        return view('consultation.staffAndHeadmaster.createConsultationView', [
+        return view('consultation.staff.createConsultationView', [
             'startDate' => $startDate,
             'endDate' => $endDate,
         ]);
+    }
+
+    public function fetchAllStudents(Request $request) {
+        $students = [];
+
+        if ($search = $request->name) {
+            $students = User::where('role', 'LIKE', 'student')
+                                ->where('name', 'LIKE', "%$search%")->get();
+        }
+
+        return response()->json($students);
     }
 
     public function createEvent(Request $request)
@@ -224,6 +240,7 @@ class ConsultationEventController extends Controller
         $rules = [
             'title' => 'required|max:250',
             'description' => 'required|max:1000',
+            'consultationVisibility' => 'required',
             'startDateTime' => 'required',
             'endDateTime' => 'required|after:startDateTime',
             'consultationType' => 'required',
@@ -237,6 +254,8 @@ class ConsultationEventController extends Controller
 
             'description.required' => 'Jangan lupa masukin deskripsi yaa',
             'description.max' => 'Deskripsi yang kamu masukin cuman bisa maksimal 1000 karakter nih',
+
+            'consultationVisibility.required' => 'Jangan lupa masukin visibilitas konsultasinya yaa',
 
             'startDateTime.required' => 'Jangan lupa masukin tanggal dan waktu mulai konsultasi yaa',
             'endDateTime.required' => 'Jangan lupa masukin tanggal dan waktu selesai konsultasi yaa',
@@ -252,8 +271,9 @@ class ConsultationEventController extends Controller
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
-    
+        
         if ($validator->fails()) {
+            dd($validator);
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
@@ -265,11 +285,23 @@ class ConsultationEventController extends Controller
             'consultant' =>Auth::user()->id,
             'attendeeLimit' => $request->attendeeLimit,
             'status' => 'Belum dimulai',
-            'attendees' => [],
+            'is_confirmed' => true,
         ];
 
-        if($request->location != null) {
+        if ($request->consultationVisibility == 'public') {
+            $credentials['is_private'] = false;
+        } elseif ($request->consultationVisibility == 'private') {
+            $credentials['is_private'] = true;
+        }
+        
+        if ($request->location != null) {
             $credentials['location'] = $request->location;
+        }
+
+        if ($request->attendees != null) {
+            $credentials['attendees'] = $request->attendees;
+        } else {
+            $credentials['attendees'] = [];
         }
 
         if($request->consultationType == 'online') {
@@ -278,7 +310,25 @@ class ConsultationEventController extends Controller
             $credentials['is_online'] = false;
         }
 
-        ConsultationEvent::create($credentials);
+        
+        $event = ConsultationEvent::create($credentials);
+
+        if ($request->attendees != null) {
+            $consultationData = [
+                'ID' => $event->id,
+                'title' => $event->title,
+                'date' => $event->start,
+                'endDate' => $event->end,
+                'consultant' => $event->consultBy->name,
+            ];
+
+            foreach ($request->attendees as $attendee) {
+                $currAttendee = User::findOrFail($attendee);
+
+                Mail::to($currAttendee->email)->send(new InvitationConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
+            }
+        }
+
         return redirect()->route('consultation.seeAll')->with('successMessage', 'Sesi konsultasi berhasil ditambahkan');
     }
 
@@ -291,6 +341,19 @@ class ConsultationEventController extends Controller
 
         $event->update($credential);
         return redirect($event->location);
+    }
+
+    public function confirmEvent($consultation_id) {
+        $event = ConsultationEvent::findOrFail($consultation_id);
+
+        $credential = [
+            'consultant' => Auth::user()->id,
+            'status' => 'Belum dimulai',
+            'is_confirmed' => true,
+        ];
+
+        $event->update($credential);
+        return redirect()->back()->with('successMessage', 'Kehadiran konsultasi berhasil dikonfirmasi');
     }
 
     public function cancelEvent($consultation_id) {
