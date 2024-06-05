@@ -66,9 +66,9 @@
                                     <th>
                                         <b>Judul</b>
                                     </th>
-                                    <th data-type="date" data-format="YYYY/DD/MM">Tanggal dibuat</th>
+                                    <th data-type="date" data-format="YYYY/DD/MM">@sortablelink('created_at', 'Tanggal dibuat')</th>
                                     <th>Status</th>
-                                    <th></th>
+                                    <th style="text-align: right">Detail</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -97,12 +97,12 @@
                                     @elseif ($report->status == "In review by staff" || $report->status == "In review to headmaster")
                                         <td>Sedang ditinjau</td>
                                     @elseif ($report->status == "In Progress" || $report->status == "Monitoring process")
-                                        <td>Sedang diproses</td>
+                                        <td>Sedang ditindaklanjuti</td>
                                     @elseif ($report->status == "Completed")
                                         <td>Selesai</td>
                                     @endif
     
-                                    <td>
+                                    <td style="text-align: right">
                                         <a href="{{ route('student.reportDetail', $report->id) }}">
                                             <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
                                         </a>

@@ -20,6 +20,8 @@ class ConsultationEvent extends Model
         'start',
         'end',
         'is_online',
+        'is_private',
+        'is_confirmed',
     ];
 
     protected $casts = [

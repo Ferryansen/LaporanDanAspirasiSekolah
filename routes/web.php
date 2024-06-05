@@ -126,7 +126,7 @@ Route::middleware(['isheadandstaff'])->group(function () {
     
     Route::prefix('/report')->group(function(){
         Route::patch('/requestApproval/{id}', [ReportController::class, 'requestApprovalReport'])->name('staff.requestApprovalReport');
-        Route::patch('/staffApprove/{id}', [ReportController::class, 'approveReport'])->name('staff.approveReport');
+        // Route::patch('/staffApprove/{id}', [ReportController::class, 'approveReport'])->name('staff.approveReport');
         Route::patch('/staffReject/{id}', [ReportController::class, 'rejectReport'])->name('staff.rejectReport');
         Route::patch('/headApprove/{id}', [ReportController::class, 'approveReport'])->name('headmaster.approveReport');
         Route::patch('/headReject/{id}', [ReportController::class, 'rejectReport'])->name('headmaster.rejectReport');
@@ -137,16 +137,6 @@ Route::middleware(['isheadandstaff'])->group(function () {
         Route::patch('/finish/{id}', [ReportController::class, 'finishReport'])->name('finishReport');
         Route::get('/report/pdf/convert', [PDFController::class, 'pdfGenerationAllReports'])->name('convertReport');
         Route::get('/report/pdf/convert/{category_id}', [PDFController::class, 'pdfGenerationReportsByCategory'])->name('convertCategoryReport');
-    });
-    
-    Route::prefix('/consultation/manage')->group(function() {
-        Route::get('/', [ConsultationEventController::class, 'seeAllEvents'])->name('consultation.seeAll');
-        Route::get('/all', [ConsultationEventController::class, 'fetchAllEvents'])->name('consultation.fetchAll');
-        Route::get('/createConsultation', [ConsultationEventController::class, 'createEventForm'])->name('consultation.createForm');
-        Route::post('/createConsultation', [ConsultationEventController::class, 'createEvent'])->name('consultation.create');
-        Route::get('/updateConsultation/{consultation_id}', [ConsultationEventController::class, 'updateEventForm'])->name('consultation.updateForm');
-        Route::patch('/updateConsultation/{consultation_id}', [ConsultationEventController::class, 'updateEvent'])->name('consultation.update');
-        Route::patch('/cancel/{consultation_id}', [ConsultationEventController::class, 'cancelEvent'])->name('consultation.cancel');
     });
     
     Route::get('/dashboard', [UserController::class, 'getDashboard'])->name('dashboard');
@@ -211,6 +201,25 @@ Route::middleware(['isadmin'])->group(function () {
 
 });
 
+Route::middleware(['isstaff'])->group(function() {
+    Route::prefix('/consultation/manage')->group(function() {
+        Route::get('/', [ConsultationEventController::class, 'seeAllEvents'])->name('consultation.seeAll');
+        Route::get('/all', [ConsultationEventController::class, 'fetchAllEvents'])->name('consultation.fetchAll');
+        Route::get('/createConsultation', [ConsultationEventController::class, 'createEventForm'])->name('consultation.createForm');
+        Route::post('/createConsultation', [ConsultationEventController::class, 'createEvent'])->name('consultation.create');
+        Route::get('/updateConsultation/{consultation_id}', [ConsultationEventController::class, 'updateEventForm'])->name('consultation.updateForm');
+        Route::patch('/updateConsultation/{consultation_id}', [ConsultationEventController::class, 'updateEvent'])->name('consultation.update');
+        Route::patch('/cancel/{consultation_id}', [ConsultationEventController::class, 'cancelEvent'])->name('consultation.cancel');
+        Route::patch('/confirm/{consultation_id}', [ConsultationEventController::class, 'confirmEvent'])->name('consultation.confirm');
+        
+        Route::post('/fetchAllStudents', [ConsultationEventController::class, 'fetchAllStudents'])->name('fetch.allStudents');
+    });
+});
+
+Route::middleware(['isstaffandstudent'])->group(function() {
+
+});
+
 
 Route::middleware(['isstudent'])->group(function () {
     Route::prefix('/aspirations')->group(function(){
@@ -251,34 +260,3 @@ Route::middleware(['isstudent'])->group(function () {
 
     Route::patch('/updateUrgentPhoneNum', [UserController::class, 'updateUrgentPhoneNum'])->name('student.updateUrgentPhoneNum');
 });
-
-
-// Route::prefix('/aspirations')->group(function(){
-    
-    
-    
-    // Route::get('/chatify/{id}', [ReportController::class, 'urgentReportPage'])->name('student.chatify');
-
-
-
-// });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

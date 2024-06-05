@@ -52,7 +52,7 @@
                                                 <div>
                                                     <select style="width: 100%;" name="status" id="status_{{ $aspiration->id }}" class="form-select" required onchange="updateFormAndDisplayModal('{{ $aspiration->id }}')">
                                                         <option value="Approved" {{ $aspiration->status == 'Approved' ? 'selected' : '' }} {{ $aspiration->status == 'In Progress' || $aspiration->status == 'Monitoring' || $aspiration->status == 'Completed' ? 'disabled' : '' }}>Disetujui</option>
-                                                        <option value="In Progress" {{ $aspiration->status == 'In Progress' ? 'selected' : '' }} {{ $aspiration->status == 'Completed' ? 'disabled' : '' }}>Sedang diproses</option>
+                                                        <option value="In Progress" {{ $aspiration->status == 'In Progress' ? 'selected' : '' }} {{ $aspiration->status == 'Completed' ? 'disabled' : '' }}>Sedang ditindaklanjuti</option>
                                                         <option value="Monitoring" {{ $aspiration->status == 'Monitoring' ? 'selected' : '' }} {{ $aspiration->status == 'Completed' ? 'disabled' : '' }}>Dalam pemantauan</option>
                                                         <option value="Completed" {{ $aspiration->status == 'Completed' ? 'selected' : '' }}>Selesai</option>
                                                     </select>

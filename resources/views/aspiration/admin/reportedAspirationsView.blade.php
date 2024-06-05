@@ -65,7 +65,7 @@
                     <th data-type="date" data-format="YYYY/DD/MM">Tanggal dibuat</th>
                     <th>Status</th>
                     <th>Jumlah Pelapor</th>
-                    <th></th>
+                    <th style="text-align: right">Detail</th>
                   </tr>
               </thead>
               <tbody>

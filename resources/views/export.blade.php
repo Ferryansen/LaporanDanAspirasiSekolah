@@ -65,7 +65,7 @@
                         @elseif ($report->status == "In review to headmaster")
                           <td>Menunggu persetujuan dari atasan</td>
                         @elseif ($report->status == "In Progress")
-                          <td>Sedang diproses</td>
+                          <td>Sedang ditindaklanjuti</td>
                         @elseif ($report->status == "Monitoring process")
                           <td>Dalam pemantauan</td>
                         @elseif ($report->status == "Completed")

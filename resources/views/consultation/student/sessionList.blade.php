@@ -123,7 +123,7 @@
                                                         @endphp
                                                     <div class="desc"><i class="bi bi-calendar" style="padding-right: 5px"></i> {{$formattedDate}}</div>
                                                     <div class="desc"><i class="bi bi-clock" style="padding-right: 5px"></i> {{$formattedTimeStart}} - {{$formattedTimeEnd}}</div>
-                                                    <div class="desc"><i class="bi bi-person" style="padding-right: 5px"></i> {{$consultation->consultBy->name}}</div>
+                                                    {{-- <div class="desc"><i class="bi bi-person" style="padding-right: 5px"></i> {{$consultation->consultBy->name}}</div> --}}
                                                     @if(in_array(Auth::id(), $consultation->attendees))
                                                     <div class="warn">Anda sudah terdaftar dalam sesi ini.</div>
                                                     @endif
