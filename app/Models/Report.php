@@ -27,9 +27,10 @@ class Report extends Model
         'approvalBy',
         'lastUpdatedBy',
         'status',
+        'rejectReason'
     ];
 
-    public $sortable = ['priority'];
+    public $sortable = ['priority', 'created_at'];
 
     public function user() {
         return $this->belongsTo(User::class, 'user_id');

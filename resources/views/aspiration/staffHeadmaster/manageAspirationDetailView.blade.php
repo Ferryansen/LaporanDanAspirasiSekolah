@@ -9,7 +9,7 @@
   <h1>Detail Realisasi Aspirasi</h1>
   <nav>
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ route('aspirations.myAspirations') }}">Aspirasi</a></li>
+      <li class="breadcrumb-item"><a href="{{ route('aspirations.manageAspiration') }}">Aspirasi</a></li>
       <li class="breadcrumb-item"><a href="{{ route('aspirations.manageAspiration') }}">Kelola Aspirasi</a></li>
       <li class="breadcrumb-item active">{{ $aspiration->name }}</li>
     </ol>
@@ -52,7 +52,7 @@
                                                 <div>
                                                     <select style="width: 100%;" name="status" id="status_{{ $aspiration->id }}" class="form-select" required onchange="updateFormAndDisplayModal('{{ $aspiration->id }}')">
                                                         <option value="Approved" {{ $aspiration->status == 'Approved' ? 'selected' : '' }} {{ $aspiration->status == 'In Progress' || $aspiration->status == 'Monitoring' || $aspiration->status == 'Completed' ? 'disabled' : '' }}>Disetujui</option>
-                                                        <option value="In Progress" {{ $aspiration->status == 'In Progress' ? 'selected' : '' }} {{ $aspiration->status == 'Completed' ? 'disabled' : '' }}>Sedang diproses</option>
+                                                        <option value="In Progress" {{ $aspiration->status == 'In Progress' ? 'selected' : '' }} {{ $aspiration->status == 'Completed' ? 'disabled' : '' }}>Sedang ditindaklanjuti</option>
                                                         <option value="Monitoring" {{ $aspiration->status == 'Monitoring' ? 'selected' : '' }} {{ $aspiration->status == 'Completed' ? 'disabled' : '' }}>Dalam pemantauan</option>
                                                         <option value="Completed" {{ $aspiration->status == 'Completed' ? 'selected' : '' }}>Selesai</option>
                                                     </select>

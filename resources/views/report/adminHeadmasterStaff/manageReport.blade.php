@@ -55,69 +55,66 @@
           @if (Auth::user()->role == "staff")
             <div class="row">
               <div class="col-3">
+                @php
+                    $selectedStatus = session('selected_status', 'Semua status');
+                @endphp
                 <select class="form-select" aria-label="Default select example" name="categoryStaffType" required onchange="window.location.href=this.value;">
-                  <option selected disabled value>Pilih Status</option>
-                    <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Freshly submitted']) }}">Freshly submitted</option>
-                    <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'In review by staff']) }}">In review by staff</option>
-                    <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'In review to headmaster']) }}">In review to headmaster</option>
-                    <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Approved']) }}">Approved</option>
-                    <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Rejected']) }}">Rejected</option>
-                    <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Cancelled']) }}">Cancelled</option>
-                    <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Monitoring process']) }}">Monitoring process</option>
-                    <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'In Progress']) }}">In Progress</option>
-                    <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Completed']) }}">Completed</option>
+                  <option value="{{ route('report.adminHeadmasterStaff.manageReport') }}" {{ $selectedStatus == 'Semua status' ? 'selected' : '' }}>Semua status</option>
+                  <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Freshly submitted']) }}" {{ $selectedStatus == 'Freshly submitted' ? 'selected' : '' }}>Terkirim</option>
+                  <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'In review by staff']) }}" {{ $selectedStatus == 'In review by staff' ? 'selected' : '' }}>Sedang ditinjau</option>
+                  <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'In review to headmaster']) }}" {{ $selectedStatus == 'In review to headmaster' ? 'selected' : '' }}>Menunggu persetujuan dari atasan</option>
+                  <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Approved']) }}" {{ $selectedStatus == 'Approved' ? 'selected' : '' }}>Disetujui</option>
+                  <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Rejected']) }}" {{ $selectedStatus == 'Rejected' ? 'selected' : '' }}>Ditolak</option>
+                  <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Cancelled']) }}" {{ $selectedStatus == 'Cancelled' ? 'selected' : '' }}>Dibatalkan</option>
+                  <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Monitoring process']) }}" {{ $selectedStatus == 'Monitoring process' ? 'selected' : '' }}>Dalam pemantauan</option>
+                  <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'In Progress']) }}" {{ $selectedStatus == 'In Progress' ? 'selected' : '' }}>Sedang ditindaklanjuti</option>
+                  <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Completed']) }}" {{ $selectedStatus == 'Completed' ? 'selected' : '' }}>Selesai</option>
                 </select>
               </div>
             </div>
             
             <br>
 
-            @if ($filterTitle != null)
-              <h5>{{ $filterTitle }}</h5>
-            @endif
-
           @else
             <div class="row d-flex justify-content-between align-items-center">
               <div class="col-auto d-flex align-items-center" style="margin-top: 0.5rem">
-                  <select class="form-select" aria-label="Default select example" name="categoryStaffType" required onchange="window.location.href=this.value;">
-                      <option selected disabled value>Pilih Kategori</option>
-                      @php
-                          $lainnyaCategory = null;
-                      @endphp
-                      @foreach ($categories as $category)
-                          @if (strpos($category->name, "Lainnya") !== false)
-                              @php
-                                  $lainnyaCategory = $category;
-                              @endphp
-                          @else
-                              <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterCategory', ['category_id' => $category->id]) }}">{{ $category->name }}</option>
-                          @endif
-                      @endforeach
-                      @if ($lainnyaCategory)
-                          <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterCategory', ['category_id' => $lainnyaCategory->id]) }}">{{ $lainnyaCategory->name }}</option>
-                      @endif
-                  </select>
+                <select class="form-select" aria-label="Default select example" name="categoryStaffType" required onchange="window.location.href=this.value;">
+                    @php
+                        $lainnyaCategory = null;
+                        $selectedCategory = session('selected_category', 'Semua kategori');
+                    @endphp
+                    <option value="{{ route('report.adminHeadmasterStaff.manageReport') }}" {{ $selectedCategory == 'Semua kategori' ? 'selected' : '' }}>Semua kategori</option>
+                    @foreach ($categories as $category)
+                        @if (strpos($category->name, "Lainnya") !== false)
+                            @php
+                                $lainnyaCategory = $category;
+                            @endphp
+                        @else
+                            <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterCategory', ['category_id' => $category->id]) }}" {{ $selectedCategory == $category->name ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endif
+                    @endforeach
+                    @if ($lainnyaCategory)
+                        <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterCategory', ['category_id' => $lainnyaCategory->id]) }}" {{ $selectedCategory == $lainnyaCategory->name ? 'selected' : '' }}>{{ $lainnyaCategory->name }}</option>
+                    @endif
+                </select>
               </div>
               <div class="col-auto d-flex align-items-center">
                   @if (Auth::user()->role == "headmaster")
-                  @if ($filterTitle == null)
-                  <a href="{{ route('convertReport') }}">
-                      <button type="button" class="btn btn-success">Export Data Laporan</button>
-                  </a>
-                  @else
-                  <a href="{{ route('convertCategoryReport', ['category_id' => $categoryNow]) }}">
-                      <button type="button" class="btn btn-success">Export Data Laporan</button>
-                  </a>
-                  @endif
+                    @if ($filterTitle == null)
+                    <a href="{{ route('convertReport') }}">
+                        <button type="button" class="btn btn-success">Export Data Laporan</button>
+                    </a>
+                    @else
+                    <a href="{{ route('convertCategoryReport', ['category_id' => $categoryNow]) }}">
+                        <button type="button" class="btn btn-success">Export Data Laporan</button>
+                    </a>
+                    @endif
                   @endif
               </div>
             </div>
             
             <br>
 
-            @if ($filterTitle != null)
-              <h5><b>{{ $filterTitle }}</b></h5>
-            @endif
           @endif
 
           <br>
@@ -130,10 +127,14 @@
                     <th>
                       <b>Judul</b>
                     </th>
-                    <th data-type="date" data-format="YYYY/DD/MM">Tanggal dibuat</th>
+                    <th data-type="date" data-format="YYYY/DD/MM">@sortablelink('created_at', 'Tanggal dibuat')</th>
                     <th>Status</th>
                     <th>@sortablelink('priority', 'Prioritas')</th>
-                    <th></th>
+                    @if (Auth::user()->role != "admin")
+                      <th style="text-align: right">Detail</th>
+                    @else
+                      <th></th>
+                    @endif
                     </tr>
                   </thead>
                   <tbody>
@@ -164,7 +165,7 @@
                         @elseif ($report->status == "In review to headmaster")
                           <td>Menunggu persetujuan dari atasan oleh {{ $report->lastUpdatedBy }}</td>
                         @elseif ($report->status == "In Progress")
-                          <td>Sedang diproses oleh {{ $report->lastUpdatedBy }}</td>
+                          <td>Sedang ditindaklanjuti oleh {{ $report->lastUpdatedBy }}</td>
                         @elseif ($report->status == "Monitoring process")
                           <td>Dalam pemantauan oleh {{ $report->lastUpdatedBy }}</td>
                         @elseif ($report->status == "Completed")

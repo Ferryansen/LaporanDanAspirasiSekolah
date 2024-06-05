@@ -24,8 +24,8 @@
         <div class="col-lg-8">
           <div class="row">
 
-            <!-- Sales Card -->
-            <div class="col-xxl-4 col-md-6">
+          @if($currUserRole == 'headmaster')
+          <div class="col-xxl-6 col-md-6">
               <div class="card info-card sales-card">
 
                 <div class="filter">
@@ -35,9 +35,79 @@
                       <h6>Filter</h6>
                     </li>
 
-                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => 'Today', 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter]) }}">Today</a></li>
-                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => 'This Month', 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter]) }}">This Month</a></li>
-                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => 'This Year', 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter]) }}">This Year</a></li>
+                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => 'Today', 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">Today</a></li>
+                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => 'This Month', 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">This Month</a></li>
+                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => 'This Year', 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Laporan <span>| {{$laporanCountFilter}}</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ count($laporanForFilter) }}</h6>
+                      <span class="text-success small pt-1 fw-bold">{{number_format($persenLaporan, 2)}}%</span> <span class="text-muted small pt-2 ps-1">{{$statusLaporan}}</span>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Sales Card -->
+
+            <!-- Revenue Card -->
+            <div class="col-xxl-6 col-md-6">
+              <div class="card info-card revenue-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => 'Today', 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">Today</a></li>
+                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => 'This Month', 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">This Month</a></li>
+                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => 'This Year', 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Aspirasi <span>| {{$aspirasiCountFilter}}</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-lightbulb"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ count($aspirasiForFilter) }}</h6>
+                      <span class="text-success small pt-1 fw-bold">{{number_format($persenAspirasi, 2)}}%</span> <span class="text-muted small pt-2 ps-1">{{$statusAspirasi}}</span>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Revenue Card -->
+          @else
+              <!-- Sales Card -->
+              <div class="col-xxl-4 col-md-6">
+              <div class="card info-card sales-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => 'Today', 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">Today</a></li>
+                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => 'This Month', 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">This Month</a></li>
+                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => 'This Year', 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">This Year</a></li>
                   </ul>
                 </div>
 
@@ -70,9 +140,9 @@
                       <h6>Filter</h6>
                     </li>
 
-                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => 'Today', 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter]) }}">Today</a></li>
-                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => 'This Month', 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter]) }}">This Month</a></li>
-                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => 'This Year', 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter]) }}">This Year</a></li>
+                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => 'Today', 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">Today</a></li>
+                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => 'This Month', 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">This Month</a></li>
+                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => 'This Year', 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">This Year</a></li>
                   </ul>
                 </div>
 
@@ -99,16 +169,29 @@
 
               <div class="card info-card customers-card">
 
+              <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => 'Today', 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => 'Today']) }}">Today</a></li>
+                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => 'This Month', 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => 'This Month']) }}">This Month</a></li>
+                    <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => 'This Year', 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => 'This Year']) }}">This Year</a></li>
+                  </ul>
+                </div>
+
                 <div class="card-body">
-                  <h5 class="card-title">Staff <span>| Now</span></h5>
+                  <h5 class="card-title">Konsultasi <span>| {{$konsultasiFilter}}</span></h5>
 
                   <div class="d-flex align-items-center">
                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-people"></i>
+                      <i class="bi bi-chat-text"></i>
                     </div>
-                    <div class="ps-3" style="display:flex">
-                      <h6>{{ $users->where('staffType_id', '!=', null)->count() }}</h6>
-                      <span class="text-muted small pt-2 ps-1"> orang</span>
+                    <div class="ps-3">
+                      <h6>{{ $konsultasiCount }}</h6>
+                      <span class="text-success small pt-1 fw-bold">{{number_format($persenKonsultasi, 2)}}%</span> <span class="text-muted small pt-2 ps-1">{{$statusKonsultasi}}</span>
                     </div>
                   </div>
 
@@ -116,6 +199,8 @@
               </div>
 
             </div><!-- End Customers Card -->
+          @endif
+           
 
 
             <div class="col-lg-12">
@@ -127,14 +212,14 @@
                     <h6>Filter</h6>
                   </li>
 
-                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => 'Today', 'aspirasiCategoryFilter' => $aspirasiCategoryFilter]) }}">Today</a></li>
-                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => 'This Month', 'aspirasiCategoryFilter' => $aspirasiCategoryFilter]) }}">This Month</a></li>
-                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => 'This Year', 'aspirasiCategoryFilter' => $aspirasiCategoryFilter]) }}">This Year</a></li>
+                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => 'Today', 'konsultasiFilter' => $konsultasiFilter]) }}">Today</a></li>
+                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => 'This Month', 'konsultasiFilter' => $konsultasiFilter]) }}">This Month</a></li>
+                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => 'This Year', 'konsultasiFilter' => $konsultasiFilter]) }}">This Year</a></li>
                 </ul>
               </div>
 
               <div class="card-body pb-0">
-                <h5 class="card-title">Status</h5>
+                <h5 class="card-title">Status <span>| {{$statusFilter}}</span></h5>
 
                 <div id="aspirationStatusChart" style="min-height: 300px;" class="echart"></div>
               </div>
@@ -299,7 +384,7 @@
                         @elseif ($report->status == "In review to headmaster")
                           <td>Menunggu persetujuan dari atasan</td>
                         @elseif ($report->status == "In Progress")
-                          <td>Sedang diproses</td>
+                          <td>Sedang ditindaklanjuti</td>
                         @elseif ($report->status == "Monitoring process")
                           <td>Dalam pemantauan</td>
                         @elseif ($report->status == "Completed")
@@ -329,9 +414,9 @@
                     <h6>Filter</h6>
                   </li>
 
-                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => 'Today', 'aspirasiCategoryFilter' => $aspirasiCategoryFilter]) }}">Today</a></li>
-                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => 'This Month', 'aspirasiCategoryFilter' => $aspirasiCategoryFilter]) }}">This Month</a></li>
-                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => 'This Year', 'aspirasiCategoryFilter' => $aspirasiCategoryFilter]) }}">This Year</a></li>
+                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => 'Today', 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">Today</a></li>
+                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => 'This Month', 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">This Month</a></li>
+                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => 'This Year', 'aspirasiCategoryFilter' => $aspirasiCategoryFilter, 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">This Year</a></li>
                 </ul>
               </div>
 
@@ -351,9 +436,9 @@
                     <h6>Filter</h6>
                   </li>
 
-                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => 'Today']) }}">Today</a></li>
-                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => 'This Month']) }}">This Month</a></li>
-                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => 'This Year']) }}">This Year</a></li>
+                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => 'Today', 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">Today</a></li>
+                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => 'This Month', 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">This Month</a></li>
+                  <li><a class="dropdown-item" href="{{ route('dashboard.filtered', ['laporanCountFilter' => $laporanCountFilter, 'aspirasiCountFilter' => $aspirasiCountFilter, 'laporanCategoryFilter' => $laporanCategoryFilter, 'aspirasiCategoryFilter' => 'This Year', 'statusFilter' => $statusFilter, 'konsultasiFilter' => $konsultasiFilter]) }}">This Year</a></li>
                 </ul>
               </div>
 
@@ -403,7 +488,7 @@
                           @elseif ($aspiration->status == 'Rejected')
                           <td>Ditolak</td>
                           @elseif ($aspiration->status == 'In Progress')
-                          <td>Sedang diproses</td>
+                          <td>Sedang ditindaklanjuti</td>
                           @elseif ($aspiration->status == 'Monitoring')
                           <td>Dalam pemantauan</td>
                           @elseif ($aspiration->status == 'Completed')
@@ -527,25 +612,33 @@
 
     {{-- Ini untuk Pie Chart --}}
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-          var categories = @json($categories);
-          var laporanCategoryForFilter = @json($laporanCategoryForFilter);
-          var pieChartData = categories.map(function (category) {
-          var filteredReports = category.reports.filter(function (report) {
-              // Assuming 'id' is the unique identifier for a report
-              return laporanCategoryForFilter.some(function (filteredReport) {
-                  return filteredReport.id === report.id;
-              });
-          });
+    document.addEventListener("DOMContentLoaded", () => {
+        var categories = @json($categories);
+        var laporanCategoryForFilter = @json($laporanCategoryForFilter);
 
-          return {
-              value: filteredReports.length,
-              name: category.name
-          };
-          });
-            echarts.init(document.querySelector("#laporanKategori")).setOption({
+        var pieChartData = categories.map(function (category) {
+            var filteredReports = category.reports.filter(function (report) {
+                // Assuming 'id' is the unique identifier for a report
+                return laporanCategoryForFilter.some(function (filteredReport) {
+                    return filteredReport.id === report.id;
+                });
+            });
+
+            return {
+                value: filteredReports.length,
+                name: category.name
+            };
+        });
+
+        var totalReports = pieChartData.reduce((sum, category) => sum + category.value, 0);
+
+        echarts.init(document.querySelector("#laporanKategori")).setOption({
             tooltip: {
-                trigger: 'item'
+                trigger: 'item',
+                formatter: function (params) {
+                    var percentage = ((params.value / totalReports) * 100).toFixed(2);
+                    return `${params.seriesName}<br>${params.name} ${params.value} - ${percentage}%`;
+                }
             },
             legend: {
                 top: '5%',
@@ -557,74 +650,91 @@
                 radius: ['40%', '70%'],
                 avoidLabelOverlap: false,
                 label: {
-                show: false,
-                position: 'center'
+                    show: false,
+                    position: 'center'
                 },
                 emphasis: {
-                label: {
-                    show: true,
-                    fontSize: '18',
-                    fontWeight: 'bold'
-                }
+                    label: {
+                        show: true,
+                        fontSize: '18',
+                        fontWeight: 'bold',
+                        formatter: function (params) {
+                            var percentage = ((params.value / totalReports) * 100).toFixed(2);
+                            return `${params.name} ${params.value} - ${percentage}%`;
+                        }
+                    }
                 },
                 labelLine: {
-                show: false
+                    show: false
                 },
                 data: pieChartData
             }]
-            });
         });
+    });
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-          var categories = @json($categories);
-          var aspirasiCategoryForFilter = @json($aspirasiCategoryForFilter);
-          var pieChartData = categories.map(function (category) {
-          var filteredAspirations = category.aspirations.filter(function (aspiration) {
-              // Assuming 'id' is the unique identifier for a report
-              return aspirasiCategoryForFilter.some(function (filteredAspiration) {
-                  return filteredAspiration.id === aspiration.id;
-              });
-          });
+    document.addEventListener("DOMContentLoaded", () => {
+    var categories = @json($categories);
+    var aspirasiCategoryForFilter = @json($aspirasiCategoryForFilter);
 
-          return {
-              value: filteredAspirations.length,
-              name: category.name
-          };
-          });
-            echarts.init(document.querySelector("#aspirasiKategori")).setOption({
-            tooltip: {
-                trigger: 'item'
-            },
-            legend: {
-                top: '5%',
-                left: 'center'
-            },
-            series: [{
-                name: 'Jumlah aspirasi',
-                type: 'pie',
-                radius: ['40%', '70%'],
-                avoidLabelOverlap: false,
-                label: {
+    var pieChartData = categories.map(function (category) {
+        var filteredAspirations = category.aspirations.filter(function (aspiration) {
+            // Assuming 'id' is the unique identifier for a report
+            return aspirasiCategoryForFilter.some(function (filteredAspiration) {
+                return filteredAspiration.id === aspiration.id;
+            });
+        });
+
+        return {
+            value: filteredAspirations.length,
+            name: category.name
+        };
+    });
+
+    var totalAspirations = pieChartData.reduce((sum, category) => sum + category.value, 0);
+
+    echarts.init(document.querySelector("#aspirasiKategori")).setOption({
+        tooltip: {
+            trigger: 'item',
+            formatter: function (params) {
+                var percentage = ((params.value / totalAspirations) * 100).toFixed(2);
+                return `${params.seriesName}<br>${params.name} ${params.value} - ${percentage}%`;
+            }
+        },
+        legend: {
+            top: '5%',
+            left: 'center'
+        },
+        series: [{
+            name: 'Jumlah aspirasi',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            label: {
                 show: false,
                 position: 'center'
-                },
-                emphasis: {
+            },
+            emphasis: {
                 label: {
                     show: true,
                     fontSize: '18',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
+                    formatter: function (params) {
+                        var percentage = ((params.value / totalAspirations) * 100).toFixed(2);
+                        return `${params.name} ${params.value} - ${percentage}%`;
+                    }
                 }
-                },
-                labelLine: {
+            },
+            labelLine: {
                 show: false
-                },
-                data: pieChartData
+            },
+            data: pieChartData
             }]
-            });
         });
+    });
     </script>
+
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
@@ -709,31 +819,56 @@
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     // Sample data from server
-    var aspirations = @json($aspirations);
-    var reportsObj = @json($reports);
+    var aspirations = @json($aspirasiStatusFilter);
+    var reportsObj = @json($laporanStatusFilter);
+    var currUserRole = @json($currUserRole);
     var reports = Object.values(reportsObj);
 
     // Status options
-    var statusOptions = [
-            'Freshly submitted',
-            'In review',
-            'Request Approval',
-            'Approved',
-            'In Progress',
-            'Monitoring',
-            'Completed',
-            'Rejected',
-          ];
-    var statusOptionsView = [
-      'Terkirim',
-      'Sedang ditinjau',
-      'Menunggu persetujuan',
-      'Disetujui',
-      'Sedang diproses',
-      'Dalam pemantauan',
-      'Selesai',
-      'Ditolak',
+
+    var statusOptions;
+    var statusOptionsView;
+
+    var statusOptionsView = [];
+
+    if (currUserRole === "headmaster") {
+
+      var statusOptions = [
+      'Request Approval',
+      'In Progress',
+      'Completed',
+      'Rejected',
     ];
+
+      statusOptionsView = [
+        'Menunggu persetujuan',
+        'Sedang diproses',
+        'Selesai',
+        'Ditolak',
+      ];
+    } else {
+      var statusOptions = [
+      'Freshly submitted',
+      'In review',
+      'Request Approval',
+      'Approved',
+      'In Progress',
+      'Monitoring',
+      'Completed',
+      'Rejected',
+    ];
+
+      statusOptionsView = [
+        'Terkirim',
+        'Sedang ditinjau',
+        'Menunggu persetujuan',
+        'Disetujui',
+        'Sedang diproses',
+        'Dalam pemantauan',
+        'Selesai',
+        'Ditolak',
+      ];
+    }
 
     function mapStatus(status){
       if(status.includes('In review')){

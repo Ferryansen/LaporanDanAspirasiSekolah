@@ -60,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/comments/{comment}/reply', [CommentController::class, 'reply'])->name('comments.reply');
     Route::post('/{aspiration}/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::get('/clear-session-data', [CommentController::class, 'clearSessionData'])->name('clear-session-data');
+    Route::get('/clear-loading', [CommentController::class, 'clearLoading'])->name('clear-loading');
     Route::post('/openChat', [ReportController::class, 'openChatNotification'])->name('openChat.notif');
 });
 
@@ -124,7 +125,7 @@ Route::middleware(['isheadandstaff'])->group(function () {
     
     Route::prefix('/report')->group(function(){
         Route::patch('/requestApproval/{id}', [ReportController::class, 'requestApprovalReport'])->name('staff.requestApprovalReport');
-        Route::patch('/staffApprove/{id}', [ReportController::class, 'approveReport'])->name('staff.approveReport');
+        // Route::patch('/staffApprove/{id}', [ReportController::class, 'approveReport'])->name('staff.approveReport');
         Route::patch('/staffReject/{id}', [ReportController::class, 'rejectReport'])->name('staff.rejectReport');
         Route::patch('/headApprove/{id}', [ReportController::class, 'approveReport'])->name('headmaster.approveReport');
         Route::patch('/headReject/{id}', [ReportController::class, 'rejectReport'])->name('headmaster.rejectReport');

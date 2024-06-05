@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('approvalBy', 255)->nullable();
             $table->string('lastUpdatedBy', 255)->nullable();
             $table->string('status', 255);
+            $table->string('rejectReason', 255)->nullable();
             $table->timestamps();
         });
     }

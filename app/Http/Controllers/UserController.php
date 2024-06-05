@@ -6,6 +6,7 @@ use App\Models\Aspiration;
 use App\Models\Report;
 use App\Models\StaffType;
 use App\Models\Category;
+use App\Models\ConsultationEvent;
 
 use Illuminate\Support\Carbon;
 use App\Models\User;
@@ -23,15 +24,48 @@ class UserController extends Controller
     public function getDashboard() {
 
         $categories = Category::all();
+        $currUserRole = Auth::user()->role;
+        $statuses = ['In Progress', 'Request Approval', 'Rejected', 'Completed'];
+
+        if ($currUserRole == 'headmaster') {
+            $reports = Report::whereIn('status', $statuses)->orderBy('created_at', 'desc')->get();
+            $aspirations = Aspiration::withCount(['likes'])
+                             ->whereIn('status', $statuses)->orderBy('likes_count', 'desc')
+                             ->get();
+        }else{
         $reports = Report::all()->sortByDesc('created_at');
         $aspirations = Aspiration::withCount(['likes'])
                          ->orderBy('likes_count', 'desc')
                          ->get();
+        }
         $users = User::all();
         $staffTypes = StaffType::all();
-        $laporanForFilter =  Report::whereDate('created_at', Carbon::today())->get();
-        $laporanToday = Report::whereDate('created_at', Carbon::today())->count();
-        $laporanYesterday = Report::whereDate('created_at', Carbon::yesterday())->count();
+
+        // Base query to get today's reports
+        $laporanForFilterQuery = Report::whereDate('created_at', Carbon::today());
+
+        // Filter reports based on the user's role
+        if ($currUserRole == 'headmaster') {
+            $laporanForFilterQuery->whereIn('status', $statuses);
+        }
+
+        // Get the filtered reports
+        $laporanForFilter = $laporanForFilterQuery->get();
+
+        // Apply the same filtering logic for the counts
+        if ($currUserRole == 'headmaster') {
+            $laporanToday = Report::whereDate('created_at', Carbon::today())
+                                ->whereIn('status', $statuses)
+                                ->count();
+
+            $laporanYesterday = Report::whereDate('created_at', Carbon::yesterday())
+                                    ->whereIn('status', $statuses)
+                                    ->count();
+        } else {
+            $laporanToday = Report::whereDate('created_at', Carbon::today())->count();
+            $laporanYesterday = Report::whereDate('created_at', Carbon::yesterday())->count();
+        }
+
         if ($laporanYesterday != 0) {
             // Calculate the percentage change
             $persenLaporan = ($laporanToday - $laporanYesterday) / $laporanYesterday * 100;
@@ -43,9 +77,31 @@ class UserController extends Controller
         }
 
 
-        $aspirasiForFilter = Aspiration::whereDate('created_at', Carbon::today())->get();
-        $aspirasiToday = Aspiration::whereDate('created_at', Carbon::today())->count();
-        $aspirasiYesterday = Aspiration::whereDate('created_at', Carbon::yesterday())->count();
+         // Base query to get today's reports
+         $aspirasiForFilterQuery = Aspiration::whereDate('created_at', Carbon::today());
+
+         // Filter reports based on the user's role
+         if ($currUserRole == 'headmaster') {
+             $aspirasiForFilterQuery->whereIn('status', $statuses);
+         }
+ 
+         // Get the filtered reports
+         $aspirasiForFilter = $aspirasiForFilterQuery->get();
+ 
+         // Apply the same filtering logic for the counts
+         if ($currUserRole == 'headmaster') {
+             $aspirasiToday = Aspiration::whereDate('created_at', Carbon::today())
+                                 ->whereIn('status', $statuses)
+                                 ->count();
+ 
+             $aspirasiYesterday = Aspiration::whereDate('created_at', Carbon::yesterday())
+                                     ->whereIn('status', $statuses)
+                                     ->count();
+         } else {
+             $aspirasiToday = Aspiration::whereDate('created_at', Carbon::today())->count();
+             $aspirasiYesterday = Aspiration::whereDate('created_at', Carbon::yesterday())->count();
+         }
+
         if ($aspirasiYesterday != 0) {
             // Calculate the percentage change
             $persenAspirasi = ($aspirasiToday - $aspirasiYesterday) / $aspirasiYesterday * 100;
@@ -56,25 +112,154 @@ class UserController extends Controller
             $statusAspirasi = "N/A"; // You can set any default value or handle it differently
         }
 
-        $laporanCategoryForFilter =  Report::whereDate('created_at', Carbon::today())->get();
-        $aspirasiCategoryForFilter = Aspiration::whereDate('created_at', Carbon::today())->get();
+        $laporanCategoryForFilterRole = Report::whereDate('created_at', Carbon::today());
+
+        if ($currUserRole == 'headmaster') {
+            $laporanCategoryForFilterRole->whereIn('status', $statuses);
+        }
+
+        $laporanCategoryForFilter =  $laporanCategoryForFilterRole->get();
+
+        $aspirasiCategoryForFilterRole = Aspiration::whereDate('created_at', Carbon::today());
+
+        if ($currUserRole == 'headmaster') {
+            $aspirasiCategoryForFilterRole->whereIn('status', $statuses);
+        }
+
+        $aspirasiForFilterStatusQuery = Aspiration::whereDate('created_at', Carbon::today());
+
+        // Filter reports based on the user's role
+        if ($currUserRole == 'headmaster') {
+            $aspirasiForFilterStatusQuery->whereIn('status', $statuses);
+        }
+
+        // Get the filtered reports
+        $aspirasiStatusFilter = $aspirasiForFilterStatusQuery->get();
+
+        $laporanForFilterStatusQuery = Report::whereDate('created_at', Carbon::today());
+
+        // Filter reports based on the user's role
+        if ($currUserRole == 'headmaster') {
+            $laporanForFilterStatusQuery->whereIn('status', $statuses);
+        }
+
+        // Get the filtered reports
+        $laporanStatusFilter = $laporanForFilterStatusQuery->get();
+
+        $aspirasiCategoryForFilter = $aspirasiCategoryForFilterRole->get();
+
+        $konsultasiToday = ConsultationEvent::whereDate('start', Carbon::today())
+                                ->count();
+
+        $konsultasiYesterday = ConsultationEvent::whereDate('start', Carbon::yesterday())
+                                ->count();
+
+        if ($konsultasiYesterday != 0) {
+            $persenKonsultasi = ($konsultasiToday - $konsultasiYesterday) / $konsultasiYesterday * 100;
+            $statusKonsultasi = $persenKonsultasi >= 0 ? "increase" : "decrease";
+        }else{
+            $persenKonsultasi = 0;
+            $statusKonsultasi = "N/A";
+        }
+
+        $konsultasiCount = ConsultationEvent::whereDate('start', Carbon::today())
+        ->count();
+
+        $statusFilter = "Today";
         $laporanCountFilter = "Today";
         $aspirasiCountFilter = "Today";
         $laporanCategoryFilter = "Today";
         $aspirasiCategoryFilter = "Today";
+        $konsultasiFilter = "Today";
 
 
-        return view('user.admin.dashboard',compact('persenLaporan', 'statusLaporan', 'persenAspirasi', 'statusAspirasi', 'laporanCountFilter', 'aspirasiCountFilter', 'laporanCategoryFilter', 'aspirasiCategoryFilter', 'categories', 'reports', 'aspirations', 'users', 'staffTypes', 'aspirasiCategoryForFilter', 'laporanCategoryForFilter', 'aspirasiForFilter', 'laporanForFilter'));
+        return view('user.admin.dashboard',compact('konsultasiCount', 'persenKonsultasi', 'statusKonsultasi', 'konsultasiFilter','currUserRole','persenLaporan', 'statusLaporan', 'persenAspirasi', 'statusAspirasi', 'laporanCountFilter', 'aspirasiCountFilter', 'laporanCategoryFilter', 'aspirasiCategoryFilter', 'categories', 'reports', 'aspirations', 'users', 'staffTypes', 'aspirasiCategoryForFilter', 'laporanCategoryForFilter', 'aspirasiForFilter', 'laporanForFilter', 'statusFilter', 'laporanStatusFilter', 'aspirasiStatusFilter'));
     }
 
     public function getDashboardddFiltered(Request $request) {
+        $currUserRole = Auth::user()->role;
+        $statuses = ['In Progress', 'Request Approval', 'Rejected', 'Completed'];
+
+        $konsultasiFilter = $request->konsultasiFilter;
+        if ($konsultasiFilter == "Today") {
+            $konsultasiToday = ConsultationEvent::whereDate('start', Carbon::today())
+                                ->count();
+
+            $konsultasiYesterday = ConsultationEvent::whereDate('start', Carbon::yesterday())
+                                    ->count();
+
+            if ($konsultasiYesterday != 0) {
+                $persenKonsultasi = ($konsultasiToday - $konsultasiYesterday) / $konsultasiYesterday * 100;
+                $statusKonsultasi = $persenKonsultasi >= 0 ? "increase" : "decrease";
+            }else{
+                $persenKonsultasi = 0;
+                $statusKonsultasi = "N/A";
+            }
+
+            $konsultasiCount = ConsultationEvent::whereDate('start', Carbon::today())
+            ->count();
+        }elseif ($konsultasiFilter == "This Month") {
+            $konsultasiToday = ConsultationEvent::whereMonth('start', Carbon::now()->month)->whereYear('start', Carbon::now()->year)
+                                ->count();
+
+            $konsultasiYesterday = ConsultationEvent::whereMonth('start', Carbon::now()->subMonth()->month)
+                                ->whereYear('start', Carbon::now()->subMonth()->year)
+                                ->count();
+
+            if ($konsultasiYesterday != 0) {
+                $persenKonsultasi = ($konsultasiToday - $konsultasiYesterday) / $konsultasiYesterday * 100;
+                $statusKonsultasi = $persenKonsultasi >= 0 ? "increase" : "decrease";
+            }else{
+                $persenKonsultasi = 0;
+                $statusKonsultasi = "N/A";
+            }
+
+            $konsultasiCount = ConsultationEvent::whereMonth('start', Carbon::now()->month)->whereYear('start', Carbon::now()->year)
+            ->count();
+        }else {
+            $konsultasiToday = ConsultationEvent::whereYear('start', Carbon::now()->year)
+                                ->count();
+
+            $konsultasiYesterday = ConsultationEvent::whereYear('start', Carbon::now()->subYear()->year)
+                                ->count();
+
+            if ($konsultasiYesterday != 0) {
+                $persenKonsultasi = ($konsultasiToday - $konsultasiYesterday) / $konsultasiYesterday * 100;
+                $statusKonsultasi = $persenKonsultasi >= 0 ? "increase" : "decrease";
+            }else{
+                $persenKonsultasi = 0;
+                $statusKonsultasi = "N/A";
+            }
+
+            $konsultasiCount = ConsultationEvent::whereYear('start', Carbon::now()->year)
+            ->count();
+        }
 
         $laporanCountFilter = $request->laporanCountFilter;
         if($laporanCountFilter == "Today"){
-            $laporanForFilter = Report::whereDate('created_at', Carbon::today())->get();
+            $laporanForFilterQuery = Report::whereDate('created_at', Carbon::today());
 
-            $laporanToday = Report::whereDate('created_at', Carbon::today())->count();
-            $laporanYesterday = Report::whereDate('created_at', Carbon::yesterday())->count();
+            // Filter reports based on the user's role
+            if ($currUserRole == 'headmaster') {
+                $laporanForFilterQuery->whereIn('status', $statuses);
+            }
+    
+            // Get the filtered reports
+            $laporanForFilter = $laporanForFilterQuery->get();
+    
+            // Apply the same filtering logic for the counts
+            if ($currUserRole == 'headmaster') {
+                $laporanToday = Report::whereDate('created_at', Carbon::today())
+                                    ->whereIn('status', $statuses)
+                                    ->count();
+    
+                $laporanYesterday = Report::whereDate('created_at', Carbon::yesterday())
+                                        ->whereIn('status', $statuses)
+                                        ->count();
+            } else {
+                $laporanToday = Report::whereDate('created_at', Carbon::today())->count();
+                $laporanYesterday = Report::whereDate('created_at', Carbon::yesterday())->count();
+            }
 
             if ($laporanYesterday != 0) {
                 // Calculate the percentage change
@@ -86,16 +271,33 @@ class UserController extends Controller
                 $statusLaporan = "N/A"; // You can set any default value or handle it differently
             }
         }elseif($laporanCountFilter == "This Month"){
-            $laporanForFilter = Report::whereMonth('created_at', Carbon::now()->month)
-                ->whereYear('created_at', Carbon::now()->year)
-                ->get();
+            $laporanForFilterQuery = Report::whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year);
 
-            $laporanThisMonth = Report::whereMonth('created_at', Carbon::now()->month)
+            // Filter reports based on the user's role
+            if ($currUserRole == 'headmaster') {
+                $laporanForFilterQuery->whereIn('status', $statuses);
+            }
+    
+            // Get the filtered reports
+            $laporanForFilter = $laporanForFilterQuery->get();
+
+            if ($currUserRole == 'headmaster') {
+                $laporanThisMonth = Report::whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year)->whereIn('status', $statuses)
+                ->count();
+    
+                $laporanLastMonth = Report::whereMonth('created_at', Carbon::now()->subMonth()->month)
+                ->whereYear('created_at', Carbon::now()->subMonth()->year)->whereIn('status', $statuses)
+                ->count();
+            } else {
+                $laporanThisMonth = Report::whereMonth('created_at', Carbon::now()->month)
                 ->whereYear('created_at', Carbon::now()->year)
                 ->count();
-            $laporanLastMonth = Report::whereMonth('created_at', Carbon::now()->subMonth()->month)
+                $laporanLastMonth = Report::whereMonth('created_at', Carbon::now()->subMonth()->month)
                 ->whereYear('created_at', Carbon::now()->subMonth()->year)
                 ->count();
+            }
 
             if ($laporanLastMonth != 0) {
                 // Calculate the percentage change
@@ -107,9 +309,28 @@ class UserController extends Controller
                 $statusLaporan = "N/A"; // You can set any default value or handle it differently
             }
         }elseif($laporanCountFilter == "This Year"){
-            $laporanForFilter = Report::whereYear('created_at', Carbon::now()->year)->get();
-            $laporanThisYear = Report::whereYear('created_at', Carbon::now()->year)->count();
-            $laporanLastYear = Report::whereYear('created_at', Carbon::now()->subYear()->year)->count();
+            $laporanForFilterQuery = Report::whereYear('created_at', Carbon::now()->year);
+
+            // Filter reports based on the user's role
+            if ($currUserRole == 'headmaster') {
+                $laporanForFilterQuery->whereIn('status', $statuses);
+            }
+
+            // Get the filtered reports
+            $laporanForFilter = $laporanForFilterQuery->get();
+
+            if ($currUserRole == 'headmaster') {
+                $laporanThisYear = Report::
+                whereYear('created_at', Carbon::now()->year)->whereIn('status', $statuses)
+                ->count();
+    
+                $laporanLastYear = Report::whereYear('created_at', Carbon::now()->subYear()->year)->whereIn('status', $statuses)
+                ->count();
+            } else {
+                $laporanThisYear = Report::whereYear('created_at', Carbon::now()->year)
+                ->count();
+                $laporanLastYear = Report::whereYear('created_at', Carbon::now()->subYear()->year)->count();
+            }
 
             if ($laporanLastYear != 0) {
                 // Calculate the percentage change
@@ -121,14 +342,38 @@ class UserController extends Controller
                 $statusLaporan = "N/A"; // You can set any default value or handle it differently
             }
         }else{
+            if ($currUserRole == 'headmaster') {
+            $laporanForFilter = Report::whereIn('status', $statuses)->get();
+            }else{
             $laporanForFilter = Report::all();
+            }
         }
 
         $aspirasiCountFilter = $request->aspirasiCountFilter;
         if($aspirasiCountFilter == "Today"){
-            $aspirasiForFilter = Aspiration::whereDate('created_at', Carbon::today())->get();
-            $aspirasiToday = Aspiration::whereDate('created_at', Carbon::today())->count();
-            $aspirasiYesterday = Aspiration::whereDate('created_at', Carbon::yesterday())->count();
+            $aspirasiForFilterQuery = Aspiration::whereDate('created_at', Carbon::today());
+
+            // Filter reports based on the user's role
+            if ($currUserRole == 'headmaster') {
+                $aspirasiForFilterQuery->whereIn('status', $statuses);
+            }
+    
+            // Get the filtered reports
+            $aspirasiForFilter = $aspirasiForFilterQuery->get();
+    
+            // Apply the same filtering logic for the counts
+            if ($currUserRole == 'headmaster') {
+                $aspirasiToday = Aspiration::whereDate('created_at', Carbon::today())
+                                    ->whereIn('status', $statuses)
+                                    ->count();
+    
+                $aspirasiYesterday = Aspiration::whereDate('created_at', Carbon::yesterday())
+                                        ->whereIn('status', $statuses)
+                                        ->count();
+            } else {
+                $aspirasiToday = Aspiration::whereDate('created_at', Carbon::today())->count();
+                $aspirasiYesterday = Aspiration::whereDate('created_at', Carbon::yesterday())->count();
+            }
 
             if ($aspirasiYesterday != 0) {
                 // Calculate the percentage change
@@ -140,16 +385,33 @@ class UserController extends Controller
                 $statusAspirasi = "N/A"; // You can set any default value or handle it differently
             }
         }elseif($aspirasiCountFilter == "This Month"){
-            $aspirasiForFilter = Aspiration::whereMonth('created_at', Carbon::now()->month)
-                ->whereYear('created_at', Carbon::now()->year)
-                ->get();
+            $aspirasiForFilterQuery = Aspiration::whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year);
 
-            $aspirasiThisMonth = Aspiration::whereMonth('created_at', Carbon::now()->month)
+            // Filter reports based on the user's role
+            if ($currUserRole == 'headmaster') {
+                $aspirasiForFilterQuery->whereIn('status', $statuses);
+            }
+
+            // Get the filtered reports
+            $aspirasiForFilter = $aspirasiForFilterQuery->get();
+
+            if ($currUserRole == 'headmaster') {
+                $aspirasiThisMonth = Aspiration::whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year)->whereIn('status', $statuses)
+                ->count();
+
+                $aspirasiLastMonth = Aspiration::whereMonth('created_at', Carbon::now()->subMonth()->month)
+                ->whereYear('created_at', Carbon::now()->subMonth()->year)->whereIn('status', $statuses)
+                ->count();
+            } else {
+                $aspirasiThisMonth = Aspiration::whereMonth('created_at', Carbon::now()->month)
                 ->whereYear('created_at', Carbon::now()->year)
                 ->count();
-            $aspirasiLastMonth = Aspiration::whereMonth('created_at', Carbon::now()->subMonth()->month)
+                $aspirasiLastMonth = Aspiration::whereMonth('created_at', Carbon::now()->subMonth()->month)
                 ->whereYear('created_at', Carbon::now()->subMonth()->year)
                 ->count();
+            }
             
             if ($aspirasiLastMonth != 0) {
                 // Calculate the percentage change
@@ -161,9 +423,28 @@ class UserController extends Controller
                 $statusAspirasi = "N/A"; // You can set any default value or handle it differently
             }
         }elseif($aspirasiCountFilter == "This Year"){
-            $aspirasiForFilter = Aspiration::whereYear('created_at', Carbon::now()->year)->get();
-            $aspirasiThisYear = Aspiration::whereYear('created_at', Carbon::now()->year)->count();
-            $aspirasiLastYear = Aspiration::whereYear('created_at', Carbon::now()->subYear()->year)->count();
+            $aspirasiForFilterQuery = Aspiration::whereYear('created_at', Carbon::now()->year);
+
+            // Filter reports based on the user's role
+            if ($currUserRole == 'headmaster') {
+                $aspirasiForFilterQuery->whereIn('status', $statuses);
+            }
+
+            // Get the filtered reports
+            $aspirasiForFilter = $aspirasiForFilterQuery->get();
+
+            if ($currUserRole == 'headmaster') {
+                $aspirasiThisYear = Aspiration::
+                whereYear('created_at', Carbon::now()->year)->whereIn('status', $statuses)
+                ->count();
+    
+                $aspirasiLastYear = Aspiration::whereYear('created_at', Carbon::now()->subYear()->year)->whereIn('status', $statuses)
+                ->count();
+            } else {
+                $aspirasiThisYear = Aspiration::whereYear('created_at', Carbon::now()->year)
+                ->count();
+                $aspirasiLastYear = Aspiration::whereYear('created_at', Carbon::now()->subYear()->year)->count();
+            }
 
             if ($aspirasiLastYear != 0) {
                 // Calculate the percentage change
@@ -175,43 +456,184 @@ class UserController extends Controller
                 $statusAspirasi = "N/A"; // You can set any default value or handle it differently
             }
         }else{
-            $aspirasiForFilter = Aspiration::all();
+            if ($currUserRole == 'headmaster') {
+                $aspirasiForFilter = Aspiration::whereIn('status', $statuses)->get();
+                }else{
+                $aspirasiForFilter = Aspiration::all();
+                }
         }
 
         $laporanCategoryFilter = $request->laporanCategoryFilter;
         if($laporanCategoryFilter == "Today"){
-            $laporanCategoryForFilter = Report::whereDate('created_at', Carbon::today())->get();
+
+            $laporanForFilterQuery = Report::whereDate('created_at', Carbon::today());
+
+            // Filter reports based on the user's role
+            if ($currUserRole == 'headmaster') {
+                $laporanForFilterQuery->whereIn('status', $statuses);
+            }
+    
+            // Get the filtered reports
+            $laporanCategoryForFilter = $laporanForFilterQuery->get();
         }elseif($laporanCategoryFilter == "This Month"){
-            $laporanCategoryForFilter = Report::whereMonth('created_at', Carbon::now()->month)
-                ->whereYear('created_at', Carbon::now()->year)
-                ->get();
+            $laporanForFilterQuery = Report::whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year);
+
+            // Filter reports based on the user's role
+            if ($currUserRole == 'headmaster') {
+                $laporanForFilterQuery->whereIn('status', $statuses);
+            }
+    
+            // Get the filtered reports
+            $laporanCategoryForFilter = $laporanForFilterQuery->get();
         }elseif($laporanCategoryFilter == "This Year"){
-            $laporanCategoryForFilter = Report::whereYear('created_at', Carbon::now()->year)->get();
+            $laporanForFilterQuery = Report::whereYear('created_at', Carbon::now()->year);
+
+            // Filter reports based on the user's role
+            if ($currUserRole == 'headmaster') {
+                $laporanForFilterQuery->whereIn('status', $statuses);
+            }
+
+            // Get the filtered reports
+            $laporanCategoryForFilter = $laporanForFilterQuery->get();
         }else{
-            $laporanCategoryForFilter = Report::all();
+            if ($currUserRole == 'headmaster') {
+                $laporanCategoryForFilter = Report::whereIn('status', $statuses)->get();
+                }else{
+                $laporanCategoryForFilter = Report::all();
+                }
         }
 
         $aspirasiCategoryFilter = $request->aspirasiCategoryFilter;
         if($aspirasiCategoryFilter == "Today"){
-            $aspirasiCategoryForFilter = Aspiration::whereDate('created_at', Carbon::today())->get();
+            $aspirasiForFilterQuery = Aspiration::whereDate('created_at', Carbon::today());
+
+            // Filter reports based on the user's role
+            if ($currUserRole == 'headmaster') {
+                $aspirasiForFilterQuery->whereIn('status', $statuses);
+            }
+    
+            // Get the filtered reports
+            $aspirasiCategoryForFilter = $aspirasiForFilterQuery->get();
         }elseif($aspirasiCategoryFilter == "This Month"){
-            $aspirasiCategoryForFilter = Aspiration::whereMonth('created_at', Carbon::now()->month)
-                ->whereYear('created_at', Carbon::now()->year)
-                ->get();
+            $aspirasiForFilterQuery = Aspiration::whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year);
+
+            if ($currUserRole == 'headmaster') {
+                $aspirasiForFilterQuery->whereIn('status', $statuses);
+            }
+    
+            // Get the filtered reports
+            $aspirasiCategoryForFilter = $aspirasiForFilterQuery->get();
         }elseif($aspirasiCategoryFilter == "This Year"){
-            $aspirasiCategoryForFilter = Aspiration::whereYear('created_at', Carbon::now()->year)->get();
+            $aspirasiForFilterQuery = Aspiration::whereYear('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year);
+
+            // Filter reports based on the user's role
+            if ($currUserRole == 'headmaster') {
+                $aspirasiForFilterQuery->whereIn('status', $statuses);
+            }
+
+            // Get the filtered reports
+            $aspirasiCategoryForFilter = $aspirasiForFilterQuery->get();
         }else{
-            $aspirasiCategoryForFilter = Aspiration::all();
+            if ($currUserRole == 'headmaster') {
+                $aspirasiCategoryForFilter = Aspiration::whereIn('status', $statuses)->get();
+                }else{
+                $aspirasiCategoryForFilter = Aspiration::all();
+                }
+        }
+
+        $statusFilter = $request->statusFilter;
+        if($statusFilter == "Today"){
+            $aspirasiForFilterQuery = Aspiration::whereDate('created_at', Carbon::today());
+
+            // Filter reports based on the user's role
+            if ($currUserRole == 'headmaster') {
+                $aspirasiForFilterQuery->whereIn('status', $statuses);
+            }
+    
+            // Get the filtered reports
+            $aspirasiStatusFilter = $aspirasiForFilterQuery->get();
+
+            $laporanForFilterQuery = Report::whereDate('created_at', Carbon::today());
+
+            // Filter reports based on the user's role
+            if ($currUserRole == 'headmaster') {
+                $laporanForFilterQuery->whereIn('status', $statuses);
+            }
+    
+            // Get the filtered reports
+            $laporanStatusFilter = $laporanForFilterQuery->get();
+        }elseif($statusFilter == "This Month"){
+            $aspirasiForFilterQuery = Aspiration::whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year);
+
+            if ($currUserRole == 'headmaster') {
+                $aspirasiForFilterQuery->whereIn('status', $statuses);
+            }
+    
+            // Get the filtered reports
+            $aspirasiStatusFilter = $aspirasiForFilterQuery->get();
+
+            $laporanForFilterQuery = Report::whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', Carbon::now()->year);
+
+            if ($currUserRole == 'headmaster') {
+                $laporanForFilterQuery->whereIn('status', $statuses);
+            }
+    
+            // Get the filtered reports
+            $laporanStatusFilter = $laporanForFilterQuery->get();
+        }elseif($statusFilter == "This Year"){
+            $aspirasiForFilterQuery = Aspiration::whereYear('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year);
+
+            // Filter reports based on the user's role
+            if ($currUserRole == 'headmaster') {
+                $aspirasiForFilterQuery->whereIn('status', $statuses);
+            }
+
+            // Get the filtered reports
+            $aspirasiStatusFilter = $aspirasiForFilterQuery->get();
+
+            $laporanForFilterQuery = Report::whereYear('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year);
+
+            // Filter reports based on the user's role
+            if ($currUserRole == 'headmaster') {
+                $laporanForFilterQuery->whereIn('status', $statuses);
+            }
+
+            // Get the filtered reports
+            $laporanStatusFilter = $laporanForFilterQuery->get();
+        }else{
+            if ($currUserRole == 'headmaster') {
+                $aspirasiStatusFilter = Aspiration::whereIn('status', $statuses)->get();
+                $laporanStatusFilter = Report::whereIn('status', $statuses)->get();
+                }else{
+                $aspirasiStatusFilter = Aspiration::all();
+                $laporanStatusFilter = Report::all();
+                }
         }
 
         $categories = Category::all();
+        if ($currUserRole == 'headmaster') {
+            $reports = Report::whereIn('status', $statuses)->orderBy('created_at', 'desc')->get();
+            $aspirations = Aspiration::withCount(['likes'])
+                             ->whereIn('status', $statuses)->orderBy('likes_count', 'desc')
+                             ->get();
+        }else{
         $reports = Report::all()->sortByDesc('created_at');
-        $aspirations = Aspiration::all()->sortByDesc('upvote');
+        $aspirations = Aspiration::withCount(['likes'])
+                         ->orderBy('likes_count', 'desc')
+                         ->get();
+        }
         $users = User::all();
         $staffTypes = StaffType::all();
 
 
-        return view('user.admin.dashboard',compact('persenLaporan', 'statusLaporan', 'persenAspirasi', 'statusAspirasi', 'laporanCountFilter', 'aspirasiCountFilter', 'laporanCategoryFilter', 'aspirasiCategoryFilter', 'categories', 'reports', 'aspirations', 'users', 'staffTypes', 'aspirasiCategoryForFilter', 'laporanCategoryForFilter', 'aspirasiForFilter', 'laporanForFilter'));
+        return view('user.admin.dashboard',compact('konsultasiCount', 'persenKonsultasi', 'statusKonsultasi', 'konsultasiFilter', 'currUserRole','persenLaporan', 'statusLaporan', 'persenAspirasi', 'statusAspirasi', 'laporanCountFilter', 'aspirasiCountFilter', 'laporanCategoryFilter', 'aspirasiCategoryFilter', 'categories', 'reports', 'aspirations', 'users', 'staffTypes', 'aspirasiCategoryForFilter', 'laporanCategoryForFilter', 'aspirasiForFilter', 'laporanForFilter', 'statusFilter', 'laporanStatusFilter', 'aspirasiStatusFilter'));
     }
 
     public function getMyReport() {
