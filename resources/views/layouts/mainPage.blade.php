@@ -357,7 +357,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                               <option value="Freshly submitted" >Freshly submitted</option>
                               @if(Auth::user()->role != "student")
                                 <option value="In review by staff" >In review by staff</option>
-                                <option value="In review to headmaster" >In review to headmaster</option>
+                                <option value="Request Approval" >Request Approval</option>
                               @endif
                               <option value="Approved" >Approved</option>
                               <option value="Rejected" >Rejected</option>

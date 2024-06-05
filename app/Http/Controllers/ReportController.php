@@ -138,7 +138,7 @@ class ReportController extends Controller
     
         if ($report->status == "Approved" || 
             $report->status == "In review by staff" || 
-            $report->status == "In review to headmaster" || 
+            $report->status == "Request Approval" || 
             $report->status == "In Progress" || 
             $report->status == "Monitoring process" || 
             $report->status == "Completed") {
@@ -290,6 +290,8 @@ class ReportController extends Controller
             $currentYear = now()->year;
             $reportCount = Report::whereYear('created_at', $currentYear)->count() + 1;
             $report_no = sprintf('%03d/REP/%d', $reportCount, $currentYear);
+
+            $processEstimationDate = now()->addDay();
     
             $report = Report::create([
                 'reportNo' => $report_no,
@@ -297,11 +299,11 @@ class ReportController extends Controller
                 'name' => $request->reportName,
                 'category_id' => $request->reportCategory,
                 'description' => $request->reportDescription,
-                'priority' => 4,
+                'priority' => 1,
                 'isUrgent' => true,
                 'isChatOpened' => false,
                 'processDate' => null,
-                'processEstimationDate' => null,
+                'processEstimationDate' => $processEstimationDate,
                 'approvalBy'=> null,
                 'lastUpdatedBy'=> null,
                 'status' => "Freshly submitted",
@@ -525,7 +527,7 @@ class ReportController extends Controller
         $relatedHeadmasters = User::where('role', 'headmaster')->get();
 
         $report->update([
-            'status' => "In review to headmaster",
+            'status' => "Request Approval",
             'lastUpdatedBy' => $currUser->name
         ]);
 
@@ -595,7 +597,7 @@ class ReportController extends Controller
         //     ->with('openModal', true)
         //     ->with('reportId', $report->id);
         // }
-
+        
         if($request->priority == 1){
             $reportCreatedAt = $report->created_at->add(new DateInterval('P3D'));
             $processEstimationDate = $reportCreatedAt->format('Y-m-d');
@@ -609,14 +611,24 @@ class ReportController extends Controller
             $processEstimationDate = $reportCreatedAt->format('Y-m-d');
         }
 
-        $report->update([
-            'priority' => $request->priority,
-            'status' => "In Progress",
-            'processedBy' => $currUser->id,
-            'lastUpdatedBy' => $currUser->name,
-            'processDate' => now(),
-            'processEstimationDate' => $processEstimationDate
-        ]);
+        if($report->isUrgent == false){
+            $report->update([
+                'priority' => $request->priority,
+                'status' => "In Progress",
+                'processedBy' => $currUser->id,
+                'lastUpdatedBy' => $currUser->name,
+                'processDate' => now(),
+                'processEstimationDate' => $processEstimationDate
+            ]);
+        }
+        else{
+            $report->update([
+                'status' => "In Progress",
+                'processedBy' => $currUser->id,
+                'lastUpdatedBy' => $currUser->name,
+                'processDate' => now(),
+            ]);
+        }
 
         $reportData = [
             'reportID' => $report->id,

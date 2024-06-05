@@ -19,6 +19,12 @@
 
 @section('sectionPage')
 <section class="section">
+  <div class="row mb-3">
+    <div class="col-sm-12">
+        <a href="{{ asset('template_assets/import/TemplateImport.xlsx') }}" class="btn btn-success">Download Template</a>
+    </div>
+  </div>
+  <br>
   <!-- General Form Elements -->
   <form id="user-form" action="{{ route('manage.users.importstudents.submit') }}" enctype="multipart/form-data" method="POST" novalidate>
     @csrf

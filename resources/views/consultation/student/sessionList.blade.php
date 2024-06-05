@@ -76,7 +76,6 @@
 @endsection
 
 @section('sectionPage') 
-  @if (Auth::user()->isSuspended == false)
   <section class="section">
       <div class="row">
           <div class="col-lg-12">
@@ -86,8 +85,8 @@
                       <table class="table">
                           <tbody  style="border: white">
                             <div class="d-grid gap-2 d-md-block d-flex" style="padding-left: 15px; margin-bottom: 20px">
-                                <a href="{{ route('consultation.sessionList.sorting', ['typeSorting' => 'UpComing']) }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'UpComing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'UpComing' ? '#fff' : '#8F8F8F' }}; border: 1; border-color: #8F8F8F; border-radius: 20px;">Akan datang</a>
-                                <a href="{{ route('consultation.sessionList.sorting', ['typeSorting' => 'OnGoing']) }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'OnGoing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'OnGoing' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px;">Berlangsung</a>
+                                <a href="{{ $typeSorting !== 'UpComing' ? route('consultation.sessionList.sorting', ['typeSorting' => 'UpComing']) : route('consultation.sessionList') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'UpComing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'UpComing' ? '#fff' : '#8F8F8F' }}; border: 1; border-color: #8F8F8F; border-radius: 20px;">Akan datang</a>
+                                <a href="{{ $typeSorting !== 'OnGoing' ? route('consultation.sessionList.sorting', ['typeSorting' => 'OnGoing']) : route('consultation.sessionList') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'OnGoing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'OnGoing' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px;">Berlangsung</a>
                             </div>
                               @if ($consultations->count() == 0)
                               <tr>
@@ -147,17 +146,6 @@
           </div>
       </div>
   </section>
-  @else
-    <section class="section">
-      <div class="row">
-        <div class="card">
-            <div class="card-body text-center">
-              <h5 class="card-title mb-0 pb-0 text-danger">{{ $message }}</h5>
-            </div>
-          </div>
-      </div>
-    </section>
-  @endif
 @endsection
 
 @section('css')
