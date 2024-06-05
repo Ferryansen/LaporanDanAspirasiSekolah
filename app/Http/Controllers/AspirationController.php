@@ -44,6 +44,7 @@ class AspirationController extends Controller
         $selectedCategoryId ="";
         $currUser = Auth::user();
         $message = null;
+        $failMessage = "";
         
         if ($currUser->isSuspended == true) {
             $message = 'Kamu tidak bisa mengakses fitur ini, kamu sedang ter-suspend!';
@@ -67,7 +68,7 @@ class AspirationController extends Controller
         // $aspirations = Aspiration::orderByDesc('upvote') // Sort in descending order based on upvote count
         $aspirations = Aspiration::paginate(10)->withQueryString();
 
-        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'message', 'typeSorting', 'selectedCategoryId'));
+        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'message', 'typeSorting', 'selectedCategoryId', 'failMessage'));
     }
 
     public function publicAspirationSorting($typeSorting)
@@ -75,6 +76,7 @@ class AspirationController extends Controller
         $selectedCategoryId = "";
         $currUser = Auth::user();
         $message = null;
+        $failMessage = "";
         
         if ($currUser->isSuspended == true) {
             $message = 'Kamu tidak bisa mengakses fitur ini, kamu sedang ter-suspend!';
@@ -105,7 +107,7 @@ class AspirationController extends Controller
             $aspirations = Aspiration::paginate(10)->withQueryString();
         }
 
-        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'message', 'typeSorting', 'selectedCategoryId'));
+        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'message', 'typeSorting', 'selectedCategoryId', 'failMessage'));
     }
     
     public function manageAspiration()
@@ -219,7 +221,7 @@ class AspirationController extends Controller
         $aspiration->save();
 
         // Redirect back with a success message
-        return redirect()->back()->with('success', 'Aspirasi telah ditambah pada halaman kelola aspirasi');
+        return redirect()->route('aspirations.manageAspiration');
     }
     
 
@@ -253,6 +255,7 @@ class AspirationController extends Controller
             'message' => $message,
             'typeSorting' => $typeSorting,
             'selectedCategoryId' => $selectedCategoryId,
+            'failMessage' => ""
             // 'userUpvotes' => $userUpvotes
         ];
         
@@ -577,7 +580,34 @@ class AspirationController extends Controller
 
     public function pinAspiration(Request $request){
         $aspiration = Aspiration::find($request->id);
+
+        $pinnedCount = Aspiration::where('isPinned', true)->count();
+
         $selectedCategoryId = "";
+
+        $typeSorting = "";
+        $failMessage = "";
+
+        // Check if there are already 5 pinned aspirations
+        if ($pinnedCount >= 5) {
+            // If there are 5 or more pinned aspirations, return with fail message
+            $aspirations = Aspiration::paginate(10)->withQueryString();
+            $categories = Category::all();
+            $filterTitle = null;
+            $failMessage = "Hanya boleh ada 5 aspirasi yang di-pin bersamaan.";
+
+            $statuses = [
+                'Freshly submitted',
+                'In review',
+                'Approved',
+                'In Progress',
+                'Monitoring',
+                'Completed',
+                'Rejected',
+            ];
+
+            return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'selectedCategoryId', 'typeSorting', 'failMessage'));
+        }
 
         $aspiration->update([
             'isPinned' => true,
@@ -596,12 +626,14 @@ class AspirationController extends Controller
             'Completed',
             'Rejected',
         ];
-        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'message', 'statuses', 'selectedCategoryId'));
+        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'message', 'statuses', 'selectedCategoryId', 'typeSorting', 'failMessage'));
     }
 
     public function unpinAspiration(Request $request){
         $aspiration = Aspiration::find($request->id);
         $selectedCategoryId = "";
+        $typeSorting = "";
+        $failMessage = "";
 
         $aspiration->update([
             'isPinned' => false,
@@ -620,7 +652,7 @@ class AspirationController extends Controller
             'Completed',
         ];
         $message = "unpin sukses";
-        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'message', 'statuses', 'selectedCategoryId'));
+        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'message', 'statuses', 'selectedCategoryId', 'typeSorting', 'failMessage'));
     }
 
     public function manageAspirationDetail($aspiration_id) {

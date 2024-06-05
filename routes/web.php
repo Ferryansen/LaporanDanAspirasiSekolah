@@ -60,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/comments/{comment}/reply', [CommentController::class, 'reply'])->name('comments.reply');
     Route::post('/{aspiration}/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::get('/clear-session-data', [CommentController::class, 'clearSessionData'])->name('clear-session-data');
+    Route::get('/clear-loading', [CommentController::class, 'clearLoading'])->name('clear-loading');
     Route::post('/openChat', [ReportController::class, 'openChatNotification'])->name('openChat.notif');
     Route::get('/consultation/detail/{consultation_id}', [ConsultationEventController::class, 'consultationDetail'])->name('consultation.detail');
 });

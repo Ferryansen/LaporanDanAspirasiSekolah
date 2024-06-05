@@ -9,7 +9,11 @@
   <h1>Detail {{ $event->title }}</h1>
   <nav>
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ route('consultation.seeAll') }}">Konsultasi</a></li>
+      @if(Auth::user()->role == 'student')
+        <li class="breadcrumb-item"><a href="{{ route('consultation.sessionList') }}">Konsultasi</a></li>
+      @else
+        <li class="breadcrumb-item"><a href="{{ route('consultation.seeAll') }}">Konsultasi</a></li>
+      @endif
       <li class="breadcrumb-item active">Detail</li>
     </ol>
   </nav>
