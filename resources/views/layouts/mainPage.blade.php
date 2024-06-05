@@ -310,6 +310,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
   <main id="main" class="main">
 
     @yield('breadcrumb')
+
+    @if (session()->has("errorSearch"))
+      <div class="alert alert-danger" id="error" role="alert">
+          {{ session()->get("errorSearch") }}
+      </div>
+    @endif
     
     @yield('sectionPage')
 
@@ -356,19 +362,19 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                       <div class="form-floating mb-3">
                           <select class="form-select" id="status" name="status" aria-label="status">
                               <option value="1" >Lihat semua status!</option>
-                              <option value="Freshly submitted" >Freshly submitted</option>
+                              <option value="Freshly submitted" >Terkirim</option>
                               @if(Auth::user()->role != "student")
-                                <option value="In review by staff" >In review by staff</option>
-                                <option value="Request Approval" >Request Approval</option>
+                                <option value="In review by staff" >Sedang ditinjau</option>
+                                <option value="In review to headmaster" >Menunggu persetujuan dari atasan</option>
                               @endif
-                              <option value="Approved" >Approved</option>
-                              <option value="Rejected" >Rejected</option>
-                              <option value="Cancelled" >Cancelled</option>
+                              <option value="Approved" >Disetujui</option>
+                              <option value="Rejected" >Ditolak</option>
+                              <option value="Cancelled" >Dibatalkan</option>
                               @if(Auth::user()->role != "student")
-                                <option value="Monitoring process" >Monitoring process</option>
+                                <option value="Monitoring process" >Dalam pemantauan</option>
                               @endif
-                              <option value="In Progress" >In Progress</option>
-                              <option value="Completed">Completed</option>
+                              <option value="In Progress" >Sedang ditindaklanjuti</option>
+                              <option value="Completed">Selesai</option>
                           </select>
                           <label class="text-primary" for="project-status">Status</label>
                       </div>
@@ -381,12 +387,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
           </div>
       </div>
   </div>
-
-  @if (session()->has("errorSearch"))
-    <div class="alert alert-danger" id="error" role="alert">
-        {{ session()->get("errorSearch") }}
-    </div>
-  @endif
 
   </main><!-- End #main -->
 

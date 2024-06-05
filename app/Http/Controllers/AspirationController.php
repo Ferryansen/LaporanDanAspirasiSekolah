@@ -66,7 +66,6 @@ class AspirationController extends Controller
         ];
         $filterTitle = null;
         $typeSorting = "";
-        // $aspirations = Aspiration::orderByDesc('upvote') // Sort in descending order based on upvote count
         $aspirations = Aspiration::paginate(10)->withQueryString();
 
         Session::put('selected_category', "Semua kategori");
@@ -510,7 +509,11 @@ class AspirationController extends Controller
     public function finishAspiration(Request $request){
         $aspiration = Aspiration::find($request->id);
         $headmasters = User::where('role', 'headmaster')->get();
-        $students = User::where('role', 'student')->get();
+        // $students = User::where('role', 'student')->get();
+        $positiveReactions = $aspiration->likes()->whereHas('user', function($query) {
+            $query->where('role', 'student');
+        })
+        ->get();
 
         $request->validate([
             'aspirationEvidences.*' => 'file|mimes:png,jpg,jpeg,webp,mp4,avi,quicktime|max:40960',
@@ -576,7 +579,8 @@ class AspirationController extends Controller
             'relatedStaff' => $aspiration->processedBy
         ];
 
-        foreach ($students as $student) {
+        foreach ($positiveReactions as $positiveReaction) {
+            $student = User::findOrFail($positiveReaction->user_id);
             Mail::to($student->email)->send(new CompleteAspirationStudentNotificationEmail($student->name, $aspirationData));
         }
         
