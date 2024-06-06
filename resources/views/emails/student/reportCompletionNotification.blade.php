@@ -4,6 +4,10 @@
     Tindak Lanjut Laporan Selesai!
 @endsection
 
+@section('logo')
+    <img src="{{ $message->embed($pathToImage) }}" alt="SkolahKita Logo" style="max-height: 24px; margin-bottom: 8px;">
+@endsection
+
 @section('content')
     <p>Halo <b>{{ $receiverName }}</b>,</p>
     <p>
@@ -16,6 +20,12 @@
     </p>
     <p>
         Semoga dari penyelesaian ini, kegiatan sehari-hari kita semua di sekolah bisa menjadi lebih baik ya!
+    </p>
+    <p>
+        Untuk meningkatkan layanan, penilaian dan feedback kamu akan sangat bermanfaat bagi kami.
+        Mohon kesediaannya untuk mengisi survey pada link berikut:
+        <br>
+        https://docs.google.com/forms/d/e/1FAIpQLSd4Hf5zoweEYRBChRMc0JhGeJtojc1vXO5HnLR7NlVUnlum-Q/viewform?usp=sf_link
     </p>
     <p>Cheers,<br>Admin SkolahKita</p>
 @endsection

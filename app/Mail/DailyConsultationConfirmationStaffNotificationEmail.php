@@ -22,6 +22,7 @@ class DailyConsultationConfirmationStaffNotificationEmail extends Mailable
 
     public function build()
     {
+        $pathToImage = public_path('SkolahKitaLogo.png');
         $currentDate = date('Y-m-d');
         $nextWeekDate = date('Y-m-d', strtotime($currentDate . ' +7 days'));
         $currentMonth = date('m', strtotime($currentDate));
@@ -38,7 +39,8 @@ class DailyConsultationConfirmationStaffNotificationEmail extends Mailable
         return $this->view('emails.staff.consultationDailyConfirmationNotification')
                     ->subject('Segera Konfirmasi Sesi Konsultasimu di Minggu Ke-' . $nextWeekNumber . ' ' . $nextWeekEnding)
                     ->with([
-                        'receiverName' => $this->receiverName]
-                    );
+                        'receiverName' => $this->receiverName,
+                        'pathToImage' => $pathToImage
+                    ]);
     }
 }

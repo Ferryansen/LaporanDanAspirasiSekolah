@@ -23,11 +23,14 @@ class StartedConsultationStudentNotificationEmail extends Mailable
 
     public function build()
     {
+        $pathToImage = public_path('SkolahKitaLogo.png');
+
         return $this->view('emails.student.consultationStartedNotification')
                     ->subject('Konsultasi "' . $this->consultationData['title'] . '" Sudah Dimulai')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'consultationData' => $this->consultationData]
-                    );
+                        'consultationData' => $this->consultationData,
+                        'pathToImage' => $pathToImage
+                    ]);
     }
 }

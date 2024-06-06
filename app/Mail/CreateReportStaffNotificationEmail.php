@@ -23,11 +23,14 @@ class CreateReportStaffNotificationEmail extends Mailable
 
     public function build()
     {
+        $pathToImage = public_path('SkolahKitaLogo.png');
+
         return $this->view('emails.staff.createReportStaffNotification')
                     ->subject('Laporan Baru "' . $this->reportData['title'] . '" Diterima')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'reportData' => $this->reportData]
-                    );
+                        'reportData' => $this->reportData,
+                        'pathToImage' => $pathToImage
+                    ]);
     }
 }

@@ -23,11 +23,14 @@ class RejectReportStudentNotificationEmail extends Mailable
 
     public function build()
     {
+        $pathToImage = public_path('SkolahKitaLogo.png');
+
         return $this->view('emails.student.reportRejectionNotification')
                     ->subject('Laporan "' . $this->reportName . '" Ditolak')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'reportName' => $this->reportName]
-                    );
+                        'reportName' => $this->reportName,
+                        'pathToImage' => $pathToImage
+                    ]);
     }
 }

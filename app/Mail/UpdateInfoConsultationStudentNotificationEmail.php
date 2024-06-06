@@ -23,11 +23,14 @@ class UpdateInfoConsultationStudentNotificationEmail extends Mailable
 
     public function build()
     {
+        $pathToImage = public_path('SkolahKitaLogo.png');
+
         return $this->view('emails.student.consultationUpdateInformationNotification')
                     ->subject('Info Baru untuk Konsultasi "' . $this->consultationData['title'] . '"')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'consultationData' => $this->consultationData]
-                    );
+                        'consultationData' => $this->consultationData,
+                        'pathToImage' => $pathToImage
+                    ]);
     }
 }
