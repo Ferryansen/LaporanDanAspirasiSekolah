@@ -76,7 +76,7 @@
                                 @endif
                                 @foreach ($downloadContents as $downloadContent)
                                 <tr>
-                                    <td>{{ $downloadContent->title }}</td>
+                                    <td style="max-width: 400px">{{ $downloadContent->title }}</td>
                                     <td>{{ $downloadContent->description }}</td>
                                     <td style="text-align: right">
                                         @if(file_exists(public_path().'\storage/'.$downloadContent->file))

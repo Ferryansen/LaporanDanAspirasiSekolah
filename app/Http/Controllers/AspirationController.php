@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -70,7 +71,9 @@ class AspirationController extends Controller
         $typeSorting = "";
         $aspirations = Aspiration::paginate(10)->withQueryString();
 
-        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'message', 'typeSorting', 'selectedCategoryId', 'failMessage'));
+        Session::put('selected_category', "Semua kategori");
+
+        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'message', 'typeSorting', 'selectedCategoryId'));
     }
 
     public function publicAspirationSorting($typeSorting)
@@ -143,6 +146,7 @@ class AspirationController extends Controller
                 })->orWhere('category_id', $idx);
             })->get();
         }
+        Session::put('selected_category', "Semua kategori");
 
         // Pass the users and aspirations to the view
         return view('aspiration.staffHeadmaster.manageAspiration', compact('users', 'aspirations', 'allUser', 'categories', 'selectedCategoryId'));
@@ -180,9 +184,18 @@ class AspirationController extends Controller
                 $aspiration->approvedBy = Auth::user()->id;
             }
 
+<<<<<<< HEAD
             // Update the status field
             $aspiration->status = $request->status;
             $aspiration->save();
+=======
+        // Update the status field
+        $aspiration->status = $request->status;
+        // if($request->status == "Rejected"){
+        //     $aspiration->rejectReason = $request->rejectReason;
+        // }
+        $aspiration->save();
+>>>>>>> 7a0d02860cff58f3360b315ef53b345a2d6e8dda
 
             DB::commit();
     
@@ -383,6 +396,7 @@ class AspirationController extends Controller
             'isChatOpened' => 0,
             'countProblematicAspiration' => null,
             'isPinned' => false,
+            'rejectReason' => null,
             'deletedBy' => null,
             'deleteReason' => null
         ]);
@@ -474,6 +488,7 @@ class AspirationController extends Controller
 
         $aspiration->update([
             'status' => "Rejected",
+            'rejectReason' => $request->rejectReason,
         ]);
         return redirect()->route('aspirations.manageAspirations');
     }

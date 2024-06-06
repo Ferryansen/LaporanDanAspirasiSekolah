@@ -62,7 +62,7 @@
                           <td>Terkirim</td>
                         @elseif ($report->status == "In review by staff")
                           <td>Sedang ditinjau</td>
-                        @elseif ($report->status == "In review to headmaster")
+                        @elseif ($report->status == "Request Approval")
                           <td>Menunggu persetujuan dari atasan</td>
                         @elseif ($report->status == "In Progress")
                           <td>Sedang ditindaklanjuti</td>
@@ -75,7 +75,7 @@
                         <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d F Y') }}</td>
                         @if($report->processedBy == null)
                             <td>Belum ditangani</td>
-                        @elseif($report->status == "In review by staff" || $report->status == "In review to headmaster" || $report->status == "Approved")
+                        @elseif($report->status == "In review by staff" || $report->status == "Request Approval" || $report->status == "Approved")
                             <td>Belum ditangani</td>
                         @else
                             <td>{{ $report->processExecutor->name }}</td>

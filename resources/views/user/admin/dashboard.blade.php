@@ -381,7 +381,7 @@
                           <td>Terkirim</td>
                         @elseif ($report->status == "In review by staff")
                           <td>Sedang ditinjau</td>
-                        @elseif ($report->status == "In review to headmaster")
+                        @elseif ($report->status == "Request Approval")
                           <td>Menunggu persetujuan dari atasan</td>
                         @elseif ($report->status == "In Progress")
                           <td>Sedang ditindaklanjuti</td>
