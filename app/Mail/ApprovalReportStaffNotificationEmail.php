@@ -23,11 +23,14 @@ class ApprovalReportStaffNotificationEmail extends Mailable
 
     public function build()
     {
+        $pathToImage = public_path('SkolahKitaLogo.png');
+
         return $this->view('emails.staff.reportApprovalNotification')
                     ->subject('Tindak Lanjut Laporan "' . $this->reportData['title'] . '" Disetujui!')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'reportData' => $this->reportData]
-                    );
+                        'reportData' => $this->reportData,
+                        'pathToImage' => $pathToImage
+                    ]);
     }
 }

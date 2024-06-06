@@ -6,6 +6,12 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
   <title>@yield('title')</title>
+  <link rel="icon" href="{{ asset('favicon_io/favicon.ico') }}" type="image/x-icon">
+  <link rel="icon" href="{{ asset('favicon_io/favicon-16x16.png') }}" sizes="192x192" type="image/png">
+  <link rel="icon" href="{{ asset('favicon_io/favicon-32x32.png') }}" sizes="32x32" type="image/png">
+  <link rel="icon" href="{{ asset('favicon_io/android-chrome-192x192.png') }}" sizes="192x192" type="image/png">
+  <link rel="icon" href="{{ asset('favicon_io/android-chrome-512x512.png') }}" sizes="512x512" type="image/png">
+
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -46,7 +52,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
     <div class="d-flex align-items-center justify-content-between">
       <a href="{{ url('/') }}" class="logo d-flex align-items-center">
-        <span>SkolahKita</span>
+        <img src="{{ asset('SkolahKitaLogo.png') }}" alt="SkolahKita Logo" style="max-height: 32px;">
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->

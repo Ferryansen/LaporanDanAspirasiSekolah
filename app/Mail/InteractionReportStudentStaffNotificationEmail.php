@@ -23,11 +23,14 @@ class InteractionReportStudentStaffNotificationEmail extends Mailable
 
     public function build()
     {
+        $pathToImage = public_path('SkolahKitaLogo.png');
+
         return $this->view('emails.reportInteractionNotification')
                     ->subject('Ada Respon Terkait Laporan "' . $this->reportData['title'] . '" nih!')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'reportData' => $this->reportData]
-                    );
+                        'reportData' => $this->reportData,
+                        'pathToImage' => $pathToImage
+                    ]);
     }
 }

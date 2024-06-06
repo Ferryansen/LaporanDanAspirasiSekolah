@@ -22,7 +22,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use DateInterval;
+use Exception;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -184,91 +186,101 @@ class ReportController extends Controller
     
 
     public function createReport(Request $request)
-    {
-        $currUser = Auth::user();
-        $request->validate([
-            'reportName' => 'required',
-            'reportDescription' => 'required|max:200',
-            'reportCategory' => 'required',
-            'reportEvidences.*' => 'file|mimes:png,jpg,jpeg,webp',
-            'reportEvidenceVideo.*' => 'required_without:reportEvidences|file|mimes:mp4,avi,quicktime|max:40960',
-            'reportEvidences' => [
-                'required_without:reportEvidenceVideo',
-                'array',
-                'max:5'
-            ],
-        ]);
+    { 
+        try {
+            DB::beginTransaction();
+    
+            $currUser = Auth::user();
+            $request->validate([
+                'reportName' => 'required',
+                'reportDescription' => 'required|max:200',
+                'reportCategory' => 'required',
+                'reportEvidences.*' => 'file|mimes:png,jpg,jpeg,webp',
+                'reportEvidenceVideo.*' => 'required_without:reportEvidences|file|mimes:mp4,avi,quicktime|max:40960',
+                'reportEvidences' => [
+                    'required_without:reportEvidenceVideo',
+                    'array',
+                    'max:5'
+                ],
+            ]);
+            
+            // Create report
+            $currentYear = now()->year;
+            $reportCount = Report::whereYear('created_at', $currentYear)->count() + 1;
+            $report_no = sprintf('%03d/REP/%d', $reportCount, $currentYear);
         
-        // Create report
-        $currentYear = now()->year;
-        $reportCount = Report::whereYear('created_at', $currentYear)->count() + 1;
-        $report_no = sprintf('%03d/REP/%d', $reportCount, $currentYear);
-    
-        $report = Report::create([
-            'reportNo' => $report_no,
-            'user_id' => $currUser->id,
-            'name' => $request->reportName,
-            'category_id' => $request->reportCategory,
-            'description' => $request->reportDescription,
-            'priority' => 4,
-            'isUrgent' => false,
-            'isChatOpened' => false,
-            'processDate' => null,
-            'processEstimationDate' => null,
-            'approvalBy'=> null,
-            'lastUpdatedBy'=> null,
-            'status' => "Freshly submitted",
-            'rejectReason' => null,
-            'deletedBy' => null,
-            'deleteReason' => null,
-        ]);
-    
-        // Store evidence files
-        if ($request->hasFile('reportEvidences')) {
-            foreach ($request->file('reportEvidences') as $file) {
-                $name = $file->getClientOriginalName();
+            $report = Report::create([
+                'reportNo' => $report_no,
+                'user_id' => $currUser->id,
+                'name' => $request->reportName,
+                'category_id' => $request->reportCategory,
+                'description' => $request->reportDescription,
+                'priority' => 4,
+                'isUrgent' => false,
+                'isChatOpened' => false,
+                'processDate' => null,
+                'processEstimationDate' => null,
+                'approvalBy'=> null,
+                'lastUpdatedBy'=> null,
+                'status' => "Freshly submitted",
+                'rejectReason' => null,
+                'deletedBy' => null,
+                'deleteReason' => null,
+            ]);
+        
+            // Store evidence files
+            if ($request->hasFile('reportEvidences')) {
+                foreach ($request->file('reportEvidences') as $file) {
+                    $name = $file->getClientOriginalName();
+                    $filename = now()->timestamp . '_' . $name;
+
+                    $imageUrl = Storage::disk('public')->putFileAs('ListImage', $file, $filename);
+                    // Create evidence and associate it with the report
+                    $report->evidences()->create([
+                        'image' => $imageUrl,
+                        'name' => $name,
+                        'context' => 'reporting',
+                    ]);
+                }
+            }
+
+            if ($request->hasFile('reportEvidenceVideo')) {
+                $name = $request->file('reportEvidenceVideo')->getClientOriginalName();
                 $filename = now()->timestamp . '_' . $name;
 
-                $imageUrl = Storage::disk('public')->putFileAs('ListImage', $file, $filename);
+                
+                $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $request->file('reportEvidenceVideo'), $filename);
                 // Create evidence and associate it with the report
                 $report->evidences()->create([
-                    'image' => $imageUrl,
+                    'video' => $videoUrl,
                     'name' => $name,
                     'context' => 'reporting',
                 ]);
             }
-        }
 
-        if ($request->hasFile('reportEvidenceVideo')) {
-            $name = $request->file('reportEvidenceVideo')->getClientOriginalName();
-            $filename = now()->timestamp . '_' . $name;
+            $reportData = [
+                'reportID' => $report->id,
+                'reportNo' => $report_no,
+                'title' => $request->reportName,
+                'date' => Carbon::now()->format('d/m/Y'),
+            ];
 
             
-            $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $request->file('reportEvidenceVideo'), $filename);
-            // Create evidence and associate it with the report
-            $report->evidences()->create([
-                'video' => $videoUrl,
-                'name' => $name,
-                'context' => 'reporting',
-            ]);
-        }
-
-        $reportData = [
-            'reportID' => $report->id,
-            'reportNo' => $report_no,
-            'title' => $request->reportName,
-            'date' => Carbon::now()->format('d/m/Y'),
-        ];
-
-        
-        Mail::to($currUser->email)->send(new CreateReportStudentNotificationEmail($currUser->name, $reportData));
-        $relatedStaffs = $report->category->staffType->users;
-        foreach ($relatedStaffs as $staff) {
-            Mail::to($staff->email)->send(new CreateReportStaffNotificationEmail($staff->name, $reportData));
-        }
-
+            Mail::to($currUser->email)->send(new CreateReportStudentNotificationEmail($currUser->name, $reportData));
+            $relatedStaffs = $report->category->staffType->users;
+            foreach ($relatedStaffs as $staff) {
+                Mail::to($staff->email)->send(new CreateReportStaffNotificationEmail($staff->name, $reportData));
+            }
+            
+            DB::commit();
+            return redirect()->route('report.student.myReport')->with('successMessage', 'Laporan berhasil dibuat');
+        } catch (Exception $e) {
+            DB::rollBack();
     
-        return redirect()->route('report.student.myReport')->with('successMessage', 'Laporan berhasil dibuat');
+            Log::error('Error creating report: ' . $e->getMessage());
+    
+            return redirect()->route('report.student.myReport')->with('errorMessage', 'Terjadi kesalahan dalam pembuatan laporan. Silakan coba lagi.');
+        }
     }
 
     public function createReportUrgent(Request $request)
@@ -491,20 +503,36 @@ class ReportController extends Controller
     }
 
     public function rejectReport(Request $request){
-        $report = Report::find($request->id);
-        $currUser = Auth::user();
-        $rejectedUser = $report->user;
+        try {
+            DB::beginTransaction();
+    
+            $report = Report::find($request->id);
+            $currUser = Auth::user();
+            $rejectedUser = $report->user;
 
-        $report->update([
-            'status' => "Rejected",
-            'rejectReason' => $request->rejectReason,
-            'approvalBy' => $currUser->name
-        ]);
+            $report->update([
+                'status' => "Rejected",
+                'rejectReason' => $request->rejectReason,
+                'approvalBy' => $currUser->name
+            ]);
 
-        Mail::to($rejectedUser->email)->send(new RejectReportStudentNotificationEmail($rejectedUser->name, $report->name));
+            Mail::to($rejectedUser->email)->send(new RejectReportStudentNotificationEmail($rejectedUser->name, $report->name));
 
 
-        return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Laporan berhasil di-reject');
+            
+            DB::commit();
+            
+            // Success message
+            return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Laporan berhasil di-reject');
+        } catch (Exception $e) {
+            DB::rollBack();
+    
+            // Log the error
+            Log::error('Error rejecting report: ' . $e->getMessage());
+    
+            // Return back with error message
+            return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam menolak laporan. Silakan coba lagi.');
+        }
     }
 
     public function inReviewStaffReport(Request $request){
@@ -520,48 +548,79 @@ class ReportController extends Controller
     }
     
     public function inReviewHeadmasterReport(Request $request){
-        $report = Report::find($request->id);
-        $currUser = Auth::user();
-        $relatedHeadmasters = User::where('role', 'headmaster')->get();
+        try {
+            DB::beginTransaction();
+    
+            $report = Report::find($request->id);
+            $currUser = Auth::user();
+            $relatedHeadmasters = User::where('role', 'headmaster')->get();
 
-        $report->update([
-            'status' => "In review to headmaster",
-            'lastUpdatedBy' => $currUser->name
-        ]);
+            $report->update([
+                'status' => "In review to headmaster",
+                'lastUpdatedBy' => $currUser->name
+            ]);
 
-        $reportData = [
-            'reportID' => $report->id,
-            'reportNo' => $report->reportNo,
-            'title' => $report->name,
-            'relatedStaff' => $currUser->name,
-        ];
+            $reportData = [
+                'reportID' => $report->id,
+                'reportNo' => $report->reportNo,
+                'title' => $report->name,
+                'relatedStaff' => $currUser->name,
+            ];
 
-        foreach ($relatedHeadmasters as $headmaster) {
-            Mail::to($headmaster->email)->send(new RequestReportHeadmasterNotificationEmail($headmaster->name, $reportData));
+            foreach ($relatedHeadmasters as $headmaster) {
+                Mail::to($headmaster->email)->send(new RequestReportHeadmasterNotificationEmail($headmaster->name, $reportData));
+            }
+
+            
+            DB::commit();
+            
+            // Success message
+            return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Request tindak lanjut laporan telah dikirim');
+        } catch (Exception $e) {
+            DB::rollBack();
+    
+            // Log the error
+            Log::error('Error requesting review report: ' . $e->getMessage());
+    
+            // Return back with error message
+            return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam me-request tindak lanjut laporan. Silakan coba lagi.');
         }
-
-        return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 
     public function approveReport(Request $request){
-        $report = Report::find($request->id);
-        $currUser = Auth::user();
-        $processExecutor = $report->processExecutor;
+        try {
+            DB::beginTransaction();
+    
+            $report = Report::find($request->id);
+            $currUser = Auth::user();
+            $processExecutor = $report->processExecutor;
 
-        $report->update([
-            'status' => "Approved",
-            'approvalBy' => $currUser->name
-        ]);
+            $report->update([
+                'status' => "Approved",
+                'approvalBy' => $currUser->name
+            ]);
 
-        $reportData = [
-            'reportID' => $report->id,
-            'title' => $report->name,
-        ];
-        if(Auth::user()->role == "headmaster"){
-            Mail::to($processExecutor->email)->send(new ApprovalReportStaffNotificationEmail($processExecutor->name, $reportData));
-        } 
-
-        return redirect()->route('report.adminHeadmasterStaff.manageReport');
+            $reportData = [
+                'reportID' => $report->id,
+                'title' => $report->name,
+            ];
+            if(Auth::user()->role == "headmaster"){
+                Mail::to($processExecutor->email)->send(new ApprovalReportStaffNotificationEmail($processExecutor->name, $reportData));
+            } 
+            
+            DB::commit();
+            
+            // Success message
+            return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Tindak lanjut laporan telah disetujui');
+        } catch (Exception $e) {
+            DB::rollBack();
+    
+            // Log the error
+            Log::error('Error approving request report: ' . $e->getMessage());
+    
+            // Return back with error message
+            return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam persetujuan tindak lanjut laporan. Silakan coba lagi.');
+        }
     }
 
     // public function requestApprovalReport(Request $request){
@@ -574,58 +633,55 @@ class ReportController extends Controller
     // }
 
     public function onProgReport(Request $request){
-        $report = Report::find($request->id);
-        $currUser = Auth::user();
-
-        // $rules = [
-        //   'processEstimationDate' => 'required|date|after_or_equal:today'
-        // ];
-
-        // $messages = [
-        //     'processEstimationDate.required' => 'Jangan lupa masukin tanggal estimasinya yaa', 
-        //     'processEstimationDate.date' => 'Yuk masukin tanggal estimasi dengan format yang benar',
-        //     'processEstimationDate.after_or_equal' => 'Tanggal estimasi harus sama dengan atau setelah hari ini',
-        // ];
-
-        // $validator = Validator::make($request->all(), $rules, $messages);
+        try {
+            DB::beginTransaction();
     
-        // if ($validator->fails()) {
-        //     return redirect()->back()->withErrors($validator)
-        //     ->withInput()
-        //     ->with('openModal', true)
-        //     ->with('reportId', $report->id);
-        // }
+            $report = Report::find($request->id);
+            $currUser = Auth::user();
 
-        if($request->priority == 1){
-            $reportCreatedAt = $report->created_at->add(new DateInterval('P3D'));
-            $processEstimationDate = $reportCreatedAt->format('Y-m-d');
+            if($request->priority == 1){
+                $reportCreatedAt = $report->created_at->add(new DateInterval('P3D'));
+                $processEstimationDate = $reportCreatedAt->format('Y-m-d');
+            }
+            else if($request->priority == 2){
+                $reportCreatedAt = $report->created_at->add(new DateInterval('P7D'));
+                $processEstimationDate = $reportCreatedAt->format('Y-m-d');
+            }
+            else if($request->priority == 3){
+                $reportCreatedAt = $report->created_at->add(new DateInterval('P10D'));
+                $processEstimationDate = $reportCreatedAt->format('Y-m-d');
+            }
+
+            $report->update([
+                'priority' => $request->priority,
+                'status' => "In Progress",
+                'processedBy' => $currUser->id,
+                'lastUpdatedBy' => $currUser->name,
+                'processDate' => now(),
+                'processEstimationDate' => $processEstimationDate
+            ]);
+
+            $reportData = [
+                'reportID' => $report->id,
+                'title' => $report->name,
+            ];
+
+            Mail::to($report->user->email)->send(new InProgressReportStudentNotificationEmail($report->user->name, $reportData));
+
+            
+            DB::commit();
+            
+            // Success message
+            return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Laporan sedang ditindaklanjuti');
+        } catch (Exception $e) {
+            DB::rollBack();
+    
+            // Log the error
+            Log::error('Error updating in progress status report: ' . $e->getMessage());
+    
+            // Return back with error message
+            return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam menindaklanjuti laporan. Silakan coba lagi.');
         }
-        else if($request->priority == 2){
-            $reportCreatedAt = $report->created_at->add(new DateInterval('P7D'));
-            $processEstimationDate = $reportCreatedAt->format('Y-m-d');
-        }
-        else if($request->priority == 3){
-            $reportCreatedAt = $report->created_at->add(new DateInterval('P10D'));
-            $processEstimationDate = $reportCreatedAt->format('Y-m-d');
-        }
-
-        $report->update([
-            'priority' => $request->priority,
-            'status' => "In Progress",
-            'processedBy' => $currUser->id,
-            'lastUpdatedBy' => $currUser->name,
-            'processDate' => now(),
-            'processEstimationDate' => $processEstimationDate
-        ]);
-
-        $reportData = [
-            'reportID' => $report->id,
-            'title' => $report->name,
-        ];
-
-        Mail::to($report->user->email)->send(new InProgressReportStudentNotificationEmail($report->user->name, $reportData));
-
-        return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 
     public function monitoringReport(Request $request){
@@ -640,83 +696,99 @@ class ReportController extends Controller
     }
 
     public function finishReport(Request $request){
-        $report = Report::find($request->id);
-        $request->validate([
-            'reportEvidences.*' => 'file|mimes:png,jpg,jpeg,webp,mp4,avi,quicktime|max:40960',
-            'reportEvidences' => [
-                'required',
-                'array',
-                function ($attribute, $value, $fail) {
-                    $imageCount = 0;
-                    $videoCount = 0;
+        try {
+            DB::beginTransaction();
     
-                    foreach ($value as $file) {
-                        if (in_array($file->getClientOriginalExtension(), ['mp4', 'avi', 'quicktime'])) {
-                            $videoCount++;
-                        } else {
-                            $imageCount++;
+            $report = Report::find($request->id);
+            $request->validate([
+                'reportEvidences.*' => 'file|mimes:png,jpg,jpeg,webp,mp4,avi,quicktime|max:40960',
+                'reportEvidences' => [
+                    'required',
+                    'array',
+                    function ($attribute, $value, $fail) {
+                        $imageCount = 0;
+                        $videoCount = 0;
+        
+                        foreach ($value as $file) {
+                            if (in_array($file->getClientOriginalExtension(), ['mp4', 'avi', 'quicktime'])) {
+                                $videoCount++;
+                            } else {
+                                $imageCount++;
+                            }
                         }
-                    }
-    
-                    if ($imageCount > 5) {
-                        $fail('Maksimal 5 gambar yang di upload');
-                    }
-    
-                    if ($videoCount > 1) {
-                        $fail('Maksimal 1 video yang di upload');
-                    }
-                },
-            ],
-        ]);
+        
+                        if ($imageCount > 5) {
+                            $fail('Maksimal 5 gambar yang di upload');
+                        }
+        
+                        if ($videoCount > 1) {
+                            $fail('Maksimal 1 video yang di upload');
+                        }
+                    },
+                ],
+            ]);
 
-        if ($request->hasFile('reportEvidences')) {
-            foreach ($request->file('reportEvidences') as $file) {
-                if ($file instanceof \Illuminate\Http\UploadedFile) {
-                    $name = $file->getClientOriginalName();
-                    $filename = now()->timestamp . '_' . $name;
-                    $extension = $file->getClientOriginalExtension();
-    
-                    if (in_array($extension, ['mp4', 'avi', 'quicktime'])) {
-                        $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $file, $filename);
-                        $report->evidences()->create([
-                            'video' => $videoUrl,
-                            'name' => $name,
-                            'context' => 'completion',
-                        ]);
-                    } else {
-                        $imageUrl = Storage::disk('public')->putFileAs('ListImage', $file, $filename);
-                        $report->evidences()->create([
-                            'image' => $imageUrl,
-                            'name' => $name,
-                            'context' => 'completion',
-                        ]);
+            if ($request->hasFile('reportEvidences')) {
+                foreach ($request->file('reportEvidences') as $file) {
+                    if ($file instanceof \Illuminate\Http\UploadedFile) {
+                        $name = $file->getClientOriginalName();
+                        $filename = now()->timestamp . '_' . $name;
+                        $extension = $file->getClientOriginalExtension();
+        
+                        if (in_array($extension, ['mp4', 'avi', 'quicktime'])) {
+                            $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $file, $filename);
+                            $report->evidences()->create([
+                                'video' => $videoUrl,
+                                'name' => $name,
+                                'context' => 'completion',
+                            ]);
+                        } else {
+                            $imageUrl = Storage::disk('public')->putFileAs('ListImage', $file, $filename);
+                            $report->evidences()->create([
+                                'image' => $imageUrl,
+                                'name' => $name,
+                                'context' => 'completion',
+                            ]);
+                        }
                     }
                 }
             }
+
+            $currUser = Auth::user();
+            $relatedHeadmasters = User::where('role', 'headmaster')->get();
+
+            $report->update([
+                'status' => "Completed",
+                'lastUpdatedBy' => $currUser->name
+            ]);
+
+            $reportData = [
+                'reportID' => $report->id,
+                'reportNo' => $report->reportNo,
+                'title' => $report->name,
+                'relatedStaff' => $currUser->name,
+                'completionDate' => Carbon::now()->format('d/m/Y'),
+            ];
+
+            Mail::to($report->user->email)->send(new CompleteReportStudentNotificationEmail($report->user->name, $reportData));
+            foreach ($relatedHeadmasters as $headmaster) {
+                Mail::to($headmaster->email)->send(new CompleteReportHeadmasterNotificationEmail($headmaster->name, $reportData));
+            }
+
+            
+            DB::commit();
+            
+            // Success message
+            return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Tindak lanjut laporan selesai');
+        } catch (Exception $e) {
+            DB::rollBack();
+    
+            // Log the error
+            Log::error('Error finishing report: ' . $e->getMessage());
+    
+            // Return back with error message
+            return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam penyelesaian tindak lanjut laporan. Silakan coba lagi.');
         }
-
-        $currUser = Auth::user();
-        $relatedHeadmasters = User::where('role', 'headmaster')->get();
-
-        $report->update([
-            'status' => "Completed",
-            'lastUpdatedBy' => $currUser->name
-        ]);
-
-        $reportData = [
-            'reportID' => $report->id,
-            'reportNo' => $report->reportNo,
-            'title' => $report->name,
-            'relatedStaff' => $currUser->name,
-            'completionDate' => Carbon::now()->format('d/m/Y'),
-        ];
-
-        Mail::to($report->user->email)->send(new CompleteReportStudentNotificationEmail($report->user->name, $reportData));
-        foreach ($relatedHeadmasters as $headmaster) {
-            Mail::to($headmaster->email)->send(new CompleteReportHeadmasterNotificationEmail($headmaster->name, $reportData));
-        }
-
-        return redirect()->route('report.adminHeadmasterStaff.manageReport');
     }
 
 

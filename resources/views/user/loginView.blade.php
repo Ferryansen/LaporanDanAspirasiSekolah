@@ -6,6 +6,11 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
   <title>Halaman Login</title>
+  <link rel="icon" href="{{ asset('favicon_io/favicon.ico') }}" type="image/x-icon">
+  <link rel="icon" href="{{ asset('favicon_io/favicon-16x16.png') }}" sizes="192x192" type="image/png">
+  <link rel="icon" href="{{ asset('favicon_io/favicon-32x32.png') }}" sizes="32x32" type="image/png">
+  <link rel="icon" href="{{ asset('favicon_io/android-chrome-192x192.png') }}" sizes="192x192" type="image/png">
+  <link rel="icon" href="{{ asset('favicon_io/android-chrome-512x512.png') }}" sizes="512x512" type="image/png">
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -38,7 +43,7 @@
 
               <div class="d-flex justify-content-center py-4">
                 <a href="index.html" class="logo d-flex align-items-center w-auto">
-                  <span>SkolahKita</span>
+                  <img src="{{ asset('SkolahKitaLogo.png') }}" alt="SkolahKita Logo" style="max-height: 50px;">
                 </a>
               </div><!-- End Logo -->
 

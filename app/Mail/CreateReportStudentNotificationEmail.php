@@ -23,11 +23,14 @@ class CreateReportStudentNotificationEmail extends Mailable implements ShouldQue
 
     public function build()
     {
+        $pathToImage = public_path('SkolahKitaLogo.png');
+
         return $this->view('emails.student.createReportStudentNotification')
                     ->subject('Pengaduan Laporan "' . $this->reportData['title'] . '" Berhasil!')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'reportData' => $this->reportData]
-                    );
+                        'reportData' => $this->reportData,
+                        'pathToImage' => $pathToImage
+                    ]);
     }
 }

@@ -23,11 +23,14 @@ class CompleteAspirationHeadmasterNotificationEmail extends Mailable
 
     public function build()
     {
+        $pathToImage = public_path('SkolahKitaLogo.png');
+
         return $this->view('emails.headmaster.aspirationRealizationNotification')
                     ->subject('Realisasi Aspirasi "' . $this->aspirationData['title'] . '" Sudah Selesai')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'mailData' => $this->aspirationData]
-                    );
+                        'mailData' => $this->aspirationData,
+                        'pathToImage' => $pathToImage
+                    ]);
     }
 }

@@ -23,11 +23,14 @@ class CompleteReportHeadmasterNotificationEmail extends Mailable
 
     public function build()
     {
+        $pathToImage = public_path('SkolahKitaLogo.png');
+
         return $this->view('emails.headmaster.reportCompletionNotification')
                     ->subject('Tindak Lanjut Laporan "' . $this->reportData['title'] . '" Sudah Selesai')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'reportData' => $this->reportData]
-                    );
+                        'reportData' => $this->reportData,
+                        'pathToImage' => $pathToImage
+                    ]);
     }
 }
