@@ -4,6 +4,10 @@
     Pendaftaran Konsultasi Berhasil!
 @endsection
 
+@section('logo')
+    <img src="{{ $message->embed($pathToImage) }}" alt="SkolahKita Logo" style="max-height: 24px; margin-bottom: 8px;">
+@endsection
+
 @section('content')
     <p>Halo <b>{{ $receiverName }}</b>,</p>
     <p>
@@ -16,8 +20,19 @@
                 <td>: {{ $consultationData['title'] }}</td>
             </tr>
             <tr>
+                @php
+                    $startDate = \Carbon\Carbon::parse($consultationData['date']);
+                    $endDate = \Carbon\Carbon::parse($consultationData['endDate']);
+
+                    $differenceInMinutes = $endDate->diffInMinutes($startDate);
+
+                    $isHours = $differenceInMinutes >= 60;
+
+                    $displayUnit = $isHours ? 'jam' : 'menit';
+                    $displayValue = $isHours ? floor($differenceInMinutes / 60) : $differenceInMinutes;
+                @endphp
                 <td>Jadwal Konsultasi</td>
-                <td>: {{ \Carbon\Carbon::parse($consultationData['date'])->format('d/m/Y, H:i') }}</td>
+                <td>: {{ \Carbon\Carbon::parse($consultationData['date'])->format('d/m/Y, H:i') }} ({{ $displayValue . ' ' . $displayUnit }})</td>
             </tr>
         </table>
     </p>

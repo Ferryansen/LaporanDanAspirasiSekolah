@@ -6,6 +6,12 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
   <title>@yield('title')</title>
+  <link rel="icon" href="{{ asset('favicon_io/favicon.ico') }}" type="image/x-icon">
+  <link rel="icon" href="{{ asset('favicon_io/favicon-16x16.png') }}" sizes="192x192" type="image/png">
+  <link rel="icon" href="{{ asset('favicon_io/favicon-32x32.png') }}" sizes="32x32" type="image/png">
+  <link rel="icon" href="{{ asset('favicon_io/android-chrome-192x192.png') }}" sizes="192x192" type="image/png">
+  <link rel="icon" href="{{ asset('favicon_io/android-chrome-512x512.png') }}" sizes="512x512" type="image/png">
+
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -46,7 +52,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
     <div class="d-flex align-items-center justify-content-between">
       <a href="{{ url('/') }}" class="logo d-flex align-items-center">
-        <span>SkolahKita</span>
+        <img src="{{ asset('SkolahKitaLogo.png') }}" alt="SkolahKita Logo" style="max-height: 32px;">
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
@@ -310,6 +316,12 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
   <main id="main" class="main">
 
     @yield('breadcrumb')
+
+    @if (session()->has("errorSearch"))
+      <div class="alert alert-danger" id="error" role="alert">
+          {{ session()->get("errorSearch") }}
+      </div>
+    @endif
     
     @yield('sectionPage')
 
@@ -356,19 +368,19 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                       <div class="form-floating mb-3">
                           <select class="form-select" id="status" name="status" aria-label="status">
                               <option value="1" >Lihat semua status!</option>
-                              <option value="Freshly submitted" >Freshly submitted</option>
+                              <option value="Freshly submitted" >Terkirim</option>
                               @if(Auth::user()->role != "student")
-                                <option value="In review by staff" >In review by staff</option>
-                                <option value="Request Approval" >Request Approval</option>
+                                <option value="In review by staff" >Sedang ditinjau</option>
+                                <option value="In review to headmaster" >Menunggu persetujuan dari atasan</option>
                               @endif
-                              <option value="Approved" >Approved</option>
-                              <option value="Rejected" >Rejected</option>
-                              <option value="Cancelled" >Cancelled</option>
+                              <option value="Approved" >Disetujui</option>
+                              <option value="Rejected" >Ditolak</option>
+                              <option value="Cancelled" >Dibatalkan</option>
                               @if(Auth::user()->role != "student")
-                                <option value="Monitoring process" >Monitoring process</option>
+                                <option value="Monitoring process" >Dalam pemantauan</option>
                               @endif
-                              <option value="In Progress" >In Progress</option>
-                              <option value="Completed">Completed</option>
+                              <option value="In Progress" >Sedang ditindaklanjuti</option>
+                              <option value="Completed">Selesai</option>
                           </select>
                           <label class="text-primary" for="project-status">Status</label>
                       </div>
@@ -381,12 +393,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
           </div>
       </div>
   </div>
-
-  @if (session()->has("errorSearch"))
-    <div class="alert alert-danger" id="error" role="alert">
-        {{ session()->get("errorSearch") }}
-    </div>
-  @endif
 
   </main><!-- End #main -->
 

@@ -1064,6 +1064,8 @@ class UserController extends Controller
         $query2 = null;
         $reports = null;
         $aspirations = null;
+        $message = null;
+        $failMessage = "";
 
         if ($currUser->role == "student") {
             $query = $currUser->reports()->getQuery();
@@ -1098,13 +1100,15 @@ class UserController extends Controller
         $aspirations = $prereports2->appends($request->query());        
 
         if ($aspirations->isEmpty() && $reports->isEmpty()) {
-            return redirect()->back()->with('errorSearch', 'There\'s no such thing as you mentioned before :(');
+            return redirect()->back()->with('errorSearch', 'Duh.. ga ketemu nih :(');
         } 
         else {
             $data = [
                 'reports' => $reports,
                 'aspirations' => $aspirations,
                 'searchParams' => $request->all(),
+                'message' => $message,
+                'failMessage' => $failMessage,
             ];
 
             return view('search', $data);

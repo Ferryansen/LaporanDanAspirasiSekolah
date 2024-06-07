@@ -24,6 +24,12 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     @endif
+    @if(session('errorMessage'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('errorMessage') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
@@ -143,37 +149,42 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title" style="margin: 0">Referensi Aspirasi</h5>
+                        <h5 class="card-title" style="margin: 0">Referensi Aspirasi ({{ $aspiration->aspirationNo }})</h5>
                         
-                        <table style="width: 100%">
-                            <tr>
-                                <td style="height:32px; vertical-align: middle;">No. Aspirasi</td>
-                                <td style="height:32px; text-align: right; vertical-align: middle;"><strong>{{ $aspiration->aspirationNo }}</strong></td>
-                            </tr>
-                            <tr>
-                                <td style="height:32px; vertical-align: middle;">Judul</td>
-                                <td style="height:32px; text-align: right; vertical-align: middle;"><strong>{{ $aspiration->name }}</strong></td>
-                            </tr>
-                            <tr>
-                                <td style="height:32px; vertical-align: middle;">Deskripsi</td>
-                                <td style="height:32px; text-align: right; vertical-align: middle;"><strong>{{ $aspiration->description }}</strong></td>
-                            </tr>
-                            <tr>
-                                <td style="height:32px; vertical-align: middle;">Likes</td>
-                                <td style="height:32px; text-align: right; vertical-align: middle;"><strong>{{ count($aspiration->likes) . ' Orang' }}</strong></td>
-                            </tr>
-                            <tr>
-                                <td style="height:32px; vertical-align: middle;">Komentar</td>
-                                <td style="height:32px; text-align: right; vertical-align: middle;"><strong>{{ count($aspiration->comments) . ' Orang'}}</strong></td>
-                            </tr>
-                            
-                        </table>
+                        <p>{{ $aspiration->name }}</p>
+                        <p>{{ $aspiration->description }}</p>
+
+                        <div class="kpi" style="display: flex; align-items: center;">
+                            <div id="likes">
+                                <i class="bi bi-hand-thumbs-up-fill icon-kpi"></i>
+                                <span>{{ count($aspiration->likes) }}</span>
+                            </div>
+
+                            <div id="dislikes" style="margin: 0 16px">
+                                <i class="bi bi-hand-thumbs-down-fill icon-kpi"></i>
+                                <span>{{ count($aspiration->dislikes) }}</span>
+                            </div>
+
+                            <div id="comments" style="margin-left: 4px">
+                                <i class="bi bi-chat-left-fill icon-kpi"></i>
+                                <span>{{ count($aspiration->comments) }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 @endsection
+
+@section('css')
+    <style>
+        .icon-kpi {
+            color: rgb(201, 201, 201);
+        }
+    </style>
+@endsection
+
 @section('script')
 
 <script>

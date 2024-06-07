@@ -4,6 +4,10 @@
     Konsultasi Sudah Dimulai!
 @endsection
 
+@section('logo')
+    <img src="{{ $message->embed($pathToImage) }}" alt="SkolahKita Logo" style="max-height: 24px; margin-bottom: 8px;">
+@endsection
+
 @section('content')
     <p>Halo <b>{{ $receiverName }}</b>,</p>
     <p>

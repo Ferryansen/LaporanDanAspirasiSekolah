@@ -59,7 +59,7 @@
 <body>
     <div class="containerer">
         <a href="{{ url('/') }}" class="logo d-flex align-items-center">
-            <span>SkolahKita</span>
+            @yield('logo')
         </a>
         
         <div class="message">

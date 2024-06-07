@@ -40,6 +40,7 @@ class CreateDailyConsultation extends Command
                     'attendeeLimit' => 15,
                     'status' => '',
                     'attendees' => [],
+                    'location' => 'https://meet.google.com/twi-yuta-ata',
                     'is_online' => true,
                     'is_private' => false,
                     'is_confirmed' => false,
