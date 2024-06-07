@@ -184,18 +184,9 @@ class AspirationController extends Controller
                 $aspiration->approvedBy = Auth::user()->id;
             }
 
-<<<<<<< HEAD
             // Update the status field
             $aspiration->status = $request->status;
             $aspiration->save();
-=======
-        // Update the status field
-        $aspiration->status = $request->status;
-        // if($request->status == "Rejected"){
-        //     $aspiration->rejectReason = $request->rejectReason;
-        // }
-        $aspiration->save();
->>>>>>> 7a0d02860cff58f3360b315ef53b345a2d6e8dda
 
             DB::commit();
     

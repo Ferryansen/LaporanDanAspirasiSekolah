@@ -557,17 +557,10 @@ class ReportController extends Controller
             $currUser = Auth::user();
             $relatedHeadmasters = User::where('role', 'headmaster')->get();
 
-<<<<<<< HEAD
             $report->update([
-                'status' => "In review to headmaster",
+                'status' => "Request Approval",
                 'lastUpdatedBy' => $currUser->name
             ]);
-=======
-        $report->update([
-            'status' => "Request Approval",
-            'lastUpdatedBy' => $currUser->name
-        ]);
->>>>>>> 7a0d02860cff58f3360b315ef53b345a2d6e8dda
 
             $reportData = [
                 'reportID' => $report->id,
@@ -645,7 +638,6 @@ class ReportController extends Controller
         try {
             DB::beginTransaction();
     
-<<<<<<< HEAD
             $report = Report::find($request->id);
             $currUser = Auth::user();
 
@@ -661,16 +653,26 @@ class ReportController extends Controller
                 $reportCreatedAt = $report->created_at->add(new DateInterval('P10D'));
                 $processEstimationDate = $reportCreatedAt->format('Y-m-d');
             }
-
-            $report->update([
-                'priority' => $request->priority,
-                'status' => "In Progress",
-                'processedBy' => $currUser->id,
-                'lastUpdatedBy' => $currUser->name,
-                'processDate' => now(),
-                'processEstimationDate' => $processEstimationDate
-            ]);
-
+    
+            if($report->isUrgent == false){
+                $report->update([
+                    'priority' => $request->priority,
+                    'status' => "In Progress",
+                    'processedBy' => $currUser->id,
+                    'lastUpdatedBy' => $currUser->name,
+                    'processDate' => now(),
+                    'processEstimationDate' => $processEstimationDate
+                ]);
+            }
+            else{
+                $report->update([
+                    'status' => "In Progress",
+                    'processedBy' => $currUser->id,
+                    'lastUpdatedBy' => $currUser->name,
+                    'processDate' => now(),
+                ]);
+            }
+    
             $reportData = [
                 'reportID' => $report->id,
                 'title' => $report->name,
@@ -692,55 +694,6 @@ class ReportController extends Controller
             // Return back with error message
             return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam menindaklanjuti laporan. Silakan coba lagi.');
         }
-=======
-        // if ($validator->fails()) {
-        //     return redirect()->back()->withErrors($validator)
-        //     ->withInput()
-        //     ->with('openModal', true)
-        //     ->with('reportId', $report->id);
-        // }
-        
-        if($request->priority == 1){
-            $reportCreatedAt = $report->created_at->add(new DateInterval('P3D'));
-            $processEstimationDate = $reportCreatedAt->format('Y-m-d');
-        }
-        else if($request->priority == 2){
-            $reportCreatedAt = $report->created_at->add(new DateInterval('P7D'));
-            $processEstimationDate = $reportCreatedAt->format('Y-m-d');
-        }
-        else if($request->priority == 3){
-            $reportCreatedAt = $report->created_at->add(new DateInterval('P10D'));
-            $processEstimationDate = $reportCreatedAt->format('Y-m-d');
-        }
-
-        if($report->isUrgent == false){
-            $report->update([
-                'priority' => $request->priority,
-                'status' => "In Progress",
-                'processedBy' => $currUser->id,
-                'lastUpdatedBy' => $currUser->name,
-                'processDate' => now(),
-                'processEstimationDate' => $processEstimationDate
-            ]);
-        }
-        else{
-            $report->update([
-                'status' => "In Progress",
-                'processedBy' => $currUser->id,
-                'lastUpdatedBy' => $currUser->name,
-                'processDate' => now(),
-            ]);
-        }
-
-        $reportData = [
-            'reportID' => $report->id,
-            'title' => $report->name,
-        ];
-
-        Mail::to($report->user->email)->send(new InProgressReportStudentNotificationEmail($report->user->name, $reportData));
-
-        return redirect()->route('report.adminHeadmasterStaff.manageReport');
->>>>>>> 7a0d02860cff58f3360b315ef53b345a2d6e8dda
     }
 
     public function monitoringReport(Request $request){

@@ -86,8 +86,8 @@
                     @if ($aspiration->status != 'Freshly submitted')
                         <tr style="vertical-align: middle">
                             <td>
-                                @if ($aspiration->status == 'Approved' || $aspiration->status == 'In Progress' || $aspiration->status == 'Monitoring' || $aspiration->status == 'Completed')
-                                    <a href="{{ route('manage.aspiration.detail', ['aspiration_id' => $aspiration->id]) }}">{{ $aspiration->name }}</a>
+                                @if ($aspiration->status == 'Approved' || $aspiration->status == 'In Progress' || $aspiration->status == 'Monitoring' || $aspiration->status == 'Completed' || $aspiration->status == 'Rejected')
+                                    <a href="{{ route('manage.aspiration.detail', ['aspiration_id' => $aspiration->id]) }}" style="text-decoration: underline">{{ $aspiration->name }}</a>
                                 @else
                                     {{ $aspiration->name }}
                                 @endif
@@ -195,11 +195,11 @@
                                 </td>
 
                                 @if (in_array($aspiration->status, ['In review']))
-                                    <td>
+                                    <td style="display: flex; justify-content: flex-end;">
                                         <form action="{{ route('aspiration.updateStatus') }}" method="POST">
                                             @csrf
                                             <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
-                                            <button type="submit" name="status" value="Approved" class="btn btn-success">Setujui</button>
+                                            <button type="submit" name="status" value="Request Approval" class="btn btn-success" style="margin-right: 10px">Ajukan persetujuan</button>
                                         </form>
                                             <button type="submit" name="status" value="Rejected" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#rejectAspirationModal_" . $aspiration->id}}">Tolak</button>
                                             {{-- Modal --}}
@@ -270,11 +270,11 @@
                                 @endforeach
 
                                 @if($aspiration->status == 'Request Approval')
-                                    <td>
+                                    <td style="display: flex; justify-content: flex-end">
                                     <form action="{{ route('aspiration.updateStatus') }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
-                                        <button type="submit" name="status" value="Approved" class="btn btn-success">Setujui</button>
+                                        <button type="submit" name="status" value="Approved" class="btn btn-success" style="margin-right: 10px">Setujui</button>
                                     </form>
                                         <button type="submit" name="status" value="Rejected" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#rejectAspirationModal_" . $aspiration->id}}">Tolak</button>
                                         {{-- Modal --}}

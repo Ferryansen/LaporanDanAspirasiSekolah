@@ -114,6 +114,12 @@
                                     @endif
                                 </td>
                             </tr>
+                            @if($aspiration->status == "Rejected")
+                                <tr>
+                                    <td style="vertical-align: middle;">Alasan ditolak</td>
+                                    <td style="text-align: right; vertical-align: middle;"><strong>{{ $aspiration->rejectReason }}</strong></td>
+                                </tr>
+                            @endif
                         </table>
                         
                     
