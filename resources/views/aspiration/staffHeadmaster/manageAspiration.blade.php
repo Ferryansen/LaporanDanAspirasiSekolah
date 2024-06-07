@@ -199,9 +199,46 @@
                                         <form action="{{ route('aspiration.updateStatus') }}" method="POST">
                                             @csrf
                                             <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
-                                            <button type="submit" name="status" value="Request Approval" class="btn btn-success">Ajukan persetujuan</button>
-                                            <button type="submit" name="status" value="Rejected" class="btn btn-danger">Tolak</button>
+                                            <button type="submit" name="status" value="Approved" class="btn btn-success">Setujui</button>
                                         </form>
+                                            <button type="submit" name="status" value="Rejected" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#rejectAspirationModal_" . $aspiration->id}}">Tolak</button>
+                                            {{-- Modal --}}
+                                            <div class="modal fade" id="{{"rejectAspirationModal_" . $aspiration->id}}" tabindex="-1">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                    <h5 class="modal-title" style="font-weight: 700">Masukkan alasan penolakan</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <form id="proof-form" action="{{ route('staff.rejectAspiration', $aspiration->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                        <div class="modal-body">
+                                                        {{-- <div class="col-sm-12">
+                                                            <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
+                                                            @error('processEstimationDate')
+                                                            <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror
+                                                        </div> --}}
+                            
+                                                        {{-- <br> --}}
+                                                        
+                                                        <div class="col-sm-12">
+                                                            <textarea class="form-control" style="height: 100px" required name="rejectReason"></textarea>
+                                                        </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                        <button id="sub-btn-proof" type="submit" class="btn btn-primary">
+                                                            <span id="sub-text">Simpan</span>
+                                                            <span id="load-animation" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+                                                            <span id="load-text" style="display: none">Loading...</span>
+                                                        </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                </div>
+                                            </div><!-- End Vertically centered Modal-->
                                     </td>
                                 @else
                                     <td></td>
@@ -238,8 +275,45 @@
                                         @csrf
                                         <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
                                         <button type="submit" name="status" value="Approved" class="btn btn-success">Setujui</button>
-                                        <button type="submit" name="status" value="Rejected" class="btn btn-danger">Tolak</button>
                                     </form>
+                                        <button type="submit" name="status" value="Rejected" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#rejectAspirationModal_" . $aspiration->id}}">Tolak</button>
+                                        {{-- Modal --}}
+                                        <div class="modal fade" id="{{"rejectAspirationModal_" . $aspiration->id}}" tabindex="-1">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h5 class="modal-title" style="font-weight: 700">Masukkan alasan penolakan</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form id="proof-form" action="{{ route('headmaster.rejectAspiration', $aspiration->id) }}" method="POST">
+                                                @csrf
+                                                @method('PATCH')
+                                                    <div class="modal-body">
+                                                    {{-- <div class="col-sm-12">
+                                                        <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
+                                                        @error('processEstimationDate')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                        @enderror
+                                                    </div> --}}
+                        
+                                                    {{-- <br> --}}
+                                                    
+                                                    <div class="col-sm-12">
+                                                        <textarea class="form-control" style="height: 100px" required name="rejectReason"></textarea>
+                                                    </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                    <button id="sub-btn-proof" type="submit" class="btn btn-primary">
+                                                        <span id="sub-text">Simpan</span>
+                                                        <span id="load-animation" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+                                                        <span id="load-text" style="display: none">Loading...</span>
+                                                    </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            </div>
+                                        </div><!-- End Vertically centered Modal-->                            
                                     </td>
                                 @else
                                     <td></td>

@@ -71,7 +71,7 @@ class AspirationController extends Controller
 
         Session::put('selected_category', "Semua kategori");
 
-        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'message', 'typeSorting', 'selectedCategoryId'));
+        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'message', 'typeSorting', 'selectedCategoryId', 'failMessage'));
     }
 
     public function publicAspirationSorting($typeSorting)
@@ -468,7 +468,7 @@ class AspirationController extends Controller
             'status' => "Rejected",
             'rejectReason' => $request->rejectReason,
         ]);
-        return redirect()->route('aspirations.manageAspirations');
+        return redirect()->route('aspirations.manageAspiration');
     }
 
     public function approveAspiration(Request $request){
