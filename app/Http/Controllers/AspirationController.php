@@ -176,7 +176,7 @@ class AspirationController extends Controller
             
             if ($request->status == 'Request Approval') {
                 foreach ($headmasters as $headmaster) {
-                    Mail::to($headmaster->email)->send(new RequestAspirationHeadmasterNotificationEmail($headmaster->name, $aspirationData));
+                    Mail::to($headmaster->email)->queue(new RequestAspirationHeadmasterNotificationEmail($headmaster->name, $aspirationData));
                 }
             }
             
@@ -596,17 +596,17 @@ class AspirationController extends Controller
             ];
     
             $aspirationOwner = $aspiration->user;
-            Mail::to($aspirationOwner->email)->send(new CompleteAspirationStudentNotificationEmail($aspirationOwner->name, $aspirationData));
+            Mail::to($aspirationOwner->email)->queue(new CompleteAspirationStudentNotificationEmail($aspirationOwner->name, $aspirationData));
     
             foreach ($positiveReactions as $positiveReaction) {
                 $student = User::findOrFail($positiveReaction->user_id);
                 if ($student != $aspirationOwner) {
-                    Mail::to($student->email)->send(new CompleteAspirationStudentNotificationEmail($student->name, $aspirationData));
+                    Mail::to($student->email)->queue(new CompleteAspirationStudentNotificationEmail($student->name, $aspirationData));
                 }
             }
     
             foreach ($headmasters as $headmaster) {
-                Mail::to($headmaster->email)->send(new CompleteAspirationHeadmasterNotificationEmail($headmaster->name, $aspirationData));
+                Mail::to($headmaster->email)->queue(new CompleteAspirationHeadmasterNotificationEmail($headmaster->name, $aspirationData));
             }
     
             DB::commit();

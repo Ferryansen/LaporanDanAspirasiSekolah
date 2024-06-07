@@ -215,7 +215,7 @@ class ConsultationEventController extends Controller
             foreach ($attendees as $attendee) {
                 $currAttendee = User::findOrFail($attendee);
 
-                Mail::to($currAttendee->email)->send(new UpdateInfoConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
+                Mail::to($currAttendee->email)->queue(new UpdateInfoConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
             }
 
             $event->update($credentials);
@@ -350,7 +350,7 @@ class ConsultationEventController extends Controller
                 foreach ($request->attendees as $attendee) {
                     $currAttendee = User::findOrFail($attendee);
     
-                    Mail::to($currAttendee->email)->send(new InvitationConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
+                    Mail::to($currAttendee->email)->queue(new InvitationConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
                 }
             }
     
@@ -412,7 +412,7 @@ class ConsultationEventController extends Controller
             foreach ($attendees as $attendee) {
                 $currAttendee = User::findOrFail($attendee);
 
-                Mail::to($currAttendee->email)->send(new CancelledConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
+                Mail::to($currAttendee->email)->queue(new CancelledConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
             }
 
 
@@ -462,7 +462,7 @@ class ConsultationEventController extends Controller
                 'endDate' => $event->end,
             ];
 
-            Mail::to(Auth::user()->email)->send(new RegisteredConsultationStudentNotificationEmail(Auth::user()->name, $consultationData));
+            Mail::to(Auth::user()->email)->queue(new RegisteredConsultationStudentNotificationEmail(Auth::user()->name, $consultationData));
 
             
             DB::commit();

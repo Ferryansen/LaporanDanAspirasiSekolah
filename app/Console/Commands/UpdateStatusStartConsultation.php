@@ -41,7 +41,7 @@ class UpdateStatusStartConsultation extends Command
             foreach ($attendees as $attendee) {
                 $currAttendee = User::findOrFail($attendee);
 
-                Mail::to($currAttendee->email)->send(new StartedConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
+                Mail::to($currAttendee->email)->queue(new StartedConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
             }
 
             $record->save();
