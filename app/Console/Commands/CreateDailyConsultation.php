@@ -52,7 +52,7 @@ class CreateDailyConsultation extends Command
         $staffs = User::where('role', 'LIKE', 'staff')->get();
 
         foreach ($staffs as $staff) {
-            Mail::to($staff->email)->send(new DailyConsultationConfirmationStaffNotificationEmail($staff->name));
+            Mail::to($staff->email)->queue(new DailyConsultationConfirmationStaffNotificationEmail($staff->name));
         }
 
         $this->info('Consultations scheduled successfully.');
