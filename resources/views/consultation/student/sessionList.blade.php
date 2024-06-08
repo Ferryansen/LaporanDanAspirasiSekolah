@@ -83,18 +83,20 @@
                   <div class="card-body" style="margin-top: 24px">
                       <!-- Table with stripped rows -->
                       <table class="table">
-                          <tbody  style="border: white">
-                            <div class="d-grid gap-2 d-md-block d-flex" style="padding-left: 15px; margin-bottom: 20px">
-                                <a href="{{ $typeSorting !== 'UpComing' ? route('consultation.sessionList.sorting', ['typeSorting' => 'UpComing']) : route('consultation.sessionList') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'UpComing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'UpComing' ? '#fff' : '#8F8F8F' }}; border: 1; border-color: #8F8F8F; border-radius: 20px;">Akan datang</a>
-                                <a href="{{ $typeSorting !== 'OnGoing' ? route('consultation.sessionList.sorting', ['typeSorting' => 'OnGoing']) : route('consultation.sessionList') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'OnGoing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'OnGoing' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px;">Berlangsung</a>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="input-group">
-                                    <input type="text" id="datepicker" class="form-control" placeholder="Pilih tanggal" value="{{ request('date') }}">
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">
-                                            <i class="bi bi-calendar"></i>
-                                        </span>
+                          <tbody  style="border: white;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <div class="d-grid gap-2 d-md-block d-flex" style="margin-left: 8px; margin-bottom: 20px;">
+                                    <a href="{{ $typeSorting !== 'UpComing' ? route('consultation.sessionList.sorting', ['typeSorting' => 'UpComing']) : route('consultation.sessionList') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'UpComing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'UpComing' ? '#fff' : '#8F8F8F' }}; border: 1; border-color: #8F8F8F; border-radius: 20px;">Akan datang</a>
+                                    <a href="{{ $typeSorting !== 'OnGoing' ? route('consultation.sessionList.sorting', ['typeSorting' => 'OnGoing']) : route('consultation.sessionList') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'OnGoing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'OnGoing' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px; margin-left: 8px;">Berlangsung</a>
+                                </div>
+                                <div class="col-md-3" style="margin-left: 8px">
+                                    <div class="input-group">
+                                        <input type="text" id="datepicker" class="form-control" placeholder="Pilih tanggal" value="{{ request('date') }}">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-calendar"></i>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -121,6 +123,7 @@
                                                         @endphp
                                                     <div class="desc"><i class="bi bi-calendar" style="padding-right: 5px"></i> {{$formattedDate}}</div>
                                                     <div class="desc"><i class="bi bi-clock" style="padding-right: 5px"></i> {{$formattedTimeStart}} - {{$formattedTimeEnd}}</div>
+                                                    <div class="desc"><i class="bi bi-person" style="padding-right: 5px"></i> {{ $consultation->is_confirmed == true ? $consultation->consultBy->name : 'Belum terkonfirmasi' }}</div>
                                                     {{-- <div class="desc"><i class="bi bi-person" style="padding-right: 5px"></i> {{$consultation->consultBy->name}}</div> --}}
                                                     @if(in_array(Auth::id(), $consultation->attendees))
                                                     <div class="warn">Anda sudah terdaftar dalam sesi ini.</div>
@@ -142,7 +145,7 @@
                                 <tr>
                                   <td colspan="3">
                                       <div class="container">
-                                          <span style="color: dimgray">Belum ada sesi konseling yang tersedia</span>
+                                          <span style="color: dimgray">Belum ada sesi yang tersedia</span>
                                       </div>
                                   </td>
                               </tr>
@@ -164,10 +167,6 @@
   </section>
 @endsection
 
-@section('css')
-    
-@endsection
-
 @section('js')
 <script>
     $(function() {
@@ -187,9 +186,5 @@
         }
     });
 </script>
-
-@endsection
-
-@section('js')
 
 @endsection

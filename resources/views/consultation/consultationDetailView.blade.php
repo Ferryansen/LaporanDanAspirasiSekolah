@@ -27,6 +27,12 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     @endif
+    @if(session('errorMessage'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('errorMessage') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
 
     <section class="section">
         <div class="row">
@@ -73,10 +79,12 @@
                                 <td class="col-6">Jadwal Pertemuan</td>
                                 <td>: {{ \Carbon\Carbon::parse($event->start)->format('d/m/Y, H:i') }} ({{ $displayValue . ' ' . $displayUnit }})</td>
                             </tr>
-                            <tr>
-                                <td class="col-6">Limit Peserta</td>
-                                <td>: {{ $event->attendeeLimit }} orang</td>
-                            </tr>
+                            @if ($event->attendeeLimit != null)
+                                <tr>
+                                    <td class="col-6">Limit Peserta</td>
+                                    <td>: {{ $event->attendeeLimit }} orang</td>
+                                </tr>
+                            @endif
                             <tr>
                                 <td class="col-6">Lokasi</td>
                                 @if ($event->location == null)
@@ -84,7 +92,7 @@
                                 @else
                                     @if ($event->is_online == true)
                                         @if ($event->status == 'Belum dimulai' || $event->status == 'Pindah jadwal' || $event->status == 'Sedang dimulai')
-                                            <td>: <a href="{{ $event->location }}">Online <i class="fa-solid fa-link"></i></a></td>
+                                            <td>: <a href="{{ $event->location }}" target="_blank">Online <i class="fa-solid fa-link"></i></a></td>
                                         @else
                                             <td>: Online</td>
                                         @endif

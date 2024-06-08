@@ -37,7 +37,6 @@ class CreateDailyConsultation extends Command
                     'description' => 'Ada yang mau kamu tanyakan langsung ke sekolah? Yuk, langsung daftar konsultasinya!',
                     'start' => $startDateTime,
                     'end' => $endDateTime,
-                    'attendeeLimit' => 15,
                     'status' => '',
                     'attendees' => [],
                     'location' => 'https://meet.google.com/twi-yuta-ata',

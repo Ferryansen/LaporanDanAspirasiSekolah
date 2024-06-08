@@ -150,6 +150,20 @@
             });
 
             calendar.render();
+
+            function handleCellClick(event) {
+                var dateStr = event.currentTarget.getAttribute('data-date');
+                if (dateStr) {
+                    var info = { startStr: dateStr };
+                    calendar.trigger('select', info);
+                }
+            }
+
+            if ('ontouchstart' in window || navigator.maxTouchPoints) {
+                document.querySelectorAll('.fc-daygrid-day').forEach(function(dayCell) {
+                    dayCell.addEventListener('touchend', handleCellClick);
+                });
+            }
         });
     </script>
 @endsection
