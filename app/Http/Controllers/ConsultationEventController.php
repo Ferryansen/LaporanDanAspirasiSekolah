@@ -24,13 +24,15 @@ class ConsultationEventController extends Controller
     }
 
     public function sessionList() {
-        $consultations = ConsultationEvent::where(function ($query) {
-            $query->where('start', '>', now())
-                  ->orWhere('end', '>', now());
-            })
-            ->orderBy('start', 'asc')
-            ->paginate(10)
-            ->withQueryString();
+        $consultations = ConsultationEvent::where('is_private', false)
+                                        ->where(function ($query) {
+                                            $query->where('start', '>', now())
+                                                ->orWhere('end', '>', now());
+                                        })
+                                        ->orderBy('start', 'asc')
+                                        ->paginate(10)
+                                        ->withQueryString();
+
         $typeSorting ="";
         return view('consultation.student.sessionList', compact('consultations', 'typeSorting'));
     }
@@ -142,7 +144,6 @@ class ConsultationEventController extends Controller
                 'startDateTime' => 'required',
                 'endDateTime' => 'required|after:startDateTime',
                 'consultationType' => 'required',
-                'attendeeLimit' => 'required|integer|min:1',
                 'location' => 'max:250'
             ];
 
@@ -159,10 +160,6 @@ class ConsultationEventController extends Controller
                 
                 'consultationType.required' => 'Jangan lupa pilih jenis konsultasinya yaa',
                 
-                'attendeeLimit.required' => 'Jangan lupa masukin limit pesertanya yaa',
-                'attendeeLimit.integer' => 'Limit yang kamu masukin harus angka nih',
-                'attendeeLimit.min' => 'Limit peserta minimalnya harus 1 orang nih.',
-                
                 'location.max' => 'Lokasi konsultasi yang kamu masukin cuman bisa maksimal 250 karakter nih',
             ];
 
@@ -177,7 +174,6 @@ class ConsultationEventController extends Controller
                 'description' => $request->description,
                 'start' => $request->startDateTime,
                 'end' => $request->endDateTime,
-                'attendeeLimit' => $request->attendeeLimit,
             ];
 
             $startDateTimeRequest = Carbon::parse($request->startDateTime);
@@ -196,6 +192,10 @@ class ConsultationEventController extends Controller
             } else {
                 $consultationData['location'] = null;
             }
+
+            if ($event->attendeeLimit != null) {
+                $credentials['attendeeLimit'] = $request->attendeeLimit;
+            }
             
             if ($request->startDateTime != $event->start) {
                 $consultationData['date'] = $request->startDateTime;
@@ -210,13 +210,20 @@ class ConsultationEventController extends Controller
             }
 
             $attendees = $event->attendees;
-            $consultationData['title'] = $event->title;
+            
+            if (count($attendees) > 0) {
+                $consultationData = [
+                    'title' => $event->title,
+                    'consultant' => $event->consultBy->name,
+                ];
 
-            foreach ($attendees as $attendee) {
-                $currAttendee = User::findOrFail($attendee);
-
-                Mail::to($currAttendee->email)->queue(new UpdateInfoConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
+                foreach ($attendees as $attendee) {
+                    $currAttendee = User::findOrFail($attendee);
+    
+                    Mail::to($currAttendee->email)->queue(new UpdateInfoConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
+                }
             }
+
 
             $event->update($credentials);
             
@@ -324,7 +331,8 @@ class ConsultationEventController extends Controller
             }
     
             if ($request->attendees != null) {
-                $credentials['attendees'] = $request->attendees;
+                $attendees = array_map('intval', $request->attendees);
+                $credentials['attendees'] = $attendees;
             } else {
                 $credentials['attendees'] = [];
             }
@@ -390,6 +398,30 @@ class ConsultationEventController extends Controller
             'is_confirmed' => true,
         ];
 
+        $attendees = $event->attendees;
+            
+        if (count($attendees) > 0) {
+            $consultationData = [
+                'title' => $event->title,
+                'location' => $event->location,
+                'date' => $event->start,
+                'endDate' => $event->end,
+                'consultant' => Auth::user()->name,
+            ];
+
+            if($event->is_online == true) {
+                $consultationData['is_online'] = 'online';
+            } elseif ($event->is_online == false) {
+                $consultationData['is_online'] = 'offline';
+            }
+            
+            foreach ($attendees as $attendee) {
+                $currAttendee = User::findOrFail($attendee);
+
+                Mail::to($currAttendee->email)->queue(new UpdateInfoConsultationStudentNotificationEmail($currAttendee->name, $consultationData));
+            }
+        }
+
         $event->update($credential);
         return redirect()->back()->with('successMessage', 'Kehadiran konsultasi berhasil dikonfirmasi');
     }
@@ -442,6 +474,12 @@ class ConsultationEventController extends Controller
             $event = ConsultationEvent::findOrFail($consultation_id);
             // Get the existing attendees array
             $attendees = $event->attendees ?? [];
+            
+            if ($event->attendeeLimit != null) {
+                if (count($event->attendees) >= $event->attendeeLimit) {
+                    return redirect()->back()->with('errorMessage', 'Waduh, sesi ini sudah melebihi limit nih'); 
+                }
+            }
 
             // Check if the current user's ID is already in the attendees array
             if (!in_array($userId, $attendees)) {

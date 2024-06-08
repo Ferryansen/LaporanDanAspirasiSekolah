@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('description', 1005);
             $table->foreignId('consultant')->nullable()->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->json('attendees')->nullable();
-            $table->integer('attendeeLimit');
+            $table->integer('attendeeLimit')->nullable();
             $table->string('location', 255)->nullable();
             $table->string('status', 255);
             $table->dateTime('start');

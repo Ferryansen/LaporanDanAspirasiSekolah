@@ -16,14 +16,29 @@
     <p>
         <table>
             @if ($consultationData['date'] != null)
+                @php
+                    $startDate = \Carbon\Carbon::parse($consultationData['date']);
+                    $endDate = \Carbon\Carbon::parse($consultationData['endDate']);
+
+                    $differenceInMinutes = $endDate->diffInMinutes($startDate);
+
+                    $isHours = $differenceInMinutes >= 60;
+
+                    $displayUnit = $isHours ? 'jam' : 'menit';
+                    $displayValue = $isHours ? floor($differenceInMinutes / 60) : $differenceInMinutes;
+                @endphp
                 <tr>
                     <td>Jadwal konsultasi</td>
-                    <td>: {{ \Carbon\Carbon::parse($consultationData['date'])->format('d/m/Y, H:i') }}</td>
+                    <td>: {{ \Carbon\Carbon::parse($consultationData['date'])->format('d/m/Y, H:i') }} ({{ $displayValue . ' ' . $displayUnit }})</td>
                 </tr>
             @endif
+            <tr>
+                <td>Konsultan</td>
+                <td>: {{ $consultationData['consultant'] }}</td>
+            </tr>
             @if ($consultationData['is_online'] != null)
                 <tr>
-                    <td>Jadwal konsultasi</td>
+                    <td>Tipe konsultasi</td>
                     <td>: {{ $consultationData['is_online'] }}</td>
                 </tr>
             @endif

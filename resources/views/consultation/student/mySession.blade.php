@@ -78,16 +78,16 @@
                       <!-- Table with stripped rows -->
                       <table class="table">
                           <tbody style="border: white">
-                            <div class="d-grid gap-2 d-md-block d-flex" style="padding-left: 15px; margin-bottom: 20px">
+                            <div class="d-grid gap-2 d-md-block d-flex" style="margin-left: 8px; margin-bottom: 20px">
                                 <a href="{{ $typeSorting !== 'UpComing' ? route('consultation.mySession.sorting', ['typeSorting' => 'UpComing']) : route('consultation.mySession') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'UpComing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'UpComing' ? '#fff' : '#8F8F8F' }}; border: 1; border-color: #8F8F8F; border-radius: 20px;">Akan datang</a>
-                                <a href="{{ $typeSorting !== 'OnGoing' ? route('consultation.mySession.sorting', ['typeSorting' => 'OnGoing']) : route('consultation.mySession') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'OnGoing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'OnGoing' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px;">Berlangsung</a>
-                                <a href="{{ $typeSorting !== 'End' ? route('consultation.mySession.sorting', ['typeSorting' => 'End']) : route('consultation.mySession') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'End' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'End' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px;">Berakhir</a>
+                                <a href="{{ $typeSorting !== 'OnGoing' ? route('consultation.mySession.sorting', ['typeSorting' => 'OnGoing']) : route('consultation.mySession') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'OnGoing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'OnGoing' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px; margin-left: 8px;">Berlangsung</a>
+                                <a href="{{ $typeSorting !== 'End' ? route('consultation.mySession.sorting', ['typeSorting' => 'End']) : route('consultation.mySession') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'End' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'End' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px; margin-left: 8px;">Berakhir</a>
                             </div>
                               @if ($consultations->count() == 0)
                               <tr>
                                   <td colspan="3">
                                       <div class="container">
-                                          <span style="color: dimgray">Belum ada sesi konseling</span>
+                                          <span style="color: dimgray">Belum ada sesi yang terdaftar</span>
                                       </div>
                                   </td>
                               </tr>
@@ -109,8 +109,8 @@
                                                 @endphp
                                               <div class="desc"><i class="bi bi-calendar" style="padding-right: 5px"></i> {{$formattedDate}}</div>
                                               <div class="desc"><i class="bi bi-clock" style="padding-right: 5px"></i> {{$formattedTimeStart}} - {{$formattedTimeEnd}}</div>
-                                              <div class="desc"><i class="bi bi-person" style="padding-right: 5px"></i> {{$consultation->consultBy->name}}</div>
-                                              @if ($consultation->is_online == 1)
+                                              <div class="desc"><i class="bi bi-person" style="padding-right: 5px"></i> {{$consultation->is_confirmed == true ? $consultation->consultBy->name : 'Belum terkonfirmasi'}}</div>
+                                              @if ($consultation->is_online == 1 && $consultation->is_confirmed == true)
                                                 <a href="{{ $consultation->location }}" target="_blank">
                                                     <button type="button" class="btn btn-primary" style="margin-top: 10px"><i class="bi bi-door-open" style="margin-right: 8px"></i>Masuk ruangan</button>
                                                 </a>

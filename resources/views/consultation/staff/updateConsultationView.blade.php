@@ -25,7 +25,7 @@
         </div>
     @endif
 <section class="section">
-    <form id="consultation-form" action="#" enctype="multipart/form-data" method="POST">
+    <form id="consultation-form" action="{{ route('consultation.update', ['consultation_id' => $event->id]) }}" enctype="multipart/form-data" method="POST">
         @csrf
         @method('PATCH')
         
@@ -70,15 +70,18 @@
             @enderror
         </fieldset>
 
-        <div class="row mb-3">
-            <label for="attendeeLimit" class="col-sm-2 col-form-label">Limit Peserta</label>
-            <div class="col-sm-10">
-                <input type="number" class="form-control @error('attendeeLimit') is-invalid @enderror" name="attendeeLimit" value="{{ old('attendeeLimit') != null ? old('attendeeLimit') : $event->attendeeLimit }}" min="{{ count($event->attendees) > 1 ? count($event->attendees) : '1' }}" required>
-                @error('attendeeLimit')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+        @if ($event->attendeeLimit != null)
+            <div class="row mb-3">
+                <label for="attendeeLimit" class="col-sm-2 col-form-label">Limit Peserta</label>
+                <div class="col-sm-10">
+                    <input type="number" class="form-control @error('attendeeLimit') is-invalid @enderror" name="attendeeLimit" value="{{ old('attendeeLimit') != null ? old('attendeeLimit') : $event->attendeeLimit }}" min="{{ count($event->attendees) > 1 ? count($event->attendees) : '1' }}" required>
+                    @error('attendeeLimit')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
-        </div>
+        @endif
+
 
         <div class="row mb-3">
             <label for="startDateTime" class="col-sm-2 col-form-label">Jadwal</label>
