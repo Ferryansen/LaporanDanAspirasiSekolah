@@ -57,6 +57,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/publicAspirations/sorting/{typeSorting}', [AspirationController::class, 'publicAspirationSorting'])->name('aspirations.publicAspirations.sorting');
     Route::get('/publicAspirations/{category_id}', [AspirationController::class, 'publicAspirationFilterCategory'])->name('aspirations.publicAspirationsCategory');
     Route::post('/{aspiration}/react', [AspirationReactionController::class, 'react'])->name('aspirations.react');
+    Route::post('/react/{aspiration}', [AspirationReactionController::class, 'react'])->name('react');
     Route::post('/comments/{comment}/reply', [CommentController::class, 'reply'])->name('comments.reply');
     Route::post('/{aspiration}/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::get('/clear-session-data', [CommentController::class, 'clearSessionData'])->name('clear-session-data');

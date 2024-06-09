@@ -92,7 +92,6 @@
             height: auto; /* Full height of viewport */
             overflow-y: auto; /* Enable scrolling if content exceeds max-height */
             padding-bottom: 50px;
-            padding-top:60px;
             font-family: "Nunito", sans-serif;
         }
 
@@ -423,14 +422,20 @@
                                     @csrf
                                     @method('POST')
                                     
-                                    <button type="submit" name="reaction" value="like"
-                                            class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'like')->exists() ? 'activeLike' : '' }}">
-                                            <i class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'like')->exists() ? 'bi bi-hand-thumbs-up-fill' : 'bi bi-hand-thumbs-up' }}"><span> {{ $aspiration->reactions()->where('reaction', 'like')->count()}}</span></i>
+                                    <button type="button" name="reaction" value="like"
+                                        class="reaction-button {{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'like')->exists() ? 'activeLike' : '' }}"
+                                        data-aspiration-id="{{ $aspiration->id }}" data-reaction="like">
+                                        <i class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'like')->exists() ? 'bi bi-hand-thumbs-up-fill' : 'bi bi-hand-thumbs-up' }}">
+                                            <span class="like-count">{{ $aspiration->reactions()->where('reaction', 'like')->count()}}</span>
+                                        </i>
                                     </button>
-                                    
-                                    <button style="margin-left: -14px;" type="submit" name="reaction" value="dislike"
-                                            class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'dislike')->exists() ? 'activeDislike' : '' }}">
-                                            <i class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'dislike')->exists() ? 'bi bi-hand-thumbs-down-fill' : 'bi bi-hand-thumbs-down' }}"><span> {{ $aspiration->reactions()->where('reaction', 'dislike')->count()}}</span></i>
+
+                                    <button style="margin-left: -14px;" type="button" name="reaction" value="dislike"
+                                        class="reaction-button {{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'dislike')->exists() ? 'activeDislike' : '' }}"
+                                        data-aspiration-id="{{ $aspiration->id }}" data-reaction="dislike">
+                                        <i class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'dislike')->exists() ? 'bi bi-hand-thumbs-down-fill' : 'bi bi-hand-thumbs-down' }}">
+                                            <span class="dislike-count">{{ $aspiration->reactions()->where('reaction', 'dislike')->count()}}</span>
+                                        </i>
                                     </button>
                                 </form>
 
@@ -630,14 +635,20 @@
                                     @csrf
                                     @method('POST')
                                     
-                                    <button type="submit" name="reaction" value="like"
-                                            class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'like')->exists() ? 'activeLike' : '' }}">
-                                            <i class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'like')->exists() ? 'bi bi-hand-thumbs-up-fill' : 'bi bi-hand-thumbs-up' }}"><span> {{ $aspiration->reactions()->where('reaction', 'like')->count()}}</span></i>
+                                    <button type="button" name="reaction" value="like"
+                                        class="reaction-button {{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'like')->exists() ? 'activeLike' : '' }}"
+                                        data-aspiration-id="{{ $aspiration->id }}" data-reaction="like">
+                                        <i class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'like')->exists() ? 'bi bi-hand-thumbs-up-fill' : 'bi bi-hand-thumbs-up' }}">
+                                            <span class="like-count">{{ $aspiration->reactions()->where('reaction', 'like')->count()}}</span>
+                                        </i>
                                     </button>
-                                    
-                                    <button style="margin-left: -14px;" type="submit" name="reaction" value="dislike"
-                                            class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'dislike')->exists() ? 'activeDislike' : '' }}">
-                                            <i class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'dislike')->exists() ? 'bi bi-hand-thumbs-down-fill' : 'bi bi-hand-thumbs-down' }}"><span> {{ $aspiration->reactions()->where('reaction', 'dislike')->count()}}</span></i>
+
+                                    <button style="margin-left: -14px;" type="button" name="reaction" value="dislike"
+                                        class="reaction-button {{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'dislike')->exists() ? 'activeDislike' : '' }}"
+                                        data-aspiration-id="{{ $aspiration->id }}" data-reaction="dislike">
+                                        <i class="{{ $aspiration->reactions()->where('user_id', Auth::id())->where('reaction', 'dislike')->exists() ? 'bi bi-hand-thumbs-down-fill' : 'bi bi-hand-thumbs-down' }}">
+                                            <span class="dislike-count">{{ $aspiration->reactions()->where('reaction', 'dislike')->count()}}</span>
+                                        </i>
                                     </button>
                                 </form>
 
@@ -831,6 +842,7 @@
 
             popup.style.display = 'block';
             overlay.style.display = 'block'; // Show the overlay
+            adjustPadding();
             document.body.style.overflow = 'hidden'; // Disable scrolling on the body
 
             var closeBtn = popup.querySelector('.close-btn');
@@ -863,6 +875,7 @@ if (aspirationId && <?php echo json_encode(session('comment_popup_open', false))
     function delayedPopup() {
       currentlyOpenPopup.style.display = 'block';
       currentlyOpenOverlay.style.display = 'block';
+      adjustPadding();
       document.body.style.overflow = 'hidden';
     }
 
@@ -906,6 +919,63 @@ if (aspirationId && <?php echo json_encode(session('comment_popup_open', false))
     });
 </script>
 
+<script>
+    function adjustPadding() {
+        var topContent = document.querySelector('.top-content');
+        var commentContent = document.querySelector('.comment-content');
+        var topContentHeight = topContent.offsetHeight;
+        commentContent.style.paddingTop = topContentHeight + 'px';
+    }
+
+    // Adjust padding on page load
+    window.addEventListener('load', adjustPadding);
+
+    // Adjust padding when the window is resized (in case the height of top-content changes)
+    window.addEventListener('resize', adjustPadding);
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.reaction-button').forEach(function (button) {
+            button.addEventListener('click', function () {
+                var aspirationId = this.getAttribute('data-aspiration-id');
+                var reaction = this.getAttribute('data-reaction');
+
+                fetch('/react/' + aspirationId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ reaction: reaction })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the UI based on the response
+                        var likeButton = document.querySelector(`button[data-aspiration-id="${aspirationId}"][data-reaction="like"]`);
+                        var dislikeButton = document.querySelector(`button[data-aspiration-id="${aspirationId}"][data-reaction="dislike"]`);
+
+                        // Update like button
+                        likeButton.querySelector('i').classList.toggle('bi-hand-thumbs-up-fill', data.user_reaction === 'like');
+                        likeButton.querySelector('i').classList.toggle('bi-hand-thumbs-up', data.user_reaction !== 'like');
+                        likeButton.classList.toggle('activeLike', data.user_reaction === 'like');
+                        likeButton.querySelector('.like-count').textContent = data.like_count;
+
+                        // Update dislike button
+                        dislikeButton.querySelector('i').classList.toggle('bi-hand-thumbs-down-fill', data.user_reaction === 'dislike');
+                        dislikeButton.querySelector('i').classList.toggle('bi-hand-thumbs-down', data.user_reaction !== 'dislike');
+                        dislikeButton.classList.toggle('activeDislike', data.user_reaction === 'dislike');
+                        dislikeButton.querySelector('.dislike-count').textContent = data.dislike_count;
+                    } else {
+                        console.error('Failed to update reaction');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+</script>
 
     
 @endsection
