@@ -91,7 +91,7 @@
         .comment-content {
             height: auto; /* Full height of viewport */
             overflow-y: auto; /* Enable scrolling if content exceeds max-height */
-            padding-bottom: 50px;
+            padding-bottom: 60px;
             font-family: "Nunito", sans-serif;
         }
 
@@ -150,7 +150,7 @@
         }
 
         .comment-form textarea {
-            width: calc(100% - 40px); /* Adjust the width of the textarea */
+            width: calc(100% - 60px); /* Adjust the width of the textarea */
             vertical-align: middle;
         }
 
@@ -920,11 +920,17 @@ if (aspirationId && <?php echo json_encode(session('comment_popup_open', false))
 </script>
 
 <script>
-    function adjustPadding() {
-        var topContent = document.querySelector('.top-content');
-        var commentContent = document.querySelector('.comment-content');
-        var topContentHeight = topContent.offsetHeight;
-        commentContent.style.paddingTop = topContentHeight + 'px';
+     function adjustPadding() {
+        var commentContents = document.querySelectorAll('.comment-content');
+
+        // Determine if the device is mobile or desktop
+        var isMobile = window.innerWidth <= 768; // You can adjust the breakpoint as needed
+
+        // Set the padding-top based on the device type
+        var paddingTop = isMobile ? '120px' : '60px';
+        commentContents.forEach(function(commentContent) {
+            commentContent.style.paddingTop = paddingTop;
+        });
     }
 
     // Adjust padding on page load
