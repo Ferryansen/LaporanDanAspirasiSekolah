@@ -7,6 +7,16 @@ Detail Laporan
 @section('css')
 <link href="{{ asset('template_assets/css/detailAspiration.css') }}" rel="stylesheet">
 <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+<style>
+  .progress-bar {
+    height: auto !important;
+  }
+
+  .ul-progress-bar {
+    margin-top: 30px;
+  }
+</style>
 @endsection
 
 @section('breadcrumb')
