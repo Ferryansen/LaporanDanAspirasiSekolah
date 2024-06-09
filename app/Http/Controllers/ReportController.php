@@ -69,13 +69,13 @@ class ReportController extends Controller
             $categoriesFilter = Category::where('staffType_id', $staffType_id)->pluck('id');
             $idx = 0;
             foreach ($categories as $category) {
-                if (strpos($category->name, "Lainnya") !== false){
+                if (strpos($category->name, "Semua status") !== false){
                     $idx = $category->id;
                     break;
                 }
             }
-            $reports = Report::sortable()->where(function ($query) use ($staffType_id, $idx) {
-                            $query->where('category_id', $staffType_id)
+            $reports = Report::sortable()->where(function ($query) use ($categoriesFilter, $idx) {
+                            $query->where('category_id', $categoriesFilter)
                             ->orWhere('category_id', $idx);
                         })->orderBy('isUrgent', 'desc')->orderBy('created_at', 'desc')->paginate(10);
         }
