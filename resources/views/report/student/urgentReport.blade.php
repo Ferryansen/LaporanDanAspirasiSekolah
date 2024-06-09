@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Urgent Report</title>
 
-    {{-- Add Google Font --}}
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
     
     <style>
         *{
@@ -149,7 +148,7 @@
 <body>
     
     
-    <video id="cameraFeed" autoplay></video>
+    <video id="cameraFeed" autoplay playsinline></video>
     <div class="listButton">
         <button id="videoButton" class="button"><i class="fa-solid fa-video"></i></button>
         <button id="takePhotoButton" class="button"><i class="fa-solid fa-camera"></i></button>
@@ -203,7 +202,14 @@
         takePhotoButton.addEventListener('click', takePhoto);
 
         function startCamera() {
-            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            const constraints = {
+                video: {
+                    facingMode: { exact: "environment" } // Use the back camera
+                },
+                audio: true
+            };
+            
+            navigator.mediaDevices.getUserMedia(constraints)
                 .then(function(mediaStream) {
                     stream = mediaStream;
                     cameraFeed.srcObject = mediaStream;
@@ -214,10 +220,10 @@
         }
 
         function toggleVideoRecording() {
-            if (!recorder || recorder.state !== 'recording') {
+            if (!recorder || recorder.state === 'inactive') {
                 startRecording();
                 videoButton.innerHTML = '<i class="fa-solid fa-stop"></i>';
-            } else {
+            } else if (recorder.state === 'recording') {
                 stopRecording();
                 videoButton.innerHTML = '<i class="fa-solid fa-video"></i>';
             }
@@ -225,33 +231,41 @@
 
         function startRecording() {
             recordedChunks = [];
-            recorder = new MediaRecorder(stream, {
-                mimeType:"video/webm; codecs=vp8"
-            });
+            const options = { mimeType: 'video/webm; codecs=vp8' };
+            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                options.mimeType = 'video/mp4';
+            }
+            try {
+                recorder = new MediaRecorder(stream, options);
 
-            recorder.ondataavailable = function(event) {
-                if (event.data.size > 0) {
-                    recordedChunks.push(event.data);
-                }
-            };
-            recorder.onstop = function() {
-                const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                const videoURL = URL.createObjectURL(blob);
-                const video = document.createElement('video');
-                video.src = videoURL;
-                video.controls = true;
-                video.classList.add('previewItem');
-                previewContainer.appendChild(video);
+                recorder.ondataavailable = function(event) {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+                recorder.onstop = function() {
+                    const blob = new Blob(recordedChunks, { type: options.mimeType });
+                    const videoURL = URL.createObjectURL(blob);
+                    const video = document.createElement('video');
+                    video.src = videoURL;
+                    video.controls = true;
+                    video.classList.add('previewItem');
+                    previewContainer.appendChild(video);
 
-                mediaTypeInput.value = 'video';
-                saveFile(blob, 'video.webm'); // Change the file name here
-                showPopup(video);
-            };
-            recorder.start();
+                    mediaTypeInput.value = 'video';
+                    saveFile(blob, options.mimeType === 'video/mp4' ? 'video.mp4' : 'video.webm');
+                    showPopup(video);
+                };
+                recorder.start();
+            } catch (e) {
+                console.error('Error starting the recorder:', e);
+            }
         }
 
         function stopRecording() {
-            recorder.stop();
+            if (recorder && recorder.state === 'recording') {
+                recorder.stop();
+            }
         }
 
         function takePhoto() {
@@ -298,6 +312,7 @@
         function closePopup() {
             popupOverlay.style.display = 'none';
         }
+
     </script>
     <script src="https://kit.fontawesome.com/f98710255c.js" crossorigin="anonymous"></script>
 </body>
