@@ -54,7 +54,7 @@
         <div class="card-body" style="margin-top: 24px">
           @if (Auth::user()->role == "staff")
             <div class="row">
-              <div class="col-3">
+              <div class="col-7 col-md-3">
                 @php
                     $selectedStatus = session('selected_status', 'Semua status');
                 @endphp
@@ -76,42 +76,44 @@
             <br>
 
           @else
-            <div class="row d-flex justify-content-between align-items-center">
-              <div class="col-auto d-flex align-items-center" style="margin-top: 0.5rem">
-                <select class="form-select" aria-label="Default select example" name="categoryStaffType" required onchange="window.location.href=this.value;">
+          <div class="row d-flex justify-content-between align-items-center">
+            <div class="col-7 col-md-auto d-flex align-items-center mb-3 mb-md-0" style="margin-top: 0.5rem">
+              <select class="form-select w-100 w-md-auto" aria-label="Default select example" name="categoryStaffType" required onchange="window.location.href=this.value;">
+                @php
+                    $lainnyaCategory = null;
+                    $selectedCategory = session('selected_category', 'Semua kategori');
+                @endphp
+                <option value="{{ route('report.adminHeadmasterStaff.manageReport') }}" {{ $selectedCategory == 'Semua kategori' ? 'selected' : '' }}>Semua kategori</option>
+                @foreach ($categories as $category)
+                  @if (strpos($category->name, "Lainnya") !== false)
                     @php
-                        $lainnyaCategory = null;
-                        $selectedCategory = session('selected_category', 'Semua kategori');
+                      $lainnyaCategory = $category;
                     @endphp
-                    <option value="{{ route('report.adminHeadmasterStaff.manageReport') }}" {{ $selectedCategory == 'Semua kategori' ? 'selected' : '' }}>Semua kategori</option>
-                    @foreach ($categories as $category)
-                        @if (strpos($category->name, "Lainnya") !== false)
-                            @php
-                                $lainnyaCategory = $category;
-                            @endphp
-                        @else
-                            <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterCategory', ['category_id' => $category->id]) }}" {{ $selectedCategory == $category->name ? 'selected' : '' }}>{{ $category->name }}</option>
-                        @endif
-                    @endforeach
-                    @if ($lainnyaCategory)
-                        <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterCategory', ['category_id' => $lainnyaCategory->id]) }}" {{ $selectedCategory == $lainnyaCategory->name ? 'selected' : '' }}>{{ $lainnyaCategory->name }}</option>
-                    @endif
-                </select>
-              </div>
-              <div class="col-auto d-flex align-items-center">
-                  @if (Auth::user()->role == "headmaster")
-                    @if ($filterTitle == null)
-                    <a href="{{ route('convertReport') }}">
-                        <button type="button" class="btn btn-success">Export Data Laporan</button>
-                    </a>
-                    @else
-                    <a href="{{ route('convertCategoryReport', ['category_id' => $categoryNow]) }}">
-                        <button type="button" class="btn btn-success">Export Data Laporan</button>
-                    </a>
-                    @endif
+                  @else
+                    <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterCategory', ['category_id' => $category->id]) }}" {{ $selectedCategory == $category->name ? 'selected' : '' }}>{{ $category->name }}</option>
                   @endif
-              </div>
+                @endforeach
+                @if ($lainnyaCategory)
+                  <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterCategory', ['category_id' => $lainnyaCategory->id]) }}" {{ $selectedCategory == $lainnyaCategory->name ? 'selected' : '' }}>{{ $lainnyaCategory->name }}</option>
+                @endif
+              </select>
             </div>
+          
+            <div class="col-12 col-md-auto d-flex align-items-center mt-3 mt-md-0">
+              @if (Auth::user()->role == "headmaster")
+                @if ($filterTitle == null)
+                  <a href="{{ route('convertReport') }}">
+                    <button type="button" class="btn btn-success w-100 w-md-auto">Export Data Laporan</button>
+                  </a>
+                @else
+                  <a href="{{ route('convertCategoryReport', ['category_id' => $categoryNow]) }}">
+                    <button type="button" class="btn btn-success w-100 w-md-auto">Export Data Laporan</button>
+                  </a>
+                @endif
+              @endif
+            </div>
+          </div>
+          
             
             <br>
 
