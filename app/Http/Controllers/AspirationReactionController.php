@@ -14,14 +14,14 @@ class AspirationReactionController extends Controller
         $request->validate([
             'reaction' => 'required|in:like,dislike'
         ]);
-
+    
         $user = Auth::user();
-
+    
         // Check if the user has already reacted
         $existingReaction = AspirationReaction::where('user_id', $user->id)
                             ->where('aspiration_id', $aspiration->id)
                             ->first();
-
+    
         if ($existingReaction) {
             // Update the reaction if it's different
             if ($existingReaction->reaction !== $request->reaction) {
@@ -38,7 +38,21 @@ class AspirationReactionController extends Controller
                 'reaction' => $request->reaction,
             ]);
         }
-
-        return back();
+    
+        // Get updated reaction counts
+        $likeCount = $aspiration->reactions()->where('reaction', 'like')->count();
+        $dislikeCount = $aspiration->reactions()->where('reaction', 'dislike')->count();
+    
+        // Get the user's current reaction (if any)
+        $userReaction = AspirationReaction::where('user_id', $user->id)
+                            ->where('aspiration_id', $aspiration->id)
+                            ->first();
+    
+        return response()->json([
+            'success' => true,
+            'like_count' => $likeCount,
+            'dislike_count' => $dislikeCount,
+            'user_reaction' => $userReaction ? $userReaction->reaction : null,
+        ]);
     }
 }
