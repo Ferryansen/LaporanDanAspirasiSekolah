@@ -57,12 +57,17 @@
             @endif
           
             <thead>
+                <colgroup>
+                    <col style="min-width: 200px;">
+                    <col style="min-width: 180px;">
+                    <col style="min-width: 200px;">
+                  </colgroup>
                 <tr>
-                  <th>
+                  <th style="min-width: 200px;">
                     <b>Judul</b>
                   </th>
-                  <th>Status</th>
-                  <th>Penanggung jawab</th>
+                  <th style="min-width: 180px;">Status</th>
+                  <th style="min-width: 200px;">Penanggung jawab</th>
                   <th></th>
                 </tr>
             </thead>
