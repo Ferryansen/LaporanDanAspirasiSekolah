@@ -66,7 +66,7 @@ class ReportController extends Controller
             $staffType_id = $currUser->staffType_id;
     
             // Use whereHas to filter categories based on staffType_id
-            $categoriesFilter = Category::where('staffType_id', $staffType_id)->pluck('id');
+            $category_ids = Category::where('staffType_id', $staffType_id)->pluck('id');
             $idx = 0;
             foreach ($categories as $category) {
                 if (strpos($category->name, "Lainnya") !== false){
@@ -74,10 +74,11 @@ class ReportController extends Controller
                     break;
                 }
             }
-            $reports = Report::sortable()->where(function ($query) use ($staffType_id, $idx) {
-                            $query->where('category_id', $staffType_id)
+            $reports = Report::sortable()->where(function ($query) use ($category_ids, $idx) {
+                            $query->whereIn('category_id', $category_ids)
                             ->orWhere('category_id', $idx);
                         })->orderBy('isUrgent', 'desc')->orderBy('created_at', 'desc')->paginate(10);
+
         }
 
         $filterTitle = null;
@@ -120,7 +121,7 @@ class ReportController extends Controller
             // Use whereIn to filter aspirations by category_id and status
             $reports = Report::whereIn('category_id', $category_ids)
                 ->where('status', $status)
-                ->paginate(10)
+                ->orderBy('isUrgent', 'desc')->orderBy('created_at', 'desc')->paginate(10)
                 ->withQueryString();
         }
 
@@ -295,8 +296,8 @@ class ReportController extends Controller
                 'reportName' => 'required',
                 'reportDescription' => 'required|max:200',
                 'reportCategory' => 'required',
-                'mediaFile.*' => 'required|file|mimes:png,jpeg,jpg,webp,mp4,avi,quicktime,webm|max:40960' // Max 40MB
-            ]);
+                'mediaFile.*' => 'required|file|mimes:png,jpeg,jpg,webp,mp4,avi,quicktime,webm|max:40960'
+            ]);            
             
             // Create report
             $currentYear = now()->year;
@@ -334,7 +335,7 @@ class ReportController extends Controller
             // dd($filename);
     
             // Determine whether the file is an image or a video
-            if (in_array($mediaFile->getMimeType(), ['video/mp4', 'video/avi', 'video/quicktime', 'video/webm'])) {
+            if (in_array($mediaFile->getMimeType(), ['video/mp4', 'video/avi', 'video/quicktime', 'video/webm', 'application/octet-stream'])) {
                 $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $mediaFile, $filename . '.' . $mediaFile->getClientOriginalExtension());
                 // Create evidence and associate it with the report
                 $report->evidences()->create([
