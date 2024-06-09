@@ -69,7 +69,7 @@ class ReportController extends Controller
             $category_ids = Category::where('staffType_id', $staffType_id)->pluck('id');
             $idx = 0;
             foreach ($categories as $category) {
-                if (strpos($category->name, "Semua status") !== false){
+                if (strpos($category->name, "Lainnya") !== false){
                     $idx = $category->id;
                     break;
                 }
@@ -180,7 +180,7 @@ class ReportController extends Controller
             'link' => $link
         ];
 
-        Mail::to($receiver->email)->queue(new InteractionReportStudentStaffNotificationEmail($receiver->name, $reportData));
+        Mail::to($receiver->email)->send(new InteractionReportStudentStaffNotificationEmail($receiver->name, $reportData));
 
         return response()->json(['success' => 'Email sent successfully']);
     }
@@ -267,10 +267,10 @@ class ReportController extends Controller
             ];
 
             
-            Mail::to($currUser->email)->queue(new CreateReportStudentNotificationEmail($currUser->name, $reportData));
+            Mail::to($currUser->email)->send(new CreateReportStudentNotificationEmail($currUser->name, $reportData));
             $relatedStaffs = $report->category->staffType->users;
             foreach ($relatedStaffs as $staff) {
-                Mail::to($staff->email)->queue(new CreateReportStaffNotificationEmail($staff->name, $reportData));
+                Mail::to($staff->email)->send(new CreateReportStaffNotificationEmail($staff->name, $reportData));
             }
             
             DB::commit();
@@ -519,7 +519,7 @@ class ReportController extends Controller
                 'approvalBy' => $currUser->name
             ]);
 
-            Mail::to($rejectedUser->email)->queue(new RejectReportStudentNotificationEmail($rejectedUser->name, $report->name));
+            Mail::to($rejectedUser->email)->send(new RejectReportStudentNotificationEmail($rejectedUser->name, $report->name));
 
 
             
@@ -571,7 +571,7 @@ class ReportController extends Controller
             ];
 
             foreach ($relatedHeadmasters as $headmaster) {
-                Mail::to($headmaster->email)->queue(new RequestReportHeadmasterNotificationEmail($headmaster->name, $reportData));
+                Mail::to($headmaster->email)->send(new RequestReportHeadmasterNotificationEmail($headmaster->name, $reportData));
             }
 
             
@@ -608,7 +608,7 @@ class ReportController extends Controller
                 'title' => $report->name,
             ];
             if(Auth::user()->role == "headmaster"){
-                Mail::to($processExecutor->email)->queue(new ApprovalReportStaffNotificationEmail($processExecutor->name, $reportData));
+                Mail::to($processExecutor->email)->send(new ApprovalReportStaffNotificationEmail($processExecutor->name, $reportData));
             } 
             
             DB::commit();
@@ -638,7 +638,6 @@ class ReportController extends Controller
     public function onProgReport(Request $request){
         try {
             DB::beginTransaction();
-    
             $report = Report::find($request->id);
             $currUser = Auth::user();
 
@@ -654,8 +653,8 @@ class ReportController extends Controller
                 $reportCreatedAt = $report->created_at->add(new DateInterval('P10D'));
                 $processEstimationDate = $reportCreatedAt->format('Y-m-d');
             }
-    
-            if($report->isUrgent == false){
+
+             if($report->isUrgent == false){
                 $report->update([
                     'priority' => $request->priority,
                     'status' => "In Progress",
@@ -673,13 +672,14 @@ class ReportController extends Controller
                     'processDate' => now(),
                 ]);
             }
-    
+
             $reportData = [
                 'reportID' => $report->id,
                 'title' => $report->name,
             ];
 
-            Mail::to($report->user->email)->queue(new InProgressReportStudentNotificationEmail($report->user->name, $reportData));
+            Mail::to($report->user->email)->send(new InProgressReportStudentNotificationEmail($report->user->name, $reportData));
+
 
             
             DB::commit();
@@ -783,9 +783,9 @@ class ReportController extends Controller
                 'completionDate' => Carbon::now()->format('d/m/Y'),
             ];
 
-            Mail::to($report->user->email)->queue(new CompleteReportStudentNotificationEmail($report->user->name, $reportData));
+            Mail::to($report->user->email)->send(new CompleteReportStudentNotificationEmail($report->user->name, $reportData));
             foreach ($relatedHeadmasters as $headmaster) {
-                Mail::to($headmaster->email)->queue(new CompleteReportHeadmasterNotificationEmail($headmaster->name, $reportData));
+                Mail::to($headmaster->email)->send(new CompleteReportHeadmasterNotificationEmail($headmaster->name, $reportData));
             }
 
             

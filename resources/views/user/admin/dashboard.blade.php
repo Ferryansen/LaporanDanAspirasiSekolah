@@ -722,7 +722,7 @@
                     fontWeight: 'bold',
                     formatter: function (params) {
                         var percentage = ((params.value / totalAspirations) * 100).toFixed(2);
-                        return `${params.name} ${params.value} - ${percentage}%`;
+                        return `${params.name} ${params.value} (${percentage}%)`;
                     }
                 }
             },
@@ -912,7 +912,7 @@
         }
       },
       legend: {
-        data: ['Aspirations', 'Reports']
+        data: ['Aspirasi', 'Laporan']
       },
       grid: {
         left: '3%',
@@ -930,12 +930,12 @@
       },
       series: [
         {
-          name: 'Aspirations',
+          name: 'Aspirasi',
           type: 'bar',
           data: chartDataAsp.map(item => item.value)
         },
         {
-          name: 'Reports',
+          name: 'Laporan',
           type: 'bar',
           data: chartDataRep.map(item => item.value)
         }
