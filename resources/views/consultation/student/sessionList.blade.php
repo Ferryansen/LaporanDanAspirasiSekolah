@@ -84,21 +84,20 @@
                       <!-- Table with stripped rows -->
                       <table class="table">
                           <tbody  style="border: white;">
-                            <div style="display: flex; justify-content: space-between;">
-                                <div class="d-grid gap-2 d-md-block d-flex" style="margin-left: 8px; margin-bottom: 20px;">
-                                    <a href="{{ $typeSorting !== 'UpComing' ? route('consultation.sessionList.sorting', ['typeSorting' => 'UpComing']) : route('consultation.sessionList') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'UpComing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'UpComing' ? '#fff' : '#8F8F8F' }}; border: 1; border-color: #8F8F8F; border-radius: 20px;">Akan datang</a>
-                                    <a href="{{ $typeSorting !== 'OnGoing' ? route('consultation.sessionList.sorting', ['typeSorting' => 'OnGoing']) : route('consultation.sessionList') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'OnGoing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'OnGoing' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px; margin-left: 8px;">Berlangsung</a>
-                                </div>
-                                <div class="col-md-3" style="margin-left: 8px">
-                                    <div class="input-group">
-                                        <input type="text" id="datepicker" class="form-control" placeholder="Pilih tanggal" value="{{ request('date') }}">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">
-                                                <i class="bi bi-calendar"></i>
-                                            </span>
-                                        </div>
+                            <div class="col-md-3" style="margin-left: 8px">
+                                <div class="input-group">
+                                    <input type="text" id="datepicker" class="form-control" placeholder="Pilih tanggal" value="{{ request('date') }}">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-calendar"></i>
+                                        </span>
                                     </div>
                                 </div>
+                            </div>
+                            <br>
+                            <div class="d-grid gap-2 d-md-block d-flex" style="margin-left: 8px; margin-bottom: 20px;">
+                                <a href="{{ $typeSorting !== 'UpComing' ? route('consultation.sessionList.sorting', ['typeSorting' => 'UpComing']) : route('consultation.sessionList') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'UpComing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'UpComing' ? '#fff' : '#8F8F8F' }}; border: 1; border-color: #8F8F8F; border-radius: 20px;">Akan datang</a>
+                                <a href="{{ $typeSorting !== 'OnGoing' ? route('consultation.sessionList.sorting', ['typeSorting' => 'OnGoing']) : route('consultation.sessionList') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'OnGoing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'OnGoing' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px; margin-left: 8px;">Berlangsung</a>
                             </div>
                         </div>
                             @php $consultationsShown = false; @endphp

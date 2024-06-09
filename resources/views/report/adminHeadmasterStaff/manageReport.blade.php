@@ -122,14 +122,21 @@
           <div class="table-container">
             <!-- Table with stripped rows -->
             <table class="table" style="vertical-align: middle">
+              <colgroup>
+                <col style="min-width: 200px;">
+                <col style="min-width: 200px;">
+                <col style="min-width: 100px;">
+                <col style="min-width: 100px;">
+              </colgroup>
+
               <thead>
                   <tr>
-                    <th>
+                    <th style="min-width: 200px;">
                       <b>Judul</b>
                     </th>
-                    <th data-type="date" data-format="YYYY/DD/MM">@sortablelink('created_at', 'Tanggal dibuat')</th>
-                    <th>Status</th>
-                    <th>@sortablelink('priority', 'Prioritas')</th>
+                    <th style="min-width: 200px;" data-type="date" data-format="YYYY/DD/MM">@sortablelink('created_at', 'Tanggal dibuat')</th>
+                    <th style="min-width: 100px;">Status</th>
+                    <th style="min-width: 100px;">@sortablelink('priority', 'Prioritas')</th>
                     @if (Auth::user()->role != "admin")
                       <th style="text-align: right">Detail</th>
                     @else

@@ -16,7 +16,6 @@
 </div>
 @endsection
 
-
 @section('sectionPage')
 <section class="section">
   <div class="row">
@@ -28,68 +27,75 @@
 
           @if ($searchParams['data'] == "reports")
             <!-- Table with stripped rows -->
-            <table class="table">
-                <thead>
-                    <tr>
-                    <th>
-                        <b>Judul Laporan</b>
-                    </th>
-                    <th data-type="date" data-format="YYYY/DD/MM">Tanggal Pembuatan</th>
-                    <th>Status</th>
-                    <th style="text-align: right">Detail</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($reports as $report)
-                    <tr>
-                        <td>{{ $report->name }}</td>
-                        <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
-                        @if (Auth::user()->role != 'student')
-                            @if ($report->status == "Approved")
-                                <td>Disetujui oleh {{ $report->approvalBy }}</td>
-                            @elseif ($report->status == "Rejected")
-                                <td>Ditolak oleh {{ $report->approvalBy }}</td>  
-                            @elseif ($report->status == "Cancelled")
-                                <td>Dibatalkan</td>
-                            @elseif ($report->status == "Freshly submitted")
-                                <td>Terkirim</td>
-                            @elseif ($report->status == "In review by staff")
-                                <td>Sedang ditinjau oleh {{ $report->lastUpdatedBy }}</td>
-                            @elseif ($report->status == "In review to headmaster")
-                                <td>Menunggu persetujuan dari atasan oleh {{ $report->lastUpdatedBy }}</td>
-                            @elseif ($report->status == "In Progress")
-                                <td>Sedang ditindaklanjuti oleh {{ $report->lastUpdatedBy }}</td>
-                            @elseif ($report->status == "Monitoring process")
-                                <td>Dalam pemantauan oleh {{ $report->lastUpdatedBy }}</td>
-                            @elseif ($report->status == "Completed")
-                                <td>Selesai oleh {{ $report->lastUpdatedBy }}</td>
+            <div class="report-container">
+                <table class="table">
+                    <colgroup>
+                        <col style="min-width: 200px;">
+                        <col style="min-width: 200px;">
+                        <col style="min-width: 100px;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                        <th style="min-width: 200px;">
+                            <b>Judul Laporan</b>
+                        </th>
+                        <th style="min-width: 200px;" data-type="date" data-format="YYYY/DD/MM">Tanggal Pembuatan</th>
+                        <th style="min-width: 100px;">Status</th>
+                        <th style="text-align: right">Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($reports as $report)
+                        <tr>
+                            <td>{{ $report->name }}</td>
+                            <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
+                            @if (Auth::user()->role != 'student')
+                                @if ($report->status == "Approved")
+                                    <td>Disetujui oleh {{ $report->approvalBy }}</td>
+                                @elseif ($report->status == "Rejected")
+                                    <td>Ditolak oleh {{ $report->approvalBy }}</td>  
+                                @elseif ($report->status == "Cancelled")
+                                    <td>Dibatalkan</td>
+                                @elseif ($report->status == "Freshly submitted")
+                                    <td>Terkirim</td>
+                                @elseif ($report->status == "In review by staff")
+                                    <td>Sedang ditinjau oleh {{ $report->lastUpdatedBy }}</td>
+                                @elseif ($report->status == "In review to headmaster")
+                                    <td>Menunggu persetujuan dari atasan oleh {{ $report->lastUpdatedBy }}</td>
+                                @elseif ($report->status == "In Progress")
+                                    <td>Sedang ditindaklanjuti oleh {{ $report->lastUpdatedBy }}</td>
+                                @elseif ($report->status == "Monitoring process")
+                                    <td>Dalam pemantauan oleh {{ $report->lastUpdatedBy }}</td>
+                                @elseif ($report->status == "Completed")
+                                    <td>Selesai oleh {{ $report->lastUpdatedBy }}</td>
+                                @endif
+                            @else
+                                @if ($report->status == "Approved")
+                                    <td>Disetujui</td>
+                                @elseif ($report->status == "Rejected")
+                                    <td>Ditolak</td>  
+                                @elseif ($report->status == "Cancelled")
+                                    <td>Dibatalkan</td>
+                                @elseif ($report->status == "Freshly submitted")
+                                    <td>Terkirim</td>
+                                @elseif ($report->status == "In review by staff" || $report->status == "In review to headmaster")
+                                    <td>Sedang ditinjau</td>
+                                @elseif ($report->status == "In Progress" || $report->status == "Monitoring process")
+                                    <td>Sedang ditindaklanjuti</td>
+                                @elseif ($report->status == "Completed")
+                                    <td>Selesai</td>
+                                @endif
                             @endif
-                        @else
-                            @if ($report->status == "Approved")
-                                <td>Disetujui</td>
-                            @elseif ($report->status == "Rejected")
-                                <td>Ditolak</td>  
-                            @elseif ($report->status == "Cancelled")
-                                <td>Dibatalkan</td>
-                            @elseif ($report->status == "Freshly submitted")
-                                <td>Terkirim</td>
-                            @elseif ($report->status == "In review by staff" || $report->status == "In review to headmaster")
-                                <td>Sedang ditinjau</td>
-                            @elseif ($report->status == "In Progress" || $report->status == "Monitoring process")
-                                <td>Sedang ditindaklanjuti</td>
-                            @elseif ($report->status == "Completed")
-                                <td>Selesai</td>
-                            @endif
-                        @endif
-                        <td style="text-align: right">
-                            <a href="{{ route('student.reportDetail', $report->id) }}">
-                                <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                            <td style="text-align: right">
+                                <a href="{{ route('student.reportDetail', $report->id) }}">
+                                    <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
             <!-- End Table with stripped rows -->
 
             @if ($reports->hasPages())
@@ -103,68 +109,75 @@
           @elseif ($searchParams['data'] == "1")
             @if ($reports->count() != 0)
                 <!-- Table with stripped rows -->
-                <table class="table">
-                    <thead>
-                        <tr>
-                        <th>
-                            <b>Judul Laporan</b>
-                        </th>
-                        <th data-type="date" data-format="YYYY/DD/MM">Tanggal Pembuatan</th>
-                        <th>Status</th>
-                        <th style="text-align: right">Detail</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($reports as $report)
-                        <tr>
-                            <td>{{ $report->name }}</td>
-                            <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
-                            @if (Auth::user()->role != 'student')
-                                @if ($report->status == "Approved")
-                                    <td>Disetujui oleh {{ $report->approvalBy }}</td>
-                                @elseif ($report->status == "Rejected")
-                                    <td>Ditolak oleh {{ $report->approvalBy }}</td>  
-                                @elseif ($report->status == "Cancelled")
-                                    <td>Dibatalkan</td>
-                                @elseif ($report->status == "Freshly submitted")
-                                    <td>Terkirim</td>
-                                @elseif ($report->status == "In review by staff")
-                                    <td>Sedang ditinjau oleh {{ $report->lastUpdatedBy }}</td>
-                                @elseif ($report->status == "In review to headmaster")
-                                    <td>Menunggu persetujuan dari atasan oleh {{ $report->lastUpdatedBy }}</td>
-                                @elseif ($report->status == "In Progress")
-                                    <td>Sedang ditindaklanjuti oleh {{ $report->lastUpdatedBy }}</td>
-                                @elseif ($report->status == "Monitoring process")
-                                    <td>Dalam pemantauan oleh {{ $report->lastUpdatedBy }}</td>
-                                @elseif ($report->status == "Completed")
-                                    <td>Selesai oleh {{ $report->lastUpdatedBy }}</td>
+                <div class="report-container">
+                    <table class="table">
+                        <colgroup>
+                            <col style="min-width: 200px;">
+                            <col style="min-width: 200px;">
+                            <col style="min-width: 100px;">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                            <th style="min-width: 200px;">
+                                <b>Judul Laporan</b>
+                            </th>
+                            <th style="min-width: 200px;" data-type="date" data-format="YYYY/DD/MM">Tanggal Pembuatan</th>
+                            <th style="min-width: 100px;">Status</th>
+                            <th style="text-align: right">Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($reports as $report)
+                            <tr>
+                                <td>{{ $report->name }}</td>
+                                <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
+                                @if (Auth::user()->role != 'student')
+                                    @if ($report->status == "Approved")
+                                        <td>Disetujui oleh {{ $report->approvalBy }}</td>
+                                    @elseif ($report->status == "Rejected")
+                                        <td>Ditolak oleh {{ $report->approvalBy }}</td>  
+                                    @elseif ($report->status == "Cancelled")
+                                        <td>Dibatalkan</td>
+                                    @elseif ($report->status == "Freshly submitted")
+                                        <td>Terkirim</td>
+                                    @elseif ($report->status == "In review by staff")
+                                        <td>Sedang ditinjau oleh {{ $report->lastUpdatedBy }}</td>
+                                    @elseif ($report->status == "In review to headmaster")
+                                        <td>Menunggu persetujuan dari atasan oleh {{ $report->lastUpdatedBy }}</td>
+                                    @elseif ($report->status == "In Progress")
+                                        <td>Sedang ditindaklanjuti oleh {{ $report->lastUpdatedBy }}</td>
+                                    @elseif ($report->status == "Monitoring process")
+                                        <td>Dalam pemantauan oleh {{ $report->lastUpdatedBy }}</td>
+                                    @elseif ($report->status == "Completed")
+                                        <td>Selesai oleh {{ $report->lastUpdatedBy }}</td>
+                                    @endif
+                                @else
+                                    @if ($report->status == "Approved")
+                                        <td>Disetujui</td>
+                                    @elseif ($report->status == "Rejected")
+                                        <td>Ditolak</td>  
+                                    @elseif ($report->status == "Cancelled")
+                                        <td>Dibatalkan</td>
+                                    @elseif ($report->status == "Freshly submitted")
+                                        <td>Terkirim</td>
+                                    @elseif ($report->status == "In review by staff" || $report->status == "In review to headmaster")
+                                        <td>Sedang ditinjau</td>
+                                    @elseif ($report->status == "In Progress" || $report->status == "Monitoring process")
+                                        <td>Sedang ditindaklanjuti</td>
+                                    @elseif ($report->status == "Completed")
+                                        <td>Selesai</td>
+                                    @endif
                                 @endif
-                            @else
-                                @if ($report->status == "Approved")
-                                    <td>Disetujui</td>
-                                @elseif ($report->status == "Rejected")
-                                    <td>Ditolak</td>  
-                                @elseif ($report->status == "Cancelled")
-                                    <td>Dibatalkan</td>
-                                @elseif ($report->status == "Freshly submitted")
-                                    <td>Terkirim</td>
-                                @elseif ($report->status == "In review by staff" || $report->status == "In review to headmaster")
-                                    <td>Sedang ditinjau</td>
-                                @elseif ($report->status == "In Progress" || $report->status == "Monitoring process")
-                                    <td>Sedang ditindaklanjuti</td>
-                                @elseif ($report->status == "Completed")
-                                    <td>Selesai</td>
-                                @endif
-                            @endif
-                            <td style="text-align: right">
-                                <a href="{{ route('student.reportDetail', $report->id) }}">
-                                    <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                <td style="text-align: right">
+                                    <a href="{{ route('student.reportDetail', $report->id) }}">
+                                        <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
                 <!-- End Table with stripped rows -->
                 @if ($reports->hasPages())
                     <div class="row mt-5">
@@ -174,68 +187,75 @@
                     </div>
                 @endif
             @else
-                <table class="table">
-                    <thead>
-                        <tr>
-                        <th>
-                            <b>Judul Laporan</b>
-                        </th>
-                        <th data-type="date" data-format="YYYY/DD/MM">Tanggal Pembuatan</th>
-                        <th>Status</th>
-                        <th style="text-align: right">Detail</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($reports as $report)
-                        <tr>
-                            <td>{{ $report->name }}</td>
-                            <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
-                            @if (Auth::user()->role != 'student')
-                                @if ($report->status == "Approved")
-                                    <td>Disetujui oleh {{ $report->approvalBy }}</td>
-                                @elseif ($report->status == "Rejected")
-                                    <td>Ditolak oleh {{ $report->approvalBy }}</td>  
-                                @elseif ($report->status == "Cancelled")
-                                    <td>Dibatalkan</td>
-                                @elseif ($report->status == "Freshly submitted")
-                                    <td>Terkirim</td>
-                                @elseif ($report->status == "In review by staff")
-                                    <td>Sedang ditinjau oleh {{ $report->lastUpdatedBy }}</td>
-                                @elseif ($report->status == "In review to headmaster")
-                                    <td>Menunggu persetujuan dari atasan oleh {{ $report->lastUpdatedBy }}</td>
-                                @elseif ($report->status == "In Progress")
-                                    <td>Sedang ditindaklanjuti oleh {{ $report->lastUpdatedBy }}</td>
-                                @elseif ($report->status == "Monitoring process")
-                                    <td>Dalam pemantauan oleh {{ $report->lastUpdatedBy }}</td>
-                                @elseif ($report->status == "Completed")
-                                    <td>Selesai oleh {{ $report->lastUpdatedBy }}</td>
+                <div class="report-container">
+                    <table class="table">
+                        <colgroup>
+                            <col style="min-width: 200px;">
+                            <col style="min-width: 200px;">
+                            <col style="min-width: 100px;">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                            <th style="min-width: 200px;">
+                                <b>Judul Laporan</b>
+                            </th>
+                            <th style="min-width: 200px;" data-type="date" data-format="YYYY/DD/MM">Tanggal Pembuatan</th>
+                            <th style="min-width: 100px;">Status</th>
+                            <th style="text-align: right">Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($reports as $report)
+                            <tr>
+                                <td>{{ $report->name }}</td>
+                                <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d/m/y') }}</td>
+                                @if (Auth::user()->role != 'student')
+                                    @if ($report->status == "Approved")
+                                        <td>Disetujui oleh {{ $report->approvalBy }}</td>
+                                    @elseif ($report->status == "Rejected")
+                                        <td>Ditolak oleh {{ $report->approvalBy }}</td>  
+                                    @elseif ($report->status == "Cancelled")
+                                        <td>Dibatalkan</td>
+                                    @elseif ($report->status == "Freshly submitted")
+                                        <td>Terkirim</td>
+                                    @elseif ($report->status == "In review by staff")
+                                        <td>Sedang ditinjau oleh {{ $report->lastUpdatedBy }}</td>
+                                    @elseif ($report->status == "In review to headmaster")
+                                        <td>Menunggu persetujuan dari atasan oleh {{ $report->lastUpdatedBy }}</td>
+                                    @elseif ($report->status == "In Progress")
+                                        <td>Sedang ditindaklanjuti oleh {{ $report->lastUpdatedBy }}</td>
+                                    @elseif ($report->status == "Monitoring process")
+                                        <td>Dalam pemantauan oleh {{ $report->lastUpdatedBy }}</td>
+                                    @elseif ($report->status == "Completed")
+                                        <td>Selesai oleh {{ $report->lastUpdatedBy }}</td>
+                                    @endif
+                                @else
+                                    @if ($report->status == "Approved")
+                                        <td>Disetujui</td>
+                                    @elseif ($report->status == "Rejected")
+                                        <td>Ditolak</td>  
+                                    @elseif ($report->status == "Cancelled")
+                                        <td>Dibatalkan</td>
+                                    @elseif ($report->status == "Freshly submitted")
+                                        <td>Terkirim</td>
+                                    @elseif ($report->status == "In review by staff" || $report->status == "In review to headmaster")
+                                        <td>Sedang ditinjau</td>
+                                    @elseif ($report->status == "In Progress" || $report->status == "Monitoring process")
+                                        <td>Sedang ditindaklanjuti</td>
+                                    @elseif ($report->status == "Completed")
+                                        <td>Selesai</td>
+                                    @endif
                                 @endif
-                            @else
-                                @if ($report->status == "Approved")
-                                    <td>Disetujui</td>
-                                @elseif ($report->status == "Rejected")
-                                    <td>Ditolak</td>  
-                                @elseif ($report->status == "Cancelled")
-                                    <td>Dibatalkan</td>
-                                @elseif ($report->status == "Freshly submitted")
-                                    <td>Terkirim</td>
-                                @elseif ($report->status == "In review by staff" || $report->status == "In review to headmaster")
-                                    <td>Sedang ditinjau</td>
-                                @elseif ($report->status == "In Progress" || $report->status == "Monitoring process")
-                                    <td>Sedang ditindaklanjuti</td>
-                                @elseif ($report->status == "Completed")
-                                    <td>Selesai</td>
-                                @endif
-                            @endif
-                            <td style="text-align: right">
-                                <a href="{{ route('student.reportDetail', $report->id) }}">
-                                    <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                <td style="text-align: right">
+                                    <a href="{{ route('student.reportDetail', $report->id) }}">
+                                        <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 24px;"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
                 <!-- End Table with stripped rows -->
 
                 @if ($reports->hasPages())
@@ -984,6 +1004,11 @@
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
+    }
+
+    .report-container {
+        overflow-x: auto;
+        max-width: 100%;
     }
 </style>
 @endsection

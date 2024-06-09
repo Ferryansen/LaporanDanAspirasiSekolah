@@ -54,6 +54,15 @@
             align-items: center;
             padding-top: 30px;
         }
+
+        .filterConsultation::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filterConsultation {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 @endsection
 
@@ -78,10 +87,10 @@
                       <!-- Table with stripped rows -->
                       <table class="table">
                           <tbody style="border: white">
-                            <div class="d-grid gap-2 d-md-block d-flex" style="margin-left: 8px; margin-bottom: 20px">
+                            <div class="d-grid gap-2 d-md-block d-flex filterConsultation" style="margin-left: 8px; margin-bottom: 20px; overflow-x: auto; white-space: nowrap;">
                                 <a href="{{ $typeSorting !== 'UpComing' ? route('consultation.mySession.sorting', ['typeSorting' => 'UpComing']) : route('consultation.mySession') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'UpComing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'UpComing' ? '#fff' : '#8F8F8F' }}; border: 1; border-color: #8F8F8F; border-radius: 20px;">Akan datang</a>
-                                <a href="{{ $typeSorting !== 'OnGoing' ? route('consultation.mySession.sorting', ['typeSorting' => 'OnGoing']) : route('consultation.mySession') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'OnGoing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'OnGoing' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px; margin-left: 8px;">Berlangsung</a>
-                                <a href="{{ $typeSorting !== 'End' ? route('consultation.mySession.sorting', ['typeSorting' => 'End']) : route('consultation.mySession') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'End' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'End' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px; margin-left: 8px;">Berakhir</a>
+                                <a href="{{ $typeSorting !== 'OnGoing' ? route('consultation.mySession.sorting', ['typeSorting' => 'OnGoing']) : route('consultation.mySession') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'OnGoing' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'OnGoing' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px; margin-left: 2px;">Berlangsung</a>
+                                <a href="{{ $typeSorting !== 'End' ? route('consultation.mySession.sorting', ['typeSorting' => 'End']) : route('consultation.mySession') }}" class="btn btn-secondary" style="background-color: {{ $typeSorting === 'End' ? '#8DA5EA' : '#fff' }}; color: {{ $typeSorting === 'End' ? '#fff' : '#8F8F8F' }}; border-color: #8F8F8F; border-radius: 20px; margin-left: 2px;">Berakhir</a>
                             </div>
                               @if ($consultations->count() == 0)
                               <tr>
@@ -142,16 +151,4 @@
       </div>
   </section>
     
-@endsection
-
-@section('css')
-    
-@endsection
-
-@section('js')
-    
-@endsection
-
-@section('js')
-
 @endsection
