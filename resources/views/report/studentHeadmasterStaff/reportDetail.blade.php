@@ -123,44 +123,44 @@ Detail Laporan
           </div> --}}
 
           <div class="col-3 col-md-1" align="end">
-            <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#rejectReportModal_" . $report->id}}">Reject</button>
-            {{-- Modal --}}
-            <div class="modal fade" id="{{"rejectReportModal_" . $report->id}}" tabindex="-1">
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" style="font-weight: 700">Masukkan alasan penolakan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <form id="proof-form" action="{{ route('staff.rejectReport', $report->id) }}" method="POST">
-                    @csrf
-                    @method('PATCH')
-                      <div class="modal-body">
-                        {{-- <div class="col-sm-12">
-                          <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
-                          @error('processEstimationDate')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                          @enderror
-                        </div> --}}
+            <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#closedReportModal_" . $report->id}}">Tutup</button>
+                {{-- Modal --}}
+                <div class="modal fade" id="{{"closedReportModal_" . $report->id}}" tabindex="-1">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" style="font-weight: 700">Masukkan alasan penutupan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <form id="proof-form" action="{{ route('staff.closeReport', $report->id) }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                          <div class="modal-body">
+                            {{-- <div class="col-sm-12">
+                              <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
+                              @error('processEstimationDate')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                              @enderror
+                            </div> --}}
 
-                        {{-- <br> --}}
-                        
-                        <div class="col-sm-12">
-                          <textarea class="form-control" style="height: 100px" required name="rejectReason"></textarea>
-                        </div>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button id="sub-btn-proof" type="submit" class="btn btn-primary">
-                          <span id="sub-text">Simpan</span>
-                          <span id="load-animation" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
-                          <span id="load-text" style="display: none">Loading...</span>
-                        </button>
-                      </div>
-                  </form>
-                </div>
-              </div>
-            </div><!-- End Vertically centered Modal-->
+                            {{-- <br> --}}
+                            
+                            <div class="col-sm-12">
+                              <textarea class="form-control" style="height: 100px" required name="closedReason"></textarea>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button id="sub-btn-proof" type="submit" class="btn btn-primary">
+                              <span id="sub-text">Simpan</span>
+                              <span id="load-animation" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none"></span>
+                              <span id="load-text" style="display: none">Loading...</span>
+                            </button>
+                          </div>
+                      </form>
+                    </div>
+                  </div>
+                </div><!-- End Vertically centered Modal-->
           </div>
 
         @endif
@@ -350,7 +350,19 @@ Detail Laporan
                   Ditangani oleh: {{$report->processExecutor->name}}
                 </div>
                 <div class="reportEstimation" style="color: black">
-                  Estimasi selesai: {{ \Carbon\Carbon::parse($report->processEstimationDate)->format('d F Y') }}
+                  Estimasi selesai: {{ \Carbon\Carbon::parse($report->processEstimationDate)->translatedFormat('d F Y') }}
+                </div>
+              </div>
+            </div>
+          @elseif($report->status == "Closed" && !$report->processEstimationDate == NULL)
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center">
+              <div class="reportNo">
+                  {{$report->reportNo}}
+              </div>
+
+              <div class="reportPIC">
+                <div class="reportEstimation" style="color: black; font-weight: 600; max-width: 200px">
+                  Sudah melewati estimasi selesai <span style="color: #dc3545">{{ \Carbon\Carbon::parse($report->processEstimationDate)->translatedFormat('d F Y') }}</span>
                 </div>
               </div>
             </div>
@@ -395,6 +407,16 @@ Detail Laporan
       <h3 style="color: #dc3545; font-weight: bold">Maaf, Laporan Anda Ditolak</h3>
       <br>
       <p><strong>Alasan penolakan:</strong> <br> <span>{{ $report->rejectReason }}</span></p>
+    @elseif ($report->status == "Closed" && !$report->processEstimationDate == NULL)
+      <br>
+      <h3 style="color: #dc3545; font-weight: bold">Maaf, Laporan ditutup karena tindak lanjut melebihi tanggal estimasi selesai</h3>
+      <br>
+      <p><strong>Silahkan mengajukan kembali Laporan Anda</strong></p>
+    @elseif ($report->status == "Closed")
+      <br>
+      <h3 style="color: #dc3545; font-weight: bold">Maaf, Laporan Anda Ditutup</h3>
+      <br>
+      <p><strong>Alasan penutupan:</strong> <br> <span>{{ $report->closedReason }}</span></p>
     @else 
       {{-- Laporan di terima (Progress Bar) --}}
       <div class="progress-bar">
@@ -546,7 +568,7 @@ Detail Laporan
                   Ditangani oleh: {{$report->processExecutor->name}}
                 </div>
                 <div class="reportEstimation" style="color: black">
-                  Estimasi selesai: {{ \Carbon\Carbon::parse($report->processEstimationDate)->format('d F Y') }}
+                  Estimasi selesai: {{ \Carbon\Carbon::parse($report->processEstimationDate)->translatedFormat('d F Y') }}
                 </div>
               </div>
             </div>

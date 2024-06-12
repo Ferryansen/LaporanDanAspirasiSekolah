@@ -91,7 +91,7 @@
                     @if ($aspiration->status != 'Freshly submitted')
                         <tr style="vertical-align: middle">
                             <td>
-                                @if ($aspiration->status == 'Approved' || $aspiration->status == 'In Progress' || $aspiration->status == 'Monitoring' || $aspiration->status == 'Completed' || $aspiration->status == 'Rejected')
+                                @if ($aspiration->status == 'Approved' || $aspiration->status == 'In Progress' || $aspiration->status == 'Monitoring' || $aspiration->status == 'Completed' || $aspiration->status == 'Rejected' || $aspiration->status == 'Closed')
                                     <a href="{{ route('manage.aspiration.detail', ['aspiration_id' => $aspiration->id]) }}" style="text-decoration: underline">{{ $aspiration->name }}</a>
                                 @else
                                     {{ $aspiration->name }}
@@ -172,11 +172,13 @@
                                     <td>Dalam pemantauan</td>
                                     @elseif ($aspiration->status == 'Completed')
                                     <td>Selesai</td>
+                                    @elseif ($aspiration->status == 'Closed')
+                                    <td>Ditutup</td>
                                     @endif
                                 @endif
 
                                 <td>
-                                    @if (in_array($aspiration->status, ['Rejected', 'Completed']))
+                                    @if (in_array($aspiration->status, ['Rejected', 'Completed', 'Closed']))
                                         @foreach($allUser as $user)
                                             @if($user->id == $aspiration->processedBy)
                                                 {{ $user->name }}
@@ -206,16 +208,16 @@
                                             <input type="hidden" name="aspiration_id" value="{{ $aspiration->id }}">
                                             <button type="submit" name="status" value="Request Approval" class="btn btn-success" style="margin-right: 10px">Ajukan persetujuan</button>
                                         </form>
-                                            <button type="submit" name="status" value="Rejected" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#rejectAspirationModal_" . $aspiration->id}}">Tolak</button>
+                                            <button type="submit" name="status" value="Rejected" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#closedAspirationModal_" . $aspiration->id}}">Tutup</button>
                                             {{-- Modal --}}
-                                            <div class="modal fade" id="{{"rejectAspirationModal_" . $aspiration->id}}" tabindex="-1">
+                                            <div class="modal fade" id="{{"closedAspirationModal_" . $aspiration->id}}" tabindex="-1">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                    <h5 class="modal-title" style="font-weight: 700">Masukkan alasan penolakan</h5>
+                                                    <h5 class="modal-title" style="font-weight: 700">Masukkan alasan penutupan</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
-                                                    <form id="proof-form" action="{{ route('staff.rejectAspiration', $aspiration->id) }}" method="POST">
+                                                    <form id="proof-form" action="{{ route('staff.closeAspiration', $aspiration->id) }}" method="POST">
                                                     @csrf
                                                     @method('PATCH')
                                                         <div class="modal-body">
@@ -229,7 +231,7 @@
                                                         {{-- <br> --}}
                                                         
                                                         <div class="col-sm-12">
-                                                            <textarea class="form-control" style="height: 100px" required name="rejectReason"></textarea>
+                                                            <textarea class="form-control" style="height: 100px" required name="closedReason"></textarea>
                                                         </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -266,6 +268,8 @@
                                 <td>Dalam pemantauan</td>
                                 @elseif ($aspiration->status == 'Completed')
                                 <td>Selesai</td>
+                                @elseif ($aspiration->status == 'Closed')
+                                <td>Ditutup</td>
                                 @endif
 
                                 @foreach($allUser as $user)

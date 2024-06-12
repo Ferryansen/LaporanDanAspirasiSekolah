@@ -66,6 +66,7 @@ class AspirationController extends Controller
             'Monitoring',
             'Completed',
             'Rejected',
+            'Closed'
         ];
         $filterTitle = null;
         $typeSorting = "";
@@ -99,6 +100,7 @@ class AspirationController extends Controller
             'Monitoring',
             'Completed',
             'Rejected',
+            'Closed'
         ];
         $filterTitle = null;
         // $aspirations = Aspiration::orderByDesc('upvote') // Sort in descending order based on upvote count
@@ -263,6 +265,7 @@ class AspirationController extends Controller
             'Monitoring',
             'Completed',
             'Rejected',
+            'Closed'
         ];
 
         $typeSorting = "";
@@ -388,6 +391,7 @@ class AspirationController extends Controller
             'countProblematicAspiration' => null,
             'isPinned' => false,
             'rejectReason' => null,
+            'closedReason' => null,
             'deletedBy' => null,
             'deleteReason' => null
         ]);
@@ -480,6 +484,16 @@ class AspirationController extends Controller
         $aspiration->update([
             'status' => "Rejected",
             'rejectReason' => $request->rejectReason,
+        ]);
+        return redirect()->route('aspirations.manageAspiration');
+    }
+
+    public function closeAspiration(Request $request){
+        $aspiration = Aspiration::find($request->id);
+
+        $aspiration->update([
+            'status' => "Closed",
+            'closedReason' => $request->closedReason,
         ]);
         return redirect()->route('aspirations.manageAspiration');
     }
@@ -646,6 +660,7 @@ class AspirationController extends Controller
                 'Monitoring',
                 'Completed',
                 'Rejected',
+                'Closed'
             ];
 
             return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'selectedCategoryId', 'typeSorting', 'failMessage'));
@@ -667,6 +682,7 @@ class AspirationController extends Controller
             'Monitoring',
             'Completed',
             'Rejected',
+            'Closed'
         ];
         return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'message', 'statuses', 'selectedCategoryId', 'typeSorting', 'failMessage'));
     }
@@ -692,6 +708,7 @@ class AspirationController extends Controller
             'In Progress',
             'Monitoring',
             'Completed',
+            'Closed'
         ];
         $message = "unpin sukses";
         return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'message', 'statuses', 'selectedCategoryId', 'typeSorting', 'failMessage'));

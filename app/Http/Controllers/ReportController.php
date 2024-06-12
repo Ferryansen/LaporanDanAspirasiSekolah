@@ -75,7 +75,7 @@ class ReportController extends Controller
                 }
             }
             $reports = Report::sortable()->where(function ($query) use ($categoriesFilter, $idx) {
-                            $query->where('category_id', $categoriesFilter)
+                            $query->whereIn('category_id', $categoriesFilter)
                             ->orWhere('category_id', $idx);
                         })->orderBy('isUrgent', 'desc')->orderBy('created_at', 'desc')->paginate(10);
         }
@@ -90,7 +90,8 @@ class ReportController extends Controller
     public function manageReportFilterCategory($category_id)
     {
         $category = Category::findOrFail($category_id);
-        $reports = Report::where("category_id", "like", $category_id)->paginate(10)->withQueryString();
+        $reports = Report::where("category_id", "like", $category_id)->orderBy('isUrgent', 'desc')->orderBy('created_at', 'desc')
+        ->paginate(10)->withQueryString();
         $categories = Category::all();
 
         $data = [
@@ -110,19 +111,20 @@ class ReportController extends Controller
         // Retrieve the category IDs from the manageAspiration function
         $currUser = Auth::user();
 
-        if (Auth::user()->role == "admin" || Auth::user()->role == "headmaster"){
-            $reports = Report::where("status", "like", $status)->paginate(10)->withQueryString();
-        }
-        else{
+        // if (Auth::user()->role == "admin" || Auth::user()->role == "headmaster"){
+        //     $reports = Report::where("status", "like", $status)->paginate(10)->withQueryString();
+        // }
+        // else{
             $staffType_id = $currUser->staffType_id;
             $category_ids = Category::where('staffType_id', $staffType_id)->pluck('id');
     
             // Use whereIn to filter aspirations by category_id and status
             $reports = Report::whereIn('category_id', $category_ids)
                 ->where('status', $status)
+                ->orderBy('isUrgent', 'desc')->orderBy('created_at', 'desc')
                 ->paginate(10)
                 ->withQueryString();
-        }
+        // }
 
 
         $data = [
@@ -224,6 +226,7 @@ class ReportController extends Controller
                 'lastUpdatedBy'=> null,
                 'status' => "Freshly submitted",
                 'rejectReason' => null,
+                'closedReason' => null,
                 'deletedBy' => null,
                 'deleteReason' => null,
             ]);
@@ -320,6 +323,7 @@ class ReportController extends Controller
                 'lastUpdatedBy'=> null,
                 'status' => "Freshly submitted",
                 'rejectReason' => null,
+                'closedReason' => null,
                 'deletedBy' => null,
                 'deleteReason' => null,
             ]);
@@ -537,6 +541,35 @@ class ReportController extends Controller
         }
     }
 
+    public function closeReport(Request $request){
+        try {
+            DB::beginTransaction();
+    
+            $report = Report::find($request->id);
+            $currUser = Auth::user();
+            $closedUser = $report->user;
+
+            $report->update([
+                'status' => "Closed",
+                'closedReason' => $request->closedReason,
+                'approvalBy' => $currUser->name
+            ]);
+            
+            DB::commit();
+            
+            // Success message
+            return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Laporan berhasil ditutup');
+        } catch (Exception $e) {
+            DB::rollBack();
+    
+            // Log the error
+            Log::error('Error rejecting report: ' . $e->getMessage());
+    
+            // Return back with error message
+            return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam menutup laporan. Silakan coba lagi.');
+        }
+    }
+
     public function inReviewStaffReport(Request $request){
         $report = Report::find($request->id);
         $currUser = Auth::user();
@@ -634,27 +667,27 @@ class ReportController extends Controller
     //     return redirect()->route('admin.manageReport');
     // }
 
-    public function onProgReport(Request $request){
+    public function onProgReport(Request $request) {
         try {
             DB::beginTransaction();
     
             $report = Report::find($request->id);
             $currUser = Auth::user();
-
-            if($request->priority == 1){
-                $reportCreatedAt = $report->created_at->add(new DateInterval('P3D'));
-                $processEstimationDate = $reportCreatedAt->format('Y-m-d');
-            }
-            else if($request->priority == 2){
-                $reportCreatedAt = $report->created_at->add(new DateInterval('P7D'));
-                $processEstimationDate = $reportCreatedAt->format('Y-m-d');
-            }
-            else if($request->priority == 3){
-                $reportCreatedAt = $report->created_at->add(new DateInterval('P10D'));
-                $processEstimationDate = $reportCreatedAt->format('Y-m-d');
+    
+            // Define the number of workdays to add based on the priority
+            $workdaysToAdd = 0;
+            if ($request->priority == 1) {
+                $workdaysToAdd = 3;
+            } else if ($request->priority == 2) {
+                $workdaysToAdd = 7;
+            } else if ($request->priority == 3) {
+                $workdaysToAdd = 10;
             }
     
-            if($report->isUrgent == false){
+            // Calculate the process estimation date
+            $processEstimationDate = $this->addWorkdays($report->created_at, $workdaysToAdd);
+    
+            if (!$report->isUrgent) {
                 $report->update([
                     'priority' => $request->priority,
                     'status' => "In Progress",
@@ -663,8 +696,7 @@ class ReportController extends Controller
                     'processDate' => now(),
                     'processEstimationDate' => $processEstimationDate
                 ]);
-            }
-            else{
+            } else {
                 $report->update([
                     'status' => "In Progress",
                     'processedBy' => $currUser->id,
@@ -677,12 +709,11 @@ class ReportController extends Controller
                 'reportID' => $report->id,
                 'title' => $report->name,
             ];
-
+    
             Mail::to($report->user->email)->queue(new InProgressReportStudentNotificationEmail($report->user->name, $reportData));
-
-            
+    
             DB::commit();
-            
+    
             // Success message
             return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Laporan sedang ditindaklanjuti');
         } catch (Exception $e) {
@@ -694,6 +725,18 @@ class ReportController extends Controller
             // Return back with error message
             return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam menindaklanjuti laporan. Silakan coba lagi.');
         }
+    }
+
+    private function addWorkdays(Carbon $date, int $workdays) {
+        $currentDate = $date->copy();
+        while ($workdays > 0) {
+            $currentDate->addDay();
+            // Check if the current day is a weekday
+            if ($currentDate->isWeekday()) {
+                $workdays--;
+            }
+        }
+        return $currentDate;
     }
 
     public function monitoringReport(Request $request){

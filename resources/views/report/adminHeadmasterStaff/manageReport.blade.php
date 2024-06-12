@@ -69,6 +69,7 @@
                   <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Monitoring process']) }}" {{ $selectedStatus == 'Monitoring process' ? 'selected' : '' }}>Dalam pemantauan</option>
                   <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'In Progress']) }}" {{ $selectedStatus == 'In Progress' ? 'selected' : '' }}>Sedang ditindaklanjuti</option>
                   <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Completed']) }}" {{ $selectedStatus == 'Completed' ? 'selected' : '' }}>Selesai</option>
+                  <option value="{{ route('report.adminHeadmasterStaff.manageReportFilterStatus', ['status' => 'Closed']) }}" {{ $selectedStatus == 'Closed' ? 'selected' : '' }}>Ditutup</option>
                 </select>
               </div>
             </div>
@@ -179,6 +180,8 @@
                           <td>Dalam pemantauan oleh {{ $report->lastUpdatedBy }}</td>
                         @elseif ($report->status == "Completed")
                           <td>Selesai oleh {{ $report->lastUpdatedBy }}</td>
+                        @elseif ($report->status == "Closed")
+                          <td>Ditutup</td>
                         @endif
 
                         @if($report->priority == "1")

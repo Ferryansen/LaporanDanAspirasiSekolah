@@ -70,6 +70,8 @@
                           <td>Dalam pemantauan</td>
                         @elseif ($report->status == "Completed")
                           <td>Selesai</td>
+                        @elseif ($report->status == "Closed")
+                          <td>Ditutup</td>
                         @endif
 
                         <td>{{ \Carbon\Carbon::parse($report->created_at)->format('d F Y') }}</td>

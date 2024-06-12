@@ -48,6 +48,7 @@ class CreateReportTesting extends Command
                 'lastUpdatedBy' => null,
                 'status' => 'Freshly submitted',
                 'rejectReason' => null,
+                'closedReason' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
