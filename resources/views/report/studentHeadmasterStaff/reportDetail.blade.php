@@ -61,11 +61,11 @@ Detail Laporan
                 <form action="{{ route('staff.reviewReport', $report->id) }}" method="POST">
                 @csrf
                 @method('PATCH')
-                    <button type="submit" class="btn btn-success">Review</button>
+                    <button type="submit" class="btn btn-success">Tinjau</button>
                 </form>
             </div>
             <div class="col-3 col-md-1" align="end">
-                <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#rejectReportModal_" . $report->id}}">Reject</button>
+                <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#rejectReportModal_" . $report->id}}">Tolak</button>
                 {{-- Modal --}}
                 <div class="modal fade" id="{{"rejectReportModal_" . $report->id}}" tabindex="-1">
                   <div class="modal-dialog modal-dialog-centered">
@@ -225,7 +225,7 @@ Detail Laporan
                 <form action="{{ route('monitoringReport', $report->id) }}" method="POST">
                 @csrf
                 @method('PATCH')
-                    <button type="submit" class="btn btn-success">Mulai Monitoring</button>
+                    <button type="submit" class="btn btn-success">Mulai Pemantauan</button>
                 </form>
             </div>
         @elseif ($report->status == "Monitoring process")
@@ -287,11 +287,11 @@ Detail Laporan
                 <form action="{{ route('headmaster.approveReport', $report->id) }}" method="POST">
                 @csrf
                 @method('PATCH')
-                    <button type="submit" class="btn btn-success">Approve</button>
+                    <button type="submit" class="btn btn-success">Setujui</button>
                 </form>
             </div>
             <div class="col-3 col-md-1" align="end">
-              <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#rejectReportModal_" . $report->id}}">Reject</button>
+              <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#rejectReportModal_" . $report->id}}">Tolak</button>
               {{-- Modal --}}
               <div class="modal fade" id="{{"rejectReportModal_" . $report->id}}" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered">

@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
     
     <style>
-        *{
+        * {
             font-family: 'Open Sans', sans-serif;
         }
         .button {
@@ -27,10 +27,10 @@
             justify-content: center;
             align-items: center;
         }
-        #btn-submit{
+        #btn-submit {
             background-color: #0D6CF9;
         }
-        #btn-close{
+        #btn-close {
             background-color: #BB2D3B;
         }
         #cameraFeed {
@@ -137,25 +137,21 @@
             font-size: 24px;
             margin: 10px;
         }
-        #videoButton{
+        #videoButton {
             background-color: #BB2D3B;
         }
-        #takePhotoButton{
+        #takePhotoButton {
             background-color: black;
         }
     </style>
 </head>
 <body>
-    
-    
     <video id="cameraFeed" autoplay playsinline></video>
     <div class="listButton">
         <button id="videoButton" class="button"><i class="fa-solid fa-video"></i></button>
         <button id="takePhotoButton" class="button"><i class="fa-solid fa-camera"></i></button>
     </div>
-
     <div id="previewContainer"></div>
-
     <div id="popupOverlay">
         <div id="popupContent">
             <div id="mediaPreview"></div>
@@ -163,15 +159,15 @@
                 @csrf
                 <input type="text" class="form-control" name="reportName" placeholder="Judul" required value="{{ old('reportName') }}">
                 <textarea class="form-control @error('reportDescription') is-invalid @enderror" name="reportDescription" placeholder="Deskripsi" required>{{ old('reportDescription') }}</textarea>
-                    @error('reportDescription')
-                        <div class="invalid-feedback">
-                            {{ "Maksimal 200 Karakter" }} 
-                        </div>
-                    @enderror
+                @error('reportDescription')
+                <div class="invalid-feedback">
+                    {{ "Maksimal 200 Karakter" }}
+                </div>
+                @enderror
                 <select name="reportCategory" class="form-select" aria-label="Default select example" required>
                     <option selected disabled value>Pilih Kategori Laporan</option>
                     @foreach ($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    <option value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
                 </select>
                 <input type="file" id="mediaFile" name="mediaFile" accept="image/jpeg, image/png, image/jpg, image/webp, video/webm, video/mp4, video/avi, video/quicktime" max="40960" class="form-control @error('mediaFile') is-invalid @enderror" required hidden>
@@ -208,14 +204,23 @@
                 },
                 audio: true
             };
-            
+
             navigator.mediaDevices.getUserMedia(constraints)
-                .then(function(mediaStream) {
+                .then(function (mediaStream) {
                     stream = mediaStream;
                     cameraFeed.srcObject = mediaStream;
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     console.error('Error accessing camera:', error);
+                    // Fallback to default camera if environment camera is not available
+                    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                        .then(function (mediaStream) {
+                            stream = mediaStream;
+                            cameraFeed.srcObject = mediaStream;
+                        })
+                        .catch(function (error) {
+                            console.error('Error accessing fallback camera:', error);
+                        });
                 });
         }
 
@@ -238,12 +243,12 @@
             try {
                 recorder = new MediaRecorder(stream, options);
 
-                recorder.ondataavailable = function(event) {
+                recorder.ondataavailable = function (event) {
                     if (event.data.size > 0) {
                         recordedChunks.push(event.data);
                     }
                 };
-                recorder.onstop = function() {
+                recorder.onstop = function () {
                     const blob = new Blob(recordedChunks, { type: options.mimeType });
                     const videoURL = URL.createObjectURL(blob);
                     const video = document.createElement('video');
@@ -276,7 +281,7 @@
                 canvas.width = cameraFeed.videoWidth;
                 canvas.height = cameraFeed.videoHeight;
                 context.drawImage(cameraFeed, 0, 0, canvas.width, canvas.height);
-                canvas.toBlob(function(blob) {
+                canvas.toBlob(function (blob) {
                     const photoURL = URL.createObjectURL(blob);
                     const previewImage = document.createElement('img');
                     previewImage.src = photoURL;
@@ -313,6 +318,20 @@
             popupOverlay.style.display = 'none';
         }
 
+        // Additional debugging information for desktop browsers
+        window.addEventListener('load', () => {
+            console.log('Page loaded');
+            console.log('Stream:', stream);
+            console.log('Buttons:', videoButton, takePhotoButton);
+        });
+
+        videoButton.addEventListener('click', () => {
+            console.log('Video button clicked');
+        });
+
+        takePhotoButton.addEventListener('click', () => {
+            console.log('Take photo button clicked');
+        });
     </script>
     <script src="https://kit.fontawesome.com/f98710255c.js" crossorigin="anonymous"></script>
 </body>
