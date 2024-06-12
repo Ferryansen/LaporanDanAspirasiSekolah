@@ -15,7 +15,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('status:start')->everyMinute();
         $schedule->command('status:end')->everyMinute();
         $schedule->command('daily:consultation')->fridays()->at('14:00');
-        $schedule->command('delete:aspiration')->everyYear();
+        $schedule->command('close:report')->daily();
+        $schedule->command('delete:aspiration')->yearly();
     }
 
     /**

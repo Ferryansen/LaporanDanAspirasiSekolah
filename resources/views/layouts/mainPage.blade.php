@@ -381,6 +381,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
                               @endif
                               <option value="In Progress" >Sedang ditindaklanjuti</option>
                               <option value="Completed">Selesai</option>
+                              <option value="Closed">Ditutup</option>
                           </select>
                           <label class="text-primary" for="project-status">Status</label>
                       </div>

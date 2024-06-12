@@ -109,6 +109,7 @@ Route::middleware(['isheadandstaff'])->group(function () {
         // Route::get('/pdf/convert/{category_id}', [PDFController::class, 'pdfGenerationAspirationsByCategory'])->name('aspirations.pdf.convertCategoryAspiration');
         Route::patch('/requestApproval/{id}', [AspirationController::class, 'requestApprovalAspiration'])->name('staff.requestApprovalAspiration');
         Route::patch('/staffReject/{id}', [AspirationController::class, 'rejectAspiration'])->name('staff.rejectAspiration');
+        Route::patch('/staffClose/{id}', [AspirationController::class, 'closeAspiration'])->name('staff.closeAspiration');
         Route::patch('/headApprove/{id}', [AspirationController::class, 'approveAspiration'])->name('headmaster.approveAspiration');
         Route::patch('/headReject/{id}', [AspirationController::class, 'rejectAspiration'])->name('headmaster.rejectAspiration');
         Route::patch('/process/{id}', [AspirationController::class, 'onProgAspiration'])->name('processAspiration');
@@ -128,6 +129,7 @@ Route::middleware(['isheadandstaff'])->group(function () {
         Route::patch('/requestApproval/{id}', [ReportController::class, 'requestApprovalReport'])->name('staff.requestApprovalReport');
         // Route::patch('/staffApprove/{id}', [ReportController::class, 'approveReport'])->name('staff.approveReport');
         Route::patch('/staffReject/{id}', [ReportController::class, 'rejectReport'])->name('staff.rejectReport');
+        Route::patch('/staffClose/{id}', [ReportController::class, 'closeReport'])->name('staff.closeReport');
         Route::patch('/headApprove/{id}', [ReportController::class, 'approveReport'])->name('headmaster.approveReport');
         Route::patch('/headReject/{id}', [ReportController::class, 'rejectReport'])->name('headmaster.rejectReport');
         Route::patch('/reviewStaff/{id}', [ReportController::class, 'inReviewStaffReport'])->name('staff.reviewReport');

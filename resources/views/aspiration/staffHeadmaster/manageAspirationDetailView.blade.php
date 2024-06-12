@@ -107,10 +107,46 @@
                                                 </div>
                                             </div>
                                         @else
-                                            <strong>{{ $aspiration->status }}</strong>
+                                            @if ($aspiration->status == 'Freshly submitted')
+                                                <strong>Terkirim</strong>
+                                            @elseif ($aspiration->status == 'In review')
+                                                <strong>Sedang ditinjau</strong>
+                                            @elseif ($aspiration->status == 'Request Approval')
+                                                <strong>Menunggu persetujuan</strong>
+                                            @elseif ($aspiration->status == 'Approved')
+                                                <strong>Disetujui</strong>
+                                            @elseif ($aspiration->status == 'Rejected')
+                                                <strong>Ditolak</strong>
+                                            @elseif ($aspiration->status == 'In Progress')
+                                                <strong>Sedang ditindaklanjuti</strong>
+                                            @elseif ($aspiration->status == 'Monitoring')
+                                                <strong>Dalam pemantauan</strong>
+                                            @elseif ($aspiration->status == 'Completed')
+                                                <strong>Selesai</strong>
+                                            @elseif ($aspiration->status == "Closed")
+                                                <strong>Ditutup</strong>  
+                                            @endif
                                         @endif
                                     @else
-                                        <strong>{{ $aspiration->status }}</strong>
+                                        @if ($aspiration->status == 'Freshly submitted')
+                                            <strong>Terkirim</strong>
+                                        @elseif ($aspiration->status == 'In review')
+                                            <strong>Sedang ditinjau</strong>
+                                        @elseif ($aspiration->status == 'Request Approval')
+                                            <strong>Menunggu persetujuan</strong>
+                                        @elseif ($aspiration->status == 'Approved')
+                                            <strong>Disetujui</strong>
+                                        @elseif ($aspiration->status == 'Rejected')
+                                            <strong>Ditolak</strong>
+                                        @elseif ($aspiration->status == 'In Progress')
+                                            <strong>Sedang ditindaklanjuti</strong>
+                                        @elseif ($aspiration->status == 'Monitoring')
+                                            <strong>Dalam pemantauan</strong>
+                                        @elseif ($aspiration->status == 'Completed')
+                                            <strong>Selesai</strong>
+                                        @elseif ($aspiration->status == "Closed")
+                                            <strong>Ditutup</strong>  
+                                        @endif
                                     @endif
                                 </td>
                             </tr>
@@ -118,6 +154,11 @@
                                 <tr>
                                     <td style="vertical-align: middle;">Alasan ditolak</td>
                                     <td style="text-align: right; vertical-align: middle;"><strong>{{ $aspiration->rejectReason }}</strong></td>
+                                </tr>
+                            @elseif($aspiration->status == "Closed")
+                                <tr>
+                                    <td style="vertical-align: middle;">Alasan ditutup</td>
+                                    <td style="text-align: right; vertical-align: middle;"><strong>{{ $aspiration->closedReason }}</strong></td>
                                 </tr>
                             @endif
                         </table>

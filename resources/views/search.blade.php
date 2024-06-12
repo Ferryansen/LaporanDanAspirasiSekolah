@@ -68,6 +68,8 @@
                                     <td>Dalam pemantauan oleh {{ $report->lastUpdatedBy }}</td>
                                 @elseif ($report->status == "Completed")
                                     <td>Selesai oleh {{ $report->lastUpdatedBy }}</td>
+                                @elseif ($report->status == "Closed")
+                                    <td>Ditutup</td>
                                 @endif
                             @else
                                 @if ($report->status == "Approved")
@@ -84,6 +86,8 @@
                                     <td>Sedang ditindaklanjuti</td>
                                 @elseif ($report->status == "Completed")
                                     <td>Selesai</td>
+                                @elseif ($report->status == "Closed")
+                                    <td>Ditutup</td>
                                 @endif
                             @endif
                             <td style="text-align: right">
@@ -150,6 +154,8 @@
                                         <td>Dalam pemantauan oleh {{ $report->lastUpdatedBy }}</td>
                                     @elseif ($report->status == "Completed")
                                         <td>Selesai oleh {{ $report->lastUpdatedBy }}</td>
+                                    @elseif ($report->status == "Closed")
+                                        <td>Ditutup</td>
                                     @endif
                                 @else
                                     @if ($report->status == "Approved")
@@ -166,6 +172,8 @@
                                         <td>Sedang ditindaklanjuti</td>
                                     @elseif ($report->status == "Completed")
                                         <td>Selesai</td>
+                                    @elseif ($report->status == "Closed")
+                                        <td>Ditutup</td>
                                     @endif
                                 @endif
                                 <td style="text-align: right">
@@ -228,6 +236,8 @@
                                         <td>Dalam pemantauan oleh {{ $report->lastUpdatedBy }}</td>
                                     @elseif ($report->status == "Completed")
                                         <td>Selesai oleh {{ $report->lastUpdatedBy }}</td>
+                                    @elseif ($report->status == "Closed")
+                                        <td>Ditutup</td>
                                     @endif
                                 @else
                                     @if ($report->status == "Approved")
@@ -244,6 +254,8 @@
                                         <td>Sedang ditindaklanjuti</td>
                                     @elseif ($report->status == "Completed")
                                         <td>Selesai</td>
+                                    @elseif ($report->status == "Closed")
+                                        <td>Ditutup</td>
                                     @endif
                                 @endif
                                 <td style="text-align: right">

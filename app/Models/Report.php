@@ -27,7 +27,8 @@ class Report extends Model
         'approvalBy',
         'lastUpdatedBy',
         'status',
-        'rejectReason'
+        'rejectReason',
+        'closedReason'
     ];
 
     public $sortable = ['priority', 'created_at'];

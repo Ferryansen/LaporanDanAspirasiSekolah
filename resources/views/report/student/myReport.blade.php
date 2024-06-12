@@ -112,6 +112,8 @@
                                         <td>Sedang ditindaklanjuti</td>
                                     @elseif ($report->status == "Completed")
                                         <td>Selesai</td>
+                                    @elseif ($report->status == "Closed")
+                                        <td>Ditutup</td>
                                     @endif
     
                                     <td style="text-align: right">
