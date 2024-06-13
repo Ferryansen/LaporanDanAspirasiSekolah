@@ -7,7 +7,7 @@
 @section('content')
     <p>Halo <b>{{ $receiverName }}</b>,</p>
     <p>
-        Berhubung tindak lanjut "{{ $reportName }}" sudah melebihi tanggal estimasi selesai, laporannya akan ditutup terlebih dahulu nih.
+        Berhubung tindak lanjut "{{ $reportData['title'] }}" sudah melebihi tanggal estimasi selesai, laporannya akan ditutup terlebih dahulu nih.
     </p>
     <p>
         <table>
