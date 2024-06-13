@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class CloseReportHeadmasterNotificationEmail extends Mailable
+class CloseReportManualStudentNotificationEmail extends Mailable
 {
     use Queueable, SerializesModels;
     protected $receiverName, $reportData;
@@ -23,7 +23,7 @@ class CloseReportHeadmasterNotificationEmail extends Mailable
 
     public function build()
     {
-        return $this->view('emails.headmaster.closeReportHeadmasterNotification')
+        return $this->view('emails.student.closeReportManualStudentNotification')
                     ->subject('Laporan "' . $this->reportData['title'] . '" Ditutup')
                     ->with([
                         'receiverName' => $this->receiverName,

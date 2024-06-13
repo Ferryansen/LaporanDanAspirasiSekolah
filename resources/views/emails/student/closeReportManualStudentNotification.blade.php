@@ -7,7 +7,7 @@
 @section('content')
     <p>Halo <b>{{ $receiverName }}</b>,</p>
     <p>
-        Karena tindak lanjut sudah melebihi batas, laporanmu soal "{{ $reportName }}" kami tutup dulu ya
+        Laporanmu soal "{{ $reportData['title'] }}" telah ditutup dengan alasan "{{ $reportData['closedReason'] }}"
     </p>
     <p>
         Meskipun laporan ini telah ditutup, kamu tetap bisa mengadukan laporan yang sama kok (Dengan catatan, masalah yang mengganggu masih ada nih). Jadi, gak usah patah semangat ya!
