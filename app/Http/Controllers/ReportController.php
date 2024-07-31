@@ -548,7 +548,6 @@ class ReportController extends Controller
     
             $report = Report::find($request->id);
             $currUser = Auth::user();
-            $closedUser = $report->user;
 
             $report->update([
                 'status' => "Closed",

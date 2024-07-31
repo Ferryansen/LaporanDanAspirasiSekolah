@@ -4,7 +4,12 @@ namespace App\Console\Commands;
 
 use App\Models\Report;
 use Illuminate\Console\Command;
+use App\Mail\CloseReportStudentNotificationEmail;
+use App\Mail\CloseReportHeadmasterNotificationEmail;
+use App\Mail\CloseReportStaffNotificationEmail;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class CloseReport extends Command
 {
@@ -40,8 +45,24 @@ class CloseReport extends Command
                                 ->whereNotIn('status', $excludedStatuses)
                                 ->get();
 
+        $headmasters = User::where('role', 'headmaster')->get();
+
         foreach ($reportsToClose as $report) {
             $report->update(['status' => 'Closed']);
+            $student = $report->user;
+            $staff = $report->processExecutor;
+            
+            Mail::to($student->email)->queue(new CloseReportStudentNotificationEmail($student->name, $report->name));
+            Mail::to($staff->email)->queue(new CloseReportStaffNotificationEmail($staff->name, $report->name));
+            
+            $reportData = [
+                    'title' => $report->name,
+                    'reportNo' => $report->reportNo,
+                    'relatedStaff' => $staff->name
+                ];
+            foreach ($headmasters as $headmaster) {
+                Mail::to($headmaster->email)->queue(new CloseReportHeadmasterNotificationEmail($headmaster->name, $reportData));
+            }
         }
 
         $this->info('Reports have been successfully closed.');

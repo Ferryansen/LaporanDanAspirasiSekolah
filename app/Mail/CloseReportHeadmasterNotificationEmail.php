@@ -27,7 +27,7 @@ class CloseReportHeadmasterNotificationEmail extends Mailable
                     ->subject('Laporan "' . $this->reportData['title'] . '" Ditutup')
                     ->with([
                         'receiverName' => $this->receiverName,
-                        'reportName' => $this->reportData
+                        'reportData' => $this->reportData
                     ]);
     }
 }
