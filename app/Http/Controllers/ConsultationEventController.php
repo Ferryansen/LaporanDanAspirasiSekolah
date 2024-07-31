@@ -134,10 +134,10 @@ class ConsultationEventController extends Controller
     public function updateEvent($consultation_id, Request $request) {
         try {
             DB::beginTransaction();
-            
+    
             $event = ConsultationEvent::findOrFail($consultation_id);
             $consultationData = [];
-    
+
             $rules = [
                 'title' => 'required|max:250',
                 'description' => 'required|max:1000',
@@ -146,14 +146,14 @@ class ConsultationEventController extends Controller
                 'consultationType' => 'required',
                 'location' => 'max:250'
             ];
-    
+
             $messages = [
                 'title.required' => 'Jangan lupa masukin judulnya yaa',
                 'title.max' => 'Judul yang kamu masukin cuman bisa maksimal 250 karakter nih',
-    
+
                 'description.required' => 'Jangan lupa masukin deskripsi yaa',
                 'description.max' => 'Deskripsi yang kamu masukin cuman bisa maksimal 1000 karakter nih',
-    
+
                 'startDateTime.required' => 'Jangan lupa masukin tanggal dan waktu mulai konsultasi yaa',
                 'endDateTime.required' => 'Jangan lupa masukin tanggal dan waktu selesai konsultasi yaa',
                 'endDateTime.after' => 'Tanggal dan waktu selesainya kurang pas nih',
@@ -162,29 +162,28 @@ class ConsultationEventController extends Controller
                 
                 'location.max' => 'Lokasi konsultasi yang kamu masukin cuman bisa maksimal 250 karakter nih',
             ];
-    
+
             $validator = Validator::make($request->all(), $rules, $messages);
         
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-    
+
             $credentials = [
                 'title' => $request->title,
                 'description' => $request->description,
                 'start' => $request->startDateTime,
                 'end' => $request->endDateTime,
             ];
-    
+
             $startDateTimeRequest = Carbon::parse($request->startDateTime);
-    
+
             $startDateTimeEvent = Carbon::parse($event->start);
-    
+
             if (!$startDateTimeRequest->eq($startDateTimeEvent)) {
                 if ($event->status == 'Belum dimulai' || $event->status == 'Sedang dimulai') {
                     $credentials['status'] = 'Pindah jadwal';
                 }
-    
                 $consultationData['date'] = $request->startDateTime;
             } else {
                 $consultationData['date'] = null;
@@ -196,11 +195,11 @@ class ConsultationEventController extends Controller
             } else {
                 $consultationData['location'] = null;
             }
-    
+
             if ($event->attendeeLimit != null) {
                 $credentials['attendeeLimit'] = $request->attendeeLimit;
             }
-    
+
             if($request->consultationType == 'online') {
                 $credentials['is_online'] = true;
                 $consultationData['is_online'] = $request->consultationType;
@@ -208,14 +207,13 @@ class ConsultationEventController extends Controller
                 $credentials['is_online'] = false;
                 $consultationData['is_online'] = $request->consultationType;
             }
-    
+
             $attendees = $event->attendees;
             
             if (count($attendees) > 0) {
                 $consultationData['title'] = $event->title;
                 $consultationData['consultant'] = $event->consultBy->name;
-    
-    
+
                 foreach ($attendees as $attendee) {
                     $currAttendee = User::findOrFail($attendee);
     
@@ -234,7 +232,6 @@ class ConsultationEventController extends Controller
             DB::rollBack();
     
             // Log the error
-            dd($e->getMessage());
             Log::error('Error updating status consultation: ' . $e->getMessage());
     
             // Return back with error message
@@ -304,7 +301,6 @@ class ConsultationEventController extends Controller
             $validator = Validator::make($request->all(), $rules, $messages);
             
             if ($validator->fails()) {
-                dd($validator);
                 return redirect()->back()->withErrors($validator)->withInput();
             }
     

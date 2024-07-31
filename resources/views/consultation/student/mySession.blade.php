@@ -1,4 +1,4 @@
-@extends('layouts.mainpage')
+@extends('layouts.mainPage')
 
 @section('title')
     Daftar Konsultasi
@@ -120,10 +120,14 @@
                                               <div class="desc"><i class="bi bi-clock" style="padding-right: 5px"></i> {{$formattedTimeStart}} - {{$formattedTimeEnd}}</div>
                                               <div class="desc"><i class="bi bi-person" style="padding-right: 5px"></i> {{$consultation->is_confirmed == true ? $consultation->consultBy->name : 'Belum terkonfirmasi'}}</div>
                                               @if ($consultation->is_online == 1 && $consultation->is_confirmed == true)
+                                                @if ($consultation->location != null)
                                                 <a href="{{ $consultation->location }}" target="_blank">
                                                     <button type="button" class="btn btn-primary" style="margin-top: 10px"><i class="bi bi-door-open" style="margin-right: 8px"></i>Masuk ruangan</button>
                                                 </a>
-                                              @endif
+                                                @else
+                                                    <button type="button" class="btn btn-secondary" style="margin-top: 10px"><i class="bi bi-door-open" style="margin-right: 8px" disabled></i>Ruang Meet TBA</button>
+                                                @endif
+                                            @endif
                                           </div>
                                           <div class="post-footer">
                                             <a href="{{ route('consultation.detail', $consultation->id) }}" class="detail-button">
