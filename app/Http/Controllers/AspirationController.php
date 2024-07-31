@@ -10,7 +10,7 @@ use App\Models\Category;
 // use App\Models\UserUpvoteAspiration;
 use App\Models\User;
 use Exception;
-// use App\Models\UserReportAspiration;
+use App\Models\UserReportAspiration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
