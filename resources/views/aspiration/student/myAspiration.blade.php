@@ -1,4 +1,4 @@
-@extends('layouts.mainpage')
+@extends('layouts.mainPage')
 
 @section('title')
     Aspirasi Saya
@@ -106,7 +106,7 @@
                               @else
                               @foreach($aspirations as $aspiration)
                               <tr>
-                                  <td>
+                                  <td style="border:none">
                                       <div class="post">
                                           @if (Auth::user()->role == "student")
                                           @if ($aspiration->status == "Completed")

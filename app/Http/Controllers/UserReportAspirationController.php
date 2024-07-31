@@ -67,9 +67,6 @@ class UserReportAspirationController extends Controller
         UserReportAspiration::where('aspiration_id', $aspiration_id)->delete();
         
         $aspiration = Aspiration::findOrFail($aspiration_id);
-        $aspiration->deletedBy = Auth::user()->name;
-        $aspiration->deleteReason = 'Aspirasi Bermasalah';
-        $aspiration->save();
         $aspiration->delete();
     
         return redirect()->route('aspirations.reported')->with('successMessage', 'Aspirasi berhasil dihapus');

@@ -1,4 +1,4 @@
-@extends('layouts.mainpage')
+@extends('layouts.mainPage')
 
 @section('title')
     Admin Dashboard
@@ -389,6 +389,8 @@
                           <td>Dalam pemantauan</td>
                         @elseif ($report->status == "Completed")
                           <td>Selesai</td>
+                        @elseif ($report->status == "Closed")
+                          <td>Ditutup</td>  
                         @endif
                       </tr>
                       @endforeach
@@ -493,6 +495,8 @@
                           <td>Dalam pemantauan</td>
                           @elseif ($aspiration->status == 'Completed')
                           <td>Selesai</td>
+                          @elseif ($aspiration->status == "Closed")
+                          <td>Ditutup</td>  
                         @endif
                       </tr>
                       @endforeach
@@ -637,7 +641,7 @@
                 trigger: 'item',
                 formatter: function (params) {
                     var percentage = ((params.value / totalReports) * 100).toFixed(2);
-                    return `${params.seriesName}<br>${params.name} ${params.value} - ${percentage}%`;
+                    return `${params.seriesName}<br>${params.name} ${params.value} (${percentage}%)`;
                 }
             },
             legend: {
@@ -660,7 +664,7 @@
                         fontWeight: 'bold',
                         formatter: function (params) {
                             var percentage = ((params.value / totalReports) * 100).toFixed(2);
-                            return `${params.name} ${params.value} - ${percentage}%`;
+                            return `${params.name} ${params.value} (${percentage}%)`;
                         }
                     }
                 },
@@ -699,7 +703,7 @@
             trigger: 'item',
             formatter: function (params) {
                 var percentage = ((params.value / totalAspirations) * 100).toFixed(2);
-                return `${params.seriesName}<br>${params.name} ${params.value} - ${percentage}%`;
+                return `${params.seriesName}<br>${params.name} ${params.value} (${percentage}%)`;
             }
         },
         legend: {
@@ -838,6 +842,7 @@
       'In Progress',
       'Completed',
       'Rejected',
+      'Closed'
     ];
 
       statusOptionsView = [
@@ -845,6 +850,7 @@
         'Sedang diproses',
         'Selesai',
         'Ditolak',
+        'Ditutup'
       ];
     } else {
       var statusOptions = [
@@ -856,6 +862,7 @@
       'Monitoring',
       'Completed',
       'Rejected',
+      'Closed'
     ];
 
       statusOptionsView = [
@@ -867,6 +874,7 @@
         'Dalam pemantauan',
         'Selesai',
         'Ditolak',
+        'Ditutup'
       ];
     }
 
