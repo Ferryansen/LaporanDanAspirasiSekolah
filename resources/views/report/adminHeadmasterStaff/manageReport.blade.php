@@ -1,4 +1,4 @@
-@extends('layouts.mainpage')
+@extends('layouts.mainPage')
 
 @section('title')
     Kelola Laporan

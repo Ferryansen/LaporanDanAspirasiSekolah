@@ -1,4 +1,4 @@
-@extends('layouts.mainpage')
+@extends('layouts.mainPage')
 
 @section('title')
     Perbarui File
@@ -46,8 +46,8 @@
     <div class="row mb-3">
         <label for="file" class="col-sm-2 col-form-label">Upload File</label>
         <div class="col-sm-10">
-            @if(file_exists(public_path().'\storage/'.$currDownloadContent->file))
-            <a href="{{ asset('storage/'.$currDownloadContent->file) }}" download>
+            @if(file_exists(public_path().'/storage/'.$currDownloadContent->file))
+                <a href="{{ '/storage/public/'.$currDownloadContent->file }}" download>
                     (File saat ini)
                 </a>
             @else

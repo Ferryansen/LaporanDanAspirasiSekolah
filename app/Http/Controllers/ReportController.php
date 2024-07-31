@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ApprovalReportStaffNotificationEmail;
-use App\Mail\CloseReportManualStudentNotificationEmail;
 use App\Mail\CompleteReportHeadmasterNotificationEmail;
 use App\Mail\CompleteReportStudentNotificationEmail;
 use App\Mail\CreateReportStaffNotificationEmail;
@@ -11,6 +10,7 @@ use App\Mail\CreateReportStudentNotificationEmail;
 use App\Mail\InProgressReportStudentNotificationEmail;
 use App\Mail\InteractionReportStudentStaffNotificationEmail;
 use App\Mail\RejectReportStudentNotificationEmail;
+use App\Mail\CloseReportManualStudentNotificationEmail;
 use App\Mail\RequestReportHeadmasterNotificationEmail;
 use App\Models\Report;
 use App\Models\Category;
@@ -113,20 +113,15 @@ class ReportController extends Controller
         // Retrieve the category IDs from the manageAspiration function
         $currUser = Auth::user();
 
-        // if (Auth::user()->role == "admin" || Auth::user()->role == "headmaster"){
-        //     $reports = Report::where("status", "like", $status)->paginate(10)->withQueryString();
-        // }
-        // else{
-            $staffType_id = $currUser->staffType_id;
-            $category_ids = Category::where('staffType_id', $staffType_id)->pluck('id');
-    
-            // Use whereIn to filter aspirations by category_id and status
-            $reports = Report::whereIn('category_id', $category_ids)
-                ->where('status', $status)
-                ->orderBy('isUrgent', 'desc')->orderBy('created_at', 'desc')
-                ->paginate(10)
-                ->withQueryString();
-        // }
+        $staffType_id = $currUser->staffType_id;
+        $category_ids = Category::where('staffType_id', $staffType_id)->pluck('id');
+
+        // Use whereIn to filter aspirations by category_id and status
+        $reports = Report::whereIn('category_id', $category_ids)
+            ->where('status', $status)
+            ->orderBy('isUrgent', 'desc')->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
 
 
         $data = [
@@ -210,8 +205,15 @@ class ReportController extends Controller
             
             // Create report
             $currentYear = now()->year;
-            $reportCount = Report::whereYear('created_at', $currentYear)->count() + 1;
-            $report_no = sprintf('%03d/REP/%d', $reportCount, $currentYear);
+            $latestReport = Report::whereYear('created_at', $currentYear)->latest('created_at')->first();
+            if(!$latestReport){
+                $numberReport = 1;
+            }
+            else{
+                $numberReport = intval(substr($latestReport->reportNo, 0, 3));
+            }
+            
+            $report_no = sprintf('%03d/REP/%d', $numberReport, $currentYear);
         
             $report = Report::create([
                 'reportNo' => $report_no,
@@ -282,6 +284,7 @@ class ReportController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
     
+            dd($e->getMessage());
             Log::error('Error creating report: ' . $e->getMessage());
     
             return redirect()->route('report.student.myReport')->with('errorMessage', 'Terjadi kesalahan dalam pembuatan laporan. Silakan coba lagi.');
@@ -305,8 +308,15 @@ class ReportController extends Controller
             
             // Create report
             $currentYear = now()->year;
-            $reportCount = Report::whereYear('created_at', $currentYear)->count() + 1;
-            $report_no = sprintf('%03d/REP/%d', $reportCount, $currentYear);
+            $latestReport = Report::whereYear('created_at', $currentYear)->latest('created_at')->first();
+            if(!$latestReport){
+                $numberReport = 1;
+            }
+            else{
+                $numberReport = intval(substr($latestReport->reportNo, 0, 3));
+            }
+            
+            $report_no = sprintf('%03d/REP/%d', $numberReport, $currentYear);
 
             $processEstimationDate = now()->addDay();
     
@@ -325,7 +335,6 @@ class ReportController extends Controller
                 'lastUpdatedBy'=> null,
                 'status' => "Freshly submitted",
                 'rejectReason' => null,
-                'closedReason' => null,
                 'deletedBy' => null,
                 'deleteReason' => null,
             ]);
@@ -542,26 +551,29 @@ class ReportController extends Controller
             return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam menolak laporan. Silakan coba lagi.');
         }
     }
-
+    
     public function closeReport(Request $request){
         try {
             DB::beginTransaction();
     
             $report = Report::find($request->id);
             $currUser = Auth::user();
+            $closedUser = $report->user;
+            $headmasterUsers = User::where('role', 'headmaster')->get();
 
             $report->update([
                 'status' => "Closed",
                 'closedReason' => $request->closedReason,
                 'approvalBy' => $currUser->name
             ]);
-
+            
             $reportData = [
                 'title' => $report->name,
                 'closedReason' => $report->closedReason
             ];
 
             Mail::to($closedUser->email)->queue(new CloseReportManualStudentNotificationEmail($closedUser->name, $reportData));
+            
             DB::commit();
             
             // Success message
@@ -674,12 +686,12 @@ class ReportController extends Controller
     //     return redirect()->route('admin.manageReport');
     // }
 
-    public function onProgReport(Request $request) {
+    public function onProgReport(Request $request){
         try {
             DB::beginTransaction();
             $report = Report::find($request->id);
             $currUser = Auth::user();
-    
+
             // Define the number of workdays to add based on the priority
             $workdaysToAdd = 0;
             if ($request->priority == 1) {
@@ -715,11 +727,13 @@ class ReportController extends Controller
                 'reportID' => $report->id,
                 'title' => $report->name,
             ];
-    
+
             Mail::to($report->user->email)->queue(new InProgressReportStudentNotificationEmail($report->user->name, $reportData));
-    
+
+
+            
             DB::commit();
-    
+            
             // Success message
             return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Laporan sedang ditindaklanjuti');
         } catch (Exception $e) {
@@ -732,7 +746,7 @@ class ReportController extends Controller
             return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam menindaklanjuti laporan. Silakan coba lagi.');
         }
     }
-
+    
     private function addWorkdays(Carbon $date, int $workdays) {
         $currentDate = $date->copy();
         while ($workdays > 0) {

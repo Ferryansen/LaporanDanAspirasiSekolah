@@ -1,4 +1,4 @@
-@extends('layouts.mainpage')
+@extends('layouts.mainPage')
 
 @section('title')
 Detail Laporan
@@ -29,7 +29,7 @@ Detail Laporan
         <li class="breadcrumb-item"><a href="{{ route('report.student.myReport') }}">Laporan Saya</a></li>
       @else
         <li class="breadcrumb-item"><a href="{{ route('report.adminHeadmasterStaff.manageReport') }}">Laporan</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('report.adminHeadmasterStaff.manageReport') }}">Manage Laporan</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('report.adminHeadmasterStaff.manageReport') }}">Kelola Laporan</a></li>
       @endif
       <li class="breadcrumb-item active">Detail Laporan</li>
     </ol>
@@ -38,7 +38,6 @@ Detail Laporan
 @endsection
 
 @section('sectionPage')
-
 
 @if (Auth::user()->role == "headmaster" || Auth::user()->role == "staff")
 
@@ -401,7 +400,6 @@ Detail Laporan
 @elseif ((Auth::user()->role == "student"))
 
   @if ($report->user_id == Auth::user()->id)
-    {{-- Laporan di reject --}}
     @if ($report->status == "Rejected")
       <br>
       <h3 style="color: #dc3545; font-weight: bold">Maaf, Laporan Anda Ditolak</h3>
