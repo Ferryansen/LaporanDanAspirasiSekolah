@@ -33,7 +33,7 @@ class AspirationController extends Controller
             return view('aspiration.student.myAspiration', compact('message'));
         }
 
-        $aspirations = $currUser->aspirations()->paginate(10)->withQueryString();
+        $aspirations = $currUser->aspirations()->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
         return view('aspiration.student.myAspiration', compact('aspirations'));
     }
 
@@ -66,15 +66,18 @@ class AspirationController extends Controller
             'Monitoring',
             'Completed',
             'Rejected',
-            'Closed'
+            'Closed',
         ];
         $filterTitle = null;
         $typeSorting = "";
-        $aspirations = Aspiration::paginate(10)->withQueryString();
+        $aspirations = Aspiration::orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        $pinnedAspirations = Aspiration::where('isPinned', true)
+                                            ->orderBy('created_at', 'desc')
+                                            ->get();
 
         Session::put('selected_category', "Semua kategori");
 
-        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'message', 'typeSorting', 'selectedCategoryId', 'failMessage'));
+        return view('aspiration.all.listAspiration', compact('aspirations', 'pinnedAspirations', 'categories', 'filterTitle', 'statuses', 'message', 'typeSorting', 'selectedCategoryId', 'failMessage'));
     }
 
     public function publicAspirationSorting($typeSorting)
@@ -100,7 +103,7 @@ class AspirationController extends Controller
             'Monitoring',
             'Completed',
             'Rejected',
-            'Closed'
+            'Closed',
         ];
         $filterTitle = null;
         // $aspirations = Aspiration::orderByDesc('upvote') // Sort in descending order based on upvote count
@@ -111,10 +114,14 @@ class AspirationController extends Controller
         } else if ($typeSorting == 'Terpopuler') {
             $aspirations = Aspiration::withCount('comments')->orderByDesc('comments_count')->paginate(10)->withQueryString();
         } else {
-            $aspirations = Aspiration::paginate(10)->withQueryString();
+            $aspirations = Aspiration::orderBy('created_at', 'desc')->paginate(10)->withQueryString();
         }
+        
+        $pinnedAspirations = Aspiration::where('isPinned', true)
+                                            ->orderBy('created_at', 'desc')
+                                            ->get();
 
-        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'message', 'typeSorting', 'selectedCategoryId', 'failMessage'));
+        return view('aspiration.all.listAspiration', compact('aspirations', 'pinnedAspirations', 'categories', 'filterTitle', 'statuses', 'message', 'typeSorting', 'selectedCategoryId', 'failMessage'));
     }
     
     public function manageAspiration()
@@ -253,7 +260,11 @@ class AspirationController extends Controller
         // $userUpvotes = UserUpvoteAspiration::all();
         $category = Category::findOrFail($category_id);
         // $aspirations = Aspiration::where("category_id", "like", $category_id)->orderByDesc('upvote')->paginate(10)->withQueryString();
-        $aspirations = Aspiration::where("category_id", "like", $category_id)->paginate(10)->withQueryString();
+        $aspirations = Aspiration::where("category_id", "like", $category_id)->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        $pinnedAspirations = Aspiration::where('isPinned', true)
+                                            ->where('category_id',              $category_id)
+                                            ->orderBy('created_at', 'desc')
+                                            ->get();
         $categories = Category::all();
 
         $message = null;
@@ -265,13 +276,14 @@ class AspirationController extends Controller
             'Monitoring',
             'Completed',
             'Rejected',
-            'Closed'
+            'Closed',
         ];
 
         $typeSorting = "";
 
         $data = [
             'aspirations' => $aspirations,
+            'pinnedAspirations' => $pinnedAspirations,
             'filterTitle' => $category->name,
             'categories' => $categories,
             'statuses' => $statuses,
@@ -279,7 +291,6 @@ class AspirationController extends Controller
             'typeSorting' => $typeSorting,
             'selectedCategoryId' => $selectedCategoryId,
             'failMessage' => ""
-            // 'userUpvotes' => $userUpvotes
         ];
         
         return view('aspiration.all.listAspiration', $data);
@@ -370,10 +381,17 @@ class AspirationController extends Controller
         // else{
         //     $evidenceUrl = null;
         // }
-
+        
         $currentYear = now()->year;
-        $aspirationCount = Aspiration::whereYear('created_at', $currentYear)->count() + 1;
-        $aspiration_no = sprintf('%03d/ASP/%d', $aspirationCount, $currentYear);
+            $latestAspiration = Aspiration::whereYear('created_at', $currentYear)->latest('created_at')->first();
+            if(!$latestAspiration){
+                $numberAspiration = 1;
+            }
+            else{
+                $numberAspiration = intval(substr($latestAspiration->aspirationNo, 0, 3));
+            }
+            
+            $aspiration_no = sprintf('%03d/ASP/%d', $numberAspiration, $currentYear);
 
         Aspiration::create([
             'aspirationNo' => $aspiration_no,
@@ -387,13 +405,12 @@ class AspirationController extends Controller
             'status' => 'Freshly submitted',
             // 'evidence' => $evidenceUrl,
             // 'upvote' => null,
-            'isChatOpened' => 0,
             'countProblematicAspiration' => null,
             'isPinned' => false,
             'rejectReason' => null,
             'closedReason' => null,
             'deletedBy' => null,
-            'deleteReason' => null
+            'deleteReason' => null,
         ]);
 
         return redirect()->route('aspirations.publicAspirations');
@@ -446,36 +463,12 @@ class AspirationController extends Controller
         return redirect()->route('aspirations.myAspirations');
     }
 
-    public function cancelAspiration(Request $request)
-    {
-
-        $aspiration = Aspiration::findOrFail($request->id);
-
-        $aspiration->update([
-            'status' => 'Canceled'
-        ]);
-
-        return redirect()->route('aspirations.myAspirations');
-    }
-
     public function deleteAspiration(Request $request){
         $aspiration = Aspiration::find($request->id);
         $aspiration->delete();
 
         return redirect()->route('aspirations.myAspirations');
         
-    }
-
-    public function showDetail($aspiration_id)
-    {
-        $currUser = Auth::user();
-
-        // Check if the user has already reported this aspiration
-        $existingReport = UserReportAspiration::where('aspiration_id', $aspiration_id)
-            ->where('user_id', $currUser->id)
-            ->first();
-        $aspiration = Aspiration::findOrFail($aspiration_id);
-        return view('aspiration.detail', compact('aspiration', 'existingReport'));
     }
 
     public function rejectAspiration(Request $request){
@@ -487,7 +480,7 @@ class AspirationController extends Controller
         ]);
         return redirect()->route('aspirations.manageAspiration');
     }
-
+    
     public function closeAspiration(Request $request){
         $aspiration = Aspiration::find($request->id);
 
@@ -496,42 +489,6 @@ class AspirationController extends Controller
             'closedReason' => $request->closedReason,
         ]);
         return redirect()->route('aspirations.manageAspiration');
-    }
-
-    public function approveAspiration(Request $request){
-        $aspiration = Aspiration::find($request->id);
-
-        $aspiration->update([
-            'status' => "Approved",
-        ]);
-        return redirect()->route('aspirations.manageAspirations');
-    }
-
-    public function requestApprovalAspiration(Request $request){
-        $aspiration = Aspiration::find($request->id);
-
-        $aspiration->update([
-            'status' => "Requested Approval",
-        ]);
-        return redirect()->route('aspirations.manageAspirations');
-    }
-
-    public function onProgAspiration(Request $request){
-        $aspiration = Aspiration::find($request->id);
-
-        $aspiration->update([
-            'status' => "In Progress",
-        ]);
-        return redirect()->route('aspirations.manageAspirations');
-    }
-
-    public function monitoringAspiration(Request $request){
-        $aspiration = Aspiration::find($request->id);
-
-        $aspiration->update([
-            'status' => "Monitoring",
-        ]);
-        return redirect()->route('aspirations.manageAspirations');
     }
 
     public function finishAspiration(Request $request){
@@ -647,7 +604,7 @@ class AspirationController extends Controller
         // Check if there are already 5 pinned aspirations
         if ($pinnedCount >= 5) {
             // If there are 5 or more pinned aspirations, return with fail message
-            $aspirations = Aspiration::paginate(10)->withQueryString();
+            $aspirations = Aspiration::orderBy('created_at', 'desc')->paginate(10)->withQueryString();
             $categories = Category::all();
             $filterTitle = null;
             $failMessage = "Hanya boleh ada 5 aspirasi yang di-pin bersamaan.";
@@ -660,7 +617,7 @@ class AspirationController extends Controller
                 'Monitoring',
                 'Completed',
                 'Rejected',
-                'Closed'
+                'Closed',
             ];
 
             return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'statuses', 'selectedCategoryId', 'typeSorting', 'failMessage'));
@@ -670,7 +627,10 @@ class AspirationController extends Controller
             'isPinned' => true,
         ]);
 
-        $aspirations = Aspiration::paginate(10)->withQueryString();
+        $aspirations = Aspiration::orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        $pinnedAspirations = Aspiration::where('isPinned', true)
+                                            ->orderBy('created_at', 'desc')
+                                            ->get();
         $categories = Category::all();
         $filterTitle = null;
         $message = "pin sukses";
@@ -682,9 +642,9 @@ class AspirationController extends Controller
             'Monitoring',
             'Completed',
             'Rejected',
-            'Closed'
+            'Closed',
         ];
-        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'message', 'statuses', 'selectedCategoryId', 'typeSorting', 'failMessage'));
+        return view('aspiration.all.listAspiration', compact('aspirations', 'pinnedAspirations', 'categories', 'filterTitle', 'message', 'statuses', 'selectedCategoryId', 'typeSorting', 'failMessage'));
     }
 
     public function unpinAspiration(Request $request){
@@ -697,7 +657,10 @@ class AspirationController extends Controller
             'isPinned' => false,
         ]);
 
-        $aspirations = Aspiration::paginate(10)->withQueryString();
+        $aspirations = Aspiration::orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        $pinnedAspirations = Aspiration::where('isPinned', true)
+                                            ->orderBy('created_at', 'desc')
+                                            ->get();
         $categories = Category::all();
         $filterTitle = null;
         $statuses = [
@@ -705,13 +668,13 @@ class AspirationController extends Controller
             'In review',
             'Approved',
             'Rejected',
+            'Closed',
             'In Progress',
             'Monitoring',
             'Completed',
-            'Closed'
         ];
         $message = "unpin sukses";
-        return view('aspiration.all.listAspiration', compact('aspirations', 'categories', 'filterTitle', 'message', 'statuses', 'selectedCategoryId', 'typeSorting', 'failMessage'));
+        return view('aspiration.all.listAspiration', compact('aspirations', 'pinnedAspirations', 'categories', 'filterTitle', 'message', 'statuses', 'selectedCategoryId', 'typeSorting', 'failMessage'));
     }
 
     public function manageAspirationDetail($aspiration_id) {

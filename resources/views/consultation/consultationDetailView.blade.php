@@ -1,4 +1,4 @@
-@extends('layouts.mainpage')
+@extends('layouts.mainPage')
 
 @section('title')
   Detail Konsultasi
@@ -91,7 +91,7 @@
                                     <td>: TBA</td>
                                 @else
                                     @if ($event->is_online == true)
-                                        @if (($event->status == 'Belum dimulai' || $event->status == 'Pindah jadwal' || $event->status == 'Sedang dimulai') && in_array(Auth::id(), $event->attendees))
+                                        @if (($event->status == 'Belum dimulai' || $event->status == 'Pindah jadwal' || $event->status == 'Sedang dimulai') && (in_array(Auth::id(), $event->attendees) || Auth::user()->id == $event->consultant))
                                             <td>: <a href="{{ $event->location }}" target="_blank">Online <i class="fa-solid fa-link"></i></a></td>
                                         @else
                                             <td>: Online</td>

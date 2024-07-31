@@ -25,7 +25,7 @@ class UserController extends Controller
 
         $categories = Category::all();
         $currUserRole = Auth::user()->role;
-        $statuses = ['In Progress', 'Request Approval', 'Rejected', 'Completed'];
+        $statuses = ['In Progress', 'Request Approval', 'Rejected', 'Completed', 'Closed'];
 
         if ($currUserRole == 'headmaster') {
             $reports = Report::whereIn('status', $statuses)->orderBy('created_at', 'desc')->get();
@@ -178,7 +178,7 @@ class UserController extends Controller
 
     public function getDashboardddFiltered(Request $request) {
         $currUserRole = Auth::user()->role;
-        $statuses = ['In Progress', 'Request Approval', 'Rejected', 'Completed'];
+        $statuses = ['In Progress', 'Request Approval', 'Rejected', 'Completed', 'Closed'];
 
         $konsultasiFilter = $request->konsultasiFilter;
         if ($konsultasiFilter == "Today") {
@@ -526,8 +526,7 @@ class UserController extends Controller
             // Get the filtered reports
             $aspirasiCategoryForFilter = $aspirasiForFilterQuery->get();
         }elseif($aspirasiCategoryFilter == "This Year"){
-            $aspirasiForFilterQuery = Aspiration::whereYear('created_at', Carbon::now()->month)
-            ->whereYear('created_at', Carbon::now()->year);
+            $aspirasiForFilterQuery = Aspiration::whereYear('created_at', Carbon::now()->year);
 
             // Filter reports based on the user's role
             if ($currUserRole == 'headmaster') {
@@ -586,8 +585,7 @@ class UserController extends Controller
             // Get the filtered reports
             $laporanStatusFilter = $laporanForFilterQuery->get();
         }elseif($statusFilter == "This Year"){
-            $aspirasiForFilterQuery = Aspiration::whereYear('created_at', Carbon::now()->month)
-            ->whereYear('created_at', Carbon::now()->year);
+            $aspirasiForFilterQuery = Aspiration::whereYear('created_at', Carbon::now()->year);
 
             // Filter reports based on the user's role
             if ($currUserRole == 'headmaster') {
@@ -597,8 +595,7 @@ class UserController extends Controller
             // Get the filtered reports
             $aspirasiStatusFilter = $aspirasiForFilterQuery->get();
 
-            $laporanForFilterQuery = Report::whereYear('created_at', Carbon::now()->month)
-            ->whereYear('created_at', Carbon::now()->year);
+            $laporanForFilterQuery = Report::whereYear('created_at', Carbon::now()->year);
 
             // Filter reports based on the user's role
             if ($currUserRole == 'headmaster') {
@@ -634,14 +631,6 @@ class UserController extends Controller
 
 
         return view('user.admin.dashboard',compact('konsultasiCount', 'persenKonsultasi', 'statusKonsultasi', 'konsultasiFilter', 'currUserRole','persenLaporan', 'statusLaporan', 'persenAspirasi', 'statusAspirasi', 'laporanCountFilter', 'aspirasiCountFilter', 'laporanCategoryFilter', 'aspirasiCategoryFilter', 'categories', 'reports', 'aspirations', 'users', 'staffTypes', 'aspirasiCategoryForFilter', 'laporanCategoryForFilter', 'aspirasiForFilter', 'laporanForFilter', 'statusFilter', 'laporanStatusFilter', 'aspirasiStatusFilter'));
-    }
-
-    public function getMyReport() {
-        return view('report.student.MyReport');
-    }
-
-    public function createReportForm() {
-        return view('report.student.createReportForm');
     }
 
     public function showProfile() {
