@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ApprovalReportStaffNotificationEmail;
+use App\Mail\CloseReportManualStudentNotificationEmail;
 use App\Mail\CompleteReportHeadmasterNotificationEmail;
 use App\Mail\CompleteReportStudentNotificationEmail;
 use App\Mail\CreateReportStaffNotificationEmail;
@@ -554,7 +555,13 @@ class ReportController extends Controller
                 'closedReason' => $request->closedReason,
                 'approvalBy' => $currUser->name
             ]);
-            
+
+            $reportData = [
+                'title' => $report->name,
+                'closedReason' => $report->closedReason
+            ];
+
+            Mail::to($closedUser->email)->queue(new CloseReportManualStudentNotificationEmail($closedUser->name, $reportData));
             DB::commit();
             
             // Success message
