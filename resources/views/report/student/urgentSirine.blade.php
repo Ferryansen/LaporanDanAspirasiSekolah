@@ -32,7 +32,6 @@
         <i class="fa-solid fa-volume-high"></i>
     </button>
 
-    <!-- Add the audio element -->
     <audio id="siren-sound" loop>
         <source src="{{ asset('template_assets/sounds/sirine.mp3') }}" type="audio/mpeg">
         Your browser does not support the audio element.
@@ -46,15 +45,11 @@
 
             button.addEventListener('click', function() {
                 if (audio.paused) {
-                    // If audio is paused, start playing
                     audio.play();
-                    // Change button icon to stop icon
                     button.innerHTML = '<i class="fa-solid fa-stop"></i>';
                 } else {
-                    // If audio is playing, pause it
                     audio.pause();
                     button.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
-                    // Change button icon back to play icon
                 }
             });
         });

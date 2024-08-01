@@ -13,7 +13,6 @@ use PDF;
 class PDFController extends Controller
 {   
     public function pdfGenerationAllReports(){
-        // Convert
         $reports = Report::all();
         $aspirations = null;
         $pdf_view = PDF::loadView('export', compact('reports', 'aspirations'));
@@ -23,7 +22,6 @@ class PDFController extends Controller
     }
     
     public function pdfGenerationReportsByCategory($category_id){
-        // Convert
         $category = Category::findOrFail($category_id);
         $reports = Report::where("category_id", "like", $category_id)->orderBy('isUrgent', 'desc')->orderBy('created_at', 'desc')->get();
         $aspirations = null;

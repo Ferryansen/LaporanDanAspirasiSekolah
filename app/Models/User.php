@@ -61,10 +61,6 @@ class User extends Authenticatable
     public function reports() {
         return $this->hasMany(Report::class);
     }
-    
-    // public function user_upvote_aspirations() {
-    //     return $this->hasMany(UserUpvoteAspiration::class);
-    // }
 
     public function aspirations_upvote() {
         return $this->belongsToMany(Aspiration::class, 'userUpvotesAspiration', 'user_id', 'aspirationId');

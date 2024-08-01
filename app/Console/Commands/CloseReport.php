@@ -34,13 +34,10 @@ class CloseReport extends Command
      */
     public function handle()
     {
-        // Get today's date
         $today = Carbon::today();
 
-        // Define statuses to exclude
         $excludedStatuses = ['Closed', 'Completed', 'Rejected', 'Cancelled'];
 
-        // Find reports where processEstimationDate is equal to today and status is not in the excluded statuses
         $reportsToClose = Report::where('processEstimationDate', $today)
                                 ->whereNotIn('status', $excludedStatuses)
                                 ->get();

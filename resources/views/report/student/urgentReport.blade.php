@@ -200,7 +200,7 @@
         function startCamera() {
             const constraints = {
                 video: {
-                    facingMode: { exact: "environment" } // Use the back camera
+                    facingMode: { exact: "environment" }
                 },
                 audio: true
             };
@@ -212,7 +212,6 @@
                 })
                 .catch(function (error) {
                     console.error('Error accessing camera:', error);
-                    // Fallback to default camera if environment camera is not available
                     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
                         .then(function (mediaStream) {
                             stream = mediaStream;
@@ -318,7 +317,6 @@
             popupOverlay.style.display = 'none';
         }
 
-        // Additional debugging information for desktop browsers
         window.addEventListener('load', () => {
             console.log('Page loaded');
             console.log('Stream:', stream);

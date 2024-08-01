@@ -247,19 +247,6 @@
             @endif
 
             <br>
-
-            {{-- @if (Auth::user()->role == "headmaster")
-              @if ($filterTitle == null)
-                <a href="{{ route('convertReport') }}">
-                  <button type="button" class="btn btn-success">Export Data Laporan</button>
-                </a>
-              
-              @else
-                <a href="{{ route('convertCategoryReport', ['category_id' => $categoryNow]) }}">
-                  <button type="button" class="btn btn-success">Export Data Laporan</button>
-                </a>  
-              @endif
-            @endif --}}
           
         </div>
       </div>
