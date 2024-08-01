@@ -14,14 +14,13 @@
             <li class="breadcrumb-item active">Perbarui Penguna</li>
             </ol>
         </nav>
-    </div><!-- End Page Title -->
+    </div>
 @endsection
 
 @section('sectionPage')
 <section class="section">
   <h5 class="card-title">Perbarui Pengguna</h5>
 
-  <!-- General Form Elements -->
   <form id="user-form" action="{{ route('manage.users.update.submit', $currUser->id) }}" enctype="multipart/form-data" method="POST" novalidate>
     @csrf
     @method('PATCH')
@@ -127,7 +126,7 @@
       </div>
     </div>
 
-  </form><!-- End General Form Elements -->
+  </form>
 </section>
 @endsection
 

@@ -14,7 +14,7 @@
             <li class="breadcrumb-item active">Detail</li>
             </ol>
         </nav>
-    </div><!-- End Page Title -->
+    </div>
 @endsection
 
 @section('sectionPage')
@@ -23,9 +23,7 @@
         <div class="col-lg-12">
           <div class="card">
             <div class="card-body pt-3">
-              <!-- Bordered Tabs -->
               <ul class="nav nav-tabs nav-tabs-bordered">
-
                 <li class="nav-item">
                   <button class="nav-link {{ !$errors->has('suspendReason') ? ' active' : '' }}" data-bs-toggle="tab" data-bs-target="#profile-overview">Detail</button>
                 </li>
@@ -33,7 +31,6 @@
                 <li class="nav-item">
                   <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-setting">Pengaturan</button>
                 </li>
-
               </ul>
               <div class="tab-content pt-2">
 

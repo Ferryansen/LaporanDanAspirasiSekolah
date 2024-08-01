@@ -29,11 +29,7 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body" style="margin-top: 24px">
-                        {{-- <div id="actions-user" style="display: flex; justify-content: space-between;">
-                            
-                        </div> --}}
                         <div id='calendar'></div>
-
                         <br>
                         <br>
                     </div>

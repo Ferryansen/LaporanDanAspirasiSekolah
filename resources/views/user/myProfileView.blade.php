@@ -13,7 +13,7 @@
             <li class="breadcrumb-item active">Profil</li>
             </ol>
         </nav>
-    </div><!-- End Page Title -->
+    </div>
 @endsection
 
 @section('sectionPage')
@@ -27,9 +27,7 @@
 
           <div class="card">
             <div class="card-body pt-3">
-              <!-- Bordered Tabs -->
               <ul class="nav nav-tabs nav-tabs-bordered">
-
                 <li class="nav-item">
                   <button class="nav-link {{ ($errors->has('urgent_phone_number') || session('updateUrgentSuccessMessage') || (!$errors->any() && !session('updateUrgentSuccessMessage')) ) && !($errors->has('current_password') || $errors->has('new_password') || $errors->has('new_password_confirmation')) && !session('changePassSuccessMessage') ? 'active' : '' }}" data-bs-toggle="tab" data-bs-target="#profile-overview">Detail</button>
                 </li>
@@ -37,7 +35,7 @@
                 <li class="nav-item">
                   <button class="nav-link {{ ($errors->has('current_password') || $errors->has('new_password') || $errors->has('new_password_confirmation') || session('changePassSuccessMessage')) && !( $errors->has('urgent_phone_number') || session('updateUrgentSuccessMessage')) ? 'active' : '' }}" data-bs-toggle="tab" data-bs-target="#profile-change-password">Ubah Password</button>
                 </li>
-
+                
               </ul>
               <div class="tab-content pt-2">
                 <div class="tab-pane fade {{ ($errors->has('urgent_phone_number') || session('updateUrgentSuccessMessage') || (!$errors->any() && !session('updateUrgentSuccessMessage'))) && !($errors->has('current_password') || $errors->has('new_password') || $errors->has('new_password_confirmation')) && !session('changePassSuccessMessage') ? 'show active' : '' }} profile-overview" id="profile-overview">
