@@ -18,16 +18,11 @@ class Aspiration extends Model
         'name',
         'description',
         'processDate',
-        // 'processEstimationDate',
         'processedBy',
         'approvedBy',
         'status',
-        // 'evidence',
-        // 'likeCount',
-        // 'dislikeCount',
         'problematicAspirationCount',
         'isPinned',
-        'isChatOpened',
         'rejectReason',
         'closedReason'
     ];

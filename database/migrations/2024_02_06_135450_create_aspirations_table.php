@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('name', 255);
             $table->string('description', 255);
             $table->boolean('isPinned');
-            $table->boolean('isChatOpened');
             $table->dateTime('processDate')->nullable();
             $table->foreignId('processedBy')->nullable()->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('approvedBy')->nullable()->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
