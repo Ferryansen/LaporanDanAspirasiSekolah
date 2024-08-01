@@ -92,7 +92,6 @@
           <div class="col-lg-12">
               <div class="card">
                   <div class="card-body" style="margin-top: 24px">
-                      <!-- Table with stripped rows -->
                       <table class="table">
                           <tbody>
                               @if ($aspirations->count() == 0)
@@ -177,7 +176,6 @@
                               @endif
                           </tbody>
                       </table>
-                      <!-- End Table with stripped rows -->
                       @if ($aspirations->hasPages())
                       <div class="row mt-5">
                           <div class="d-flex justify-content-end">

@@ -35,7 +35,7 @@
             <li class="breadcrumb-item active">Daftar Suspend</li>
             </ol>
         </nav>
-    </div><!-- End Page Title -->
+    </div>
 @endsection
 
 @section('sectionPage')
@@ -51,7 +51,6 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body" style="margin-top: 24px">
-                        <!-- Default Table -->
                         <div class="table-container">
                             <table class="table" style="vertical-align: middle">
                                 <thead>

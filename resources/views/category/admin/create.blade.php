@@ -19,7 +19,6 @@
 
 @section('sectionPage')
 <section class="section">
-  <!-- General Form Elements -->
   <form id="category-form" action="{{ route('categories.create') }}" enctype="multipart/form-data" method="POST">
     @csrf
     <div class="row mb-3">
@@ -53,7 +52,7 @@
       </div>
     </div>
 
-  </form><!-- End General Form Elements -->
+  </form>
 </section>
 @endsection
 

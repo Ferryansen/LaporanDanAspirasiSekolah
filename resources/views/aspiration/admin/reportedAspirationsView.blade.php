@@ -55,7 +55,6 @@
           <br>
 
           <div class="table-container">
-            <!-- Table with stripped rows -->
             <table class="table" style="vertical-align: middle">
               <thead>
                   <tr>
@@ -89,7 +88,6 @@
                   @endforeach
               </tbody>
             </table>
-              <!-- End Table with stripped rows -->
           </div>
           
         </div>

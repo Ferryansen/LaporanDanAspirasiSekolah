@@ -19,8 +19,6 @@
 @section('sectionPage')
     <section class="section dashboard">
       <div class="row">
-
-        <!-- Left side columns -->
         <div class="col-lg-8">
           <div class="row">
 
@@ -57,9 +55,8 @@
                 </div>
 
               </div>
-            </div><!-- End Sales Card -->
+            </div>
 
-            <!-- Revenue Card -->
             <div class="col-xxl-6 col-md-6">
               <div class="card info-card revenue-card">
 
@@ -92,9 +89,8 @@
                 </div>
 
               </div>
-            </div><!-- End Revenue Card -->
+            </div>
           @else
-              <!-- Sales Card -->
               <div class="col-xxl-4 col-md-6">
               <div class="card info-card sales-card">
 
@@ -127,9 +123,8 @@
                 </div>
 
               </div>
-            </div><!-- End Sales Card -->
+            </div>
 
-            <!-- Revenue Card -->
             <div class="col-xxl-4 col-md-6">
               <div class="card info-card revenue-card">
 
@@ -162,9 +157,8 @@
                 </div>
 
               </div>
-            </div><!-- End Revenue Card -->
+            </div>
 
-            <!-- Customers Card -->
             <div class="col-xxl-4 col-xl-12">
 
               <div class="card info-card customers-card">
@@ -198,11 +192,8 @@
                 </div>
               </div>
 
-            </div><!-- End Customers Card -->
+            </div>
           @endif
-           
-
-
             <div class="col-lg-12">
               <div class="card">
               <div class="filter">
@@ -223,14 +214,11 @@
 
                 <div id="aspirationStatusChart" style="min-height: 300px;" class="echart"></div>
               </div>
-            </div><!-- End Website Traffic -->
+            </div>
           </div>
-
-
 
                         <script>
                             document.addEventListener("DOMContentLoaded", () => {
-                                // Assuming you have a variable $categories containing your categories
                                 var labels = @json($categories->pluck('name')->toArray());
                                 var data = @json($categories->map(function ($category) {
                                     return $category->reports->count();
@@ -276,7 +264,6 @@
                         </script>
                         <script>
                             document.addEventListener("DOMContentLoaded", () => {
-                                // Assuming you have a variable $categories containing your categories
                                 var labelss = @json($categories->pluck('name')->toArray());
                                 var datas = @json($categories->map(function ($category) {
                                     return $category->aspirations->count();
@@ -324,34 +311,6 @@
                             });
                         </script>
                      
-            <!-- Reports -->
-            <!-- <div class="col-12">
-              <div class="card">
-
-                <div class="filter">
-                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                    <li class="dropdown-header text-start">
-                      <h6>Filter</h6>
-                    </li>
-
-                    <li><a class="dropdown-item" href="#">Today</a></li>
-                    <li><a class="dropdown-item" href="#">This Month</a></li>
-                    <li><a class="dropdown-item" href="#">This Year</a></li>
-                  </ul>
-                </div>
-
-                <div class="card-body">
-                  <h5 class="card-title">Reports <span>/Today</span></h5>
-
-                  <div id="reportsChart"></div>
-                </div>
-
-              </div>
-            </div> -->
-
-
-            <!-- Top Selling -->
             <div class="col-12">
               <div class="card top-selling overflow-auto">
 
@@ -400,12 +359,11 @@
                 </div>
 
               </div>
-            </div><!-- End Top Selling -->
+            </div>
 
           </div>
-        </div><!-- End Left side columns -->
+        </div>
 
-        <!-- Right side columns -->
         <div class="col-lg-4">
 
         <div class="card">
@@ -427,9 +385,8 @@
 
                 <div id="laporanKategori" style="min-height: 450px; margin-bottom: -5rem" class="echart"></div>
               </div>
-            </div><!-- End Website Traffic -->
+            </div>
 
-         <!-- Budget Report -->
          <div class="card">
               <div class="filter">
                 <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
@@ -451,8 +408,6 @@
               </div>
             </div>
         
-
-          <!-- Recent Activity -->
           <div class="card">
             <div class="card-body pb-0">
                   <h5 class="card-title">Aspirasi yang disukai</h5>
@@ -504,11 +459,8 @@
                   </table>
 
                 </div>
-          </div><!-- End Recent Activity -->
-
-         
-
-        </div><!-- End Right side columns -->
+          </div>
+        </div>
 
       </div>
     </section>
@@ -584,7 +536,7 @@
         var radarIndicator = staffTypes.map(function (staffType) {
             return {
                 name: staffType.name,
-                max: 10 // You can adjust the scaling factor as needed
+                max: 10
             };
         });
 
@@ -622,7 +574,6 @@
 
         var pieChartData = categories.map(function (category) {
             var filteredReports = category.reports.filter(function (report) {
-                // Assuming 'id' is the unique identifier for a report
                 return laporanCategoryForFilter.some(function (filteredReport) {
                     return filteredReport.id === report.id;
                 });
@@ -684,7 +635,6 @@
 
     var pieChartData = categories.map(function (category) {
         var filteredAspirations = category.aspirations.filter(function (aspiration) {
-            // Assuming 'id' is the unique identifier for a report
             return aspirasiCategoryForFilter.some(function (filteredAspiration) {
                 return filteredAspiration.id === aspiration.id;
             });
@@ -742,13 +692,10 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    // Sample data from server
     var reports = @json($reports);
 
-    // Status options
     var statusOptions = ["Not Checked","canceled", "completed", "rejected", "approved", "in review"];
 
-    // Create initial chart data
     function createChartData() {
       return statusOptions.map(status => ({
         name: status,
@@ -756,10 +703,8 @@
       }));
     }
 
-    // Initialize ECharts instance
     var chart = echarts.init(document.querySelector("#reportStatusChart"));
 
-    // Set initial chart options
     var option = {
       tooltip: {
         trigger: 'item'
@@ -793,23 +738,14 @@
 
     chart.setOption(option);
 
-    // Add event listeners to filter dropdown items
     document.querySelectorAll(".dropdown-item").forEach(item => {
       item.addEventListener("click", function(event) {
-        event.preventDefault(); // Prevent default anchor behavior
+        event.preventDefault(); 
         var filter = this.textContent.trim();
-
-        // Fetch filtered data from the server or filter existing data
-        // This example assumes you're filtering existing data
         if (filter === "Today") {
-          // Implement filtering logic for "Today"
         } else if (filter === "This Month") {
-          // Implement filtering logic for "This Month"
         } else if (filter === "This Year") {
-          // Implement filtering logic for "This Year"
         }
-
-        // Update the chart with new data
         chart.setOption({
           series: [{
             data: createChartData()
@@ -822,14 +758,10 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    // Sample data from server
     var aspirations = @json($aspirasiStatusFilter);
     var reportsObj = @json($laporanStatusFilter);
     var currUserRole = @json($currUserRole);
     var reports = Object.values(reportsObj);
-
-    // Status options
-
     var statusOptions;
     var statusOptionsView;
 
@@ -889,7 +821,6 @@
       return status;
     };
 
-    // Create initial chart data
     function createChartDataAsp() {
       return statusOptions.map(status => ({
         name: status,
@@ -900,18 +831,15 @@
     function createChartDataRep() {
       return statusOptions.map(status => ({
         name: status,
-        value: reports.filter(report => mapStatus(report.status) === status).length // Filter reports instead of aspirations
+        value: reports.filter(report => mapStatus(report.status) === status).length
       }));
     }
 
-    // Generate chart data
     var chartDataAsp = createChartDataAsp();
     var chartDataRep = createChartDataRep();
 
-    // Initialize ECharts instance
     var chart = echarts.init(document.querySelector("#aspirationStatusChart"));
 
-    // Set initial chart options
     var option = {
       tooltip: {
         trigger: 'axis',
@@ -950,7 +878,6 @@
       ]
     };
 
-    // Use the specified chart configuration
     chart.setOption(option);
   });
 </script>

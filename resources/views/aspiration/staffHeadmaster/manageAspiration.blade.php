@@ -31,7 +31,6 @@
       <div class="card">
         <div class="card-body">
         <br>
-          <!-- Table with stripped rows -->
          <div class="table-container" style="overflow-x:auto; max-width: 100%;">
           <table class="table" style="overflow-x:auto">
           @if (Auth::user()->role == "headmaster")
@@ -245,7 +244,7 @@
                                                     </form>
                                                 </div>
                                                 </div>
-                                            </div><!-- End Vertically centered Modal-->
+                                            </div>
                                     </td>
                                 @else
                                     <td></td>
@@ -322,7 +321,7 @@
                                                 </form>
                                             </div>
                                             </div>
-                                        </div><!-- End Vertically centered Modal-->                            
+                                        </div>                        
                                     </td>
                                 @else
                                     <td></td>
@@ -335,7 +334,6 @@
               </tbody>
             </table>
            </div>
-            <!-- End Table with stripped rows -->
 
 
             <br>
