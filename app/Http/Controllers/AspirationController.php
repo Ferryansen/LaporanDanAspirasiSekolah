@@ -388,7 +388,7 @@ class AspirationController extends Controller
                 $numberAspiration = 1;
             }
             else{
-                $numberAspiration = intval(substr($latestAspiration->aspirationNo, 0, 3));
+                $numberAspiration = intval(substr($latestAspiration->aspirationNo, 0, 3)) + 1;
             }
             
             $aspiration_no = sprintf('%03d/ASP/%d', $numberAspiration, $currentYear);

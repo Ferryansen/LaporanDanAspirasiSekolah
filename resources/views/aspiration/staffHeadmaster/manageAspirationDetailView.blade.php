@@ -178,12 +178,14 @@
                             
                             @foreach($evidences as $evidence)
                                 @if (strpos($evidence->image, 'ListImage') === 0)
-                                    <img style="max-width: 100%;" src="{{ asset('storage/'.$evidence->image) }}" alt="{{ $evidence->name }}">
+                                    <img style="max-width: 100%; margin-top: 20px" src="{{ asset('storage/'.$evidence->image) }}" alt="{{ $evidence->name }}">
                                 @elseif (strpos($evidence->video, 'ListVideo') === 0)
-                                    <video style="max-width: 100%;" controls>
+                                <div style="max-width: 100%;">
+                                    <video style="max-width: 100%; margin-top: 20px" controls>
                                         <source src="{{ asset('storage/'.$evidence->video) }}" type="{{ getVideoMimeType($evidence->video) }}">
                                         Your browser does not support the video tag.
                                     </video>
+                                </div>
                                 @endif
                             @endforeach
                         </div>
