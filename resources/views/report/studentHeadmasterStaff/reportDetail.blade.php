@@ -5,7 +5,7 @@ Detail Laporan
 @endsection
 
 @section('css')
-<link href="{{ asset('template_assets/css/detailAspiration.css') }}" rel="stylesheet">
+<link href="{{ asset('web_assets/css/detailAspiration.css') }}" rel="stylesheet">
 <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 
 <style>
