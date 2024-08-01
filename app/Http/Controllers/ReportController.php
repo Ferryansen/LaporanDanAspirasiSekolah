@@ -35,10 +35,7 @@ class ReportController extends Controller
     public function myReport()
     {
         $currUser = Auth::user();
-        $currUser_id = $currUser->id;
-        // $reports = Report::where('user_id', $currUser->id)->orderBy('isUrgent', 'desc') 
-        //              ->orderBy('created_at', 'desc') 
-        //              ->paginate(10); 
+        $currUser_id = $currUser->id; 
 
         $reports = Report::sortable()->where(function ($query) use ($currUser_id) {
                     $query->where('user_id', $currUser_id);
@@ -63,10 +60,8 @@ class ReportController extends Controller
             ->paginate(10);
         }
         else{
-            // Get the staffType_id of the current user
             $staffType_id = $currUser->staffType_id;
     
-            // Use whereHas to filter categories based on staffType_id
             $category_ids = Category::where('staffType_id', $staffType_id)->pluck('id');
             $idx = 0;
             foreach ($categories as $category) {
@@ -110,13 +105,11 @@ class ReportController extends Controller
 
     public function manageReportFilterStatus($status)
     {
-        // Retrieve the category IDs from the manageAspiration function
         $currUser = Auth::user();
 
         $staffType_id = $currUser->staffType_id;
         $category_ids = Category::where('staffType_id', $staffType_id)->pluck('id');
 
-        // Use whereIn to filter aspirations by category_id and status
         $reports = Report::whereIn('category_id', $category_ids)
             ->where('status', $status)
             ->orderBy('isUrgent', 'desc')->orderBy('created_at', 'desc')
@@ -203,7 +196,6 @@ class ReportController extends Controller
                 ],
             ]);
             
-            // Create report
             $currentYear = now()->year;
             $latestReport = Report::whereYear('created_at', $currentYear)->latest('created_at')->first();
             if(!$latestReport){
@@ -235,14 +227,12 @@ class ReportController extends Controller
                 'deleteReason' => null,
             ]);
         
-            // Store evidence files
             if ($request->hasFile('reportEvidences')) {
                 foreach ($request->file('reportEvidences') as $file) {
                     $name = $file->getClientOriginalName();
                     $filename = now()->timestamp . '_' . $name;
 
                     $imageUrl = Storage::disk('public')->putFileAs('ListImage', $file, $filename);
-                    // Create evidence and associate it with the report
                     $report->evidences()->create([
                         'image' => $imageUrl,
                         'name' => $name,
@@ -257,7 +247,6 @@ class ReportController extends Controller
 
                 
                 $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $request->file('reportEvidenceVideo'), $filename);
-                // Create evidence and associate it with the report
                 $report->evidences()->create([
                     'video' => $videoUrl,
                     'name' => $name,
@@ -296,9 +285,7 @@ class ReportController extends Controller
         try{
             $currUser = Auth::user();
             $headmasters = User::where('role', 'headmaster')->get();
-    
-            // dd($request->all());
-            // Validate the form data
+
             $request->validate([
                 'reportName' => 'required',
                 'reportDescription' => 'required|max:200',
@@ -306,7 +293,6 @@ class ReportController extends Controller
                 'mediaFile.*' => 'required|file|mimes:png,jpeg,jpg,webp,mp4,avi,quicktime,webm|max:40960'
             ]);            
             
-            // Create report
             $currentYear = now()->year;
             $latestReport = Report::whereYear('created_at', $currentYear)->latest('created_at')->first();
             if(!$latestReport){
@@ -339,19 +325,13 @@ class ReportController extends Controller
                 'deleteReason' => null,
             ]);
     
-            // Handle the file upload
             $mediaFile = $request->file('mediaFile');
             $name = $mediaFile->getClientOriginalName();
             $filename = now()->timestamp . '_' . $name;
     
-            // dd($mediaFile->getMimeType());
-            // dd($name);
-            // dd($filename);
-    
-            // Determine whether the file is an image or a video
+
             if (in_array($mediaFile->getMimeType(), ['video/mp4', 'video/avi', 'video/quicktime', 'video/webm', 'application/octet-stream'])) {
                 $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $mediaFile, $filename . '.' . $mediaFile->getClientOriginalExtension());
-                // Create evidence and associate it with the report
                 $report->evidences()->create([
                     'video' => $videoUrl,
                     'name' => $name,
@@ -359,7 +339,6 @@ class ReportController extends Controller
                 ]);
             } else {
                 $imageUrl = Storage::disk('public')->putFileAs('ListImage', $mediaFile, $filename);
-                // Create evidence and associate it with the report
                 $report->evidences()->create([
                     'image' => $imageUrl,
                     'name' => $name,
@@ -402,7 +381,6 @@ class ReportController extends Controller
             }
 
     
-            // Redirect back to the appropriate route
             return redirect()->route('report.student.myReport')->with('successMessage', 'Laporan urgent berhasil dibuat');
         }
         catch (\Exception $e) {
@@ -470,46 +448,6 @@ class ReportController extends Controller
         return view('report.student.createReportForm', $data);
     }
 
-    // public function updateReportForm($id){
-    //     $report = Report::findorFail($id);
-
-    //     $categories = Category::all();
-
-    //     $data = [
-    //         'categories' => $categories,
-    //     ];
-
-
-    //     return view('report.student.updateReportForm', compact('report'), $data);
-    // }
-
-    // public function updateReport(Request $request, $id){
-    //     $request->validate([
-    //         'reportName' => 'required',
-    //         'reportDescription' => 'required|max:200',
-    //         'reportCategory' => 'required',
-            // 'reportEvidence' => 'required',
-            // 'reportEvidence.*' => 'file|mimes:jpg,png,jpeg',
-        // ]);
-
-        // $file = $request->file('reportEvidence');
-        // $name = $file->getClientOriginalName();
-        // $filename = now()->timestamp.'_'.$name;
-
-        // $imageUrl = Storage::disk('public')->putFileAs('ListImage', $file, $filename);
-
-        // $report = Report::findOrFail($id);
-
-        // $report->update([
-        //     'name' => $request->reportName,
-        //     'description' => $request->reportDescription,
-        //     'category_id' => $request->reportCategory,
-            // 'evidence' => $imageUrl,
-    //     ]);
-
-    //     return redirect()->route('report.adminHeadmasterStaff.reportDetail', $id);
-    // }
-
     public function cancelReport(Request $request){
         $report = Report::find($request->id);
 
@@ -539,15 +477,12 @@ class ReportController extends Controller
             
             DB::commit();
             
-            // Success message
             return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Laporan berhasil di-reject');
         } catch (Exception $e) {
             DB::rollBack();
     
-            // Log the error
             Log::error('Error rejecting report: ' . $e->getMessage());
     
-            // Return back with error message
             return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam menolak laporan. Silakan coba lagi.');
         }
     }
@@ -576,15 +511,13 @@ class ReportController extends Controller
             
             DB::commit();
             
-            // Success message
             return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Laporan berhasil ditutup');
+
         } catch (Exception $e) {
             DB::rollBack();
     
-            // Log the error
             Log::error('Error rejecting report: ' . $e->getMessage());
     
-            // Return back with error message
             return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam menutup laporan. Silakan coba lagi.');
         }
     }
@@ -628,15 +561,13 @@ class ReportController extends Controller
             
             DB::commit();
             
-            // Success message
             return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Request tindak lanjut laporan telah dikirim');
+
         } catch (Exception $e) {
             DB::rollBack();
     
-            // Log the error
             Log::error('Error requesting review report: ' . $e->getMessage());
     
-            // Return back with error message
             return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam me-request tindak lanjut laporan. Silakan coba lagi.');
         }
     }
@@ -664,27 +595,16 @@ class ReportController extends Controller
             
             DB::commit();
             
-            // Success message
             return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Tindak lanjut laporan telah disetujui');
+
         } catch (Exception $e) {
             DB::rollBack();
     
-            // Log the error
             Log::error('Error approving request report: ' . $e->getMessage());
     
-            // Return back with error message
             return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam persetujuan tindak lanjut laporan. Silakan coba lagi.');
         }
     }
-
-    // public function requestApprovalReport(Request $request){
-    //     $report = Report::find($request->id);
-
-    //     $report->update([
-    //         'status' => "Requested Approval",
-    //     ]);
-    //     return redirect()->route('admin.manageReport');
-    // }
 
     public function onProgReport(Request $request){
         try {
@@ -692,7 +612,6 @@ class ReportController extends Controller
             $report = Report::find($request->id);
             $currUser = Auth::user();
 
-            // Define the number of workdays to add based on the priority
             $workdaysToAdd = 0;
             if ($request->priority == 1) {
                 $workdaysToAdd = 3;
@@ -702,7 +621,6 @@ class ReportController extends Controller
                 $workdaysToAdd = 10;
             }
     
-            // Calculate the process estimation date
             $processEstimationDate = $this->addWorkdays($report->created_at, $workdaysToAdd);
     
             if (!$report->isUrgent) {
@@ -734,15 +652,13 @@ class ReportController extends Controller
             
             DB::commit();
             
-            // Success message
             return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Laporan sedang ditindaklanjuti');
+
         } catch (Exception $e) {
             DB::rollBack();
     
-            // Log the error
             Log::error('Error updating in progress status report: ' . $e->getMessage());
     
-            // Return back with error message
             return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam menindaklanjuti laporan. Silakan coba lagi.');
         }
     }
@@ -751,7 +667,6 @@ class ReportController extends Controller
         $currentDate = $date->copy();
         while ($workdays > 0) {
             $currentDate->addDay();
-            // Check if the current day is a weekday
             if ($currentDate->isWeekday()) {
                 $workdays--;
             }
@@ -853,15 +768,13 @@ class ReportController extends Controller
             
             DB::commit();
             
-            // Success message
             return redirect()->route('report.adminHeadmasterStaff.manageReport')->with('successMessage', 'Tindak lanjut laporan selesai');
+
         } catch (Exception $e) {
             DB::rollBack();
     
-            // Log the error
             Log::error('Error finishing report: ' . $e->getMessage());
     
-            // Return back with error message
             return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam penyelesaian tindak lanjut laporan. Silakan coba lagi.');
         }
     }

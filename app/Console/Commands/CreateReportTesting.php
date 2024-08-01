@@ -30,12 +30,11 @@ class CreateReportTesting extends Command
     {
         $reports = [];
 
-        // Generate 200 reports
         for ($i = 1; $i <= 200; $i++) {
             $reports[] = [
                 'reportNo' => 'RPT-' . $i,
-                'user_id' => 3, // Fixed user_id as 3
-                'category_id' => 1, // Assuming category IDs exist from 1 to 10
+                'user_id' => 3, 
+                'category_id' => 1, 
                 'name' => 'Report ' . $i,
                 'description' => 'Description of Report ' . $i,
                 'priority' => 1,
@@ -54,8 +53,7 @@ class CreateReportTesting extends Command
             ];
         }
 
-        // Chunk the reports array into smaller arrays to insert in batches
-        $chunks = array_chunk($reports, 50); // Insert in batches of 50 reports
+        $chunks = array_chunk($reports, 50); 
 
         foreach ($chunks as $chunk) {
             DB::table('reports')->insert($chunk);

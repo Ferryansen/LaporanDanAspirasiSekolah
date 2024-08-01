@@ -49,13 +49,6 @@ Detail Laporan
           </div>
         @endif
         @if ($report->status == "Freshly submitted")
-            {{-- <div class="col-6 col-md-10">
-                <form action="{{ route('staff.requestApprovalReport', $report->id) }}" method="POST">
-                @csrf
-                @method('PATCH')
-                    <button type="submit" class="btn btn-success">Request Approval ke head</button>
-                </form>
-            </div> --}}
             <div class="col-3 col-md-11" align="end">
                 <form action="{{ route('staff.reviewReport', $report->id) }}" method="POST">
                 @csrf
@@ -77,14 +70,6 @@ Detail Laporan
                         @csrf
                         @method('PATCH')
                           <div class="modal-body">
-                            {{-- <div class="col-sm-12">
-                              <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
-                              @error('processEstimationDate')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                              @enderror
-                            </div> --}}
-
-                            {{-- <br> --}}
                             
                             <div class="col-sm-12">
                               <textarea class="form-control" style="height: 100px" required name="rejectReason"></textarea>
@@ -113,14 +98,6 @@ Detail Laporan
             </form>
           </div>
 
-          {{-- <div class="col-3 col-md-1" align="end">
-            <form action="{{ route('staff.approveReport', $report->id) }}" method="POST">
-            @csrf
-            @method('PATCH')
-                <button type="submit" class="btn btn-success">Approve</button>
-            </form>
-          </div> --}}
-
           <div class="col-3 col-md-1" align="end">
             <button type="submit" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#closedReportModal_" . $report->id}}">Tutup</button>
                 {{-- Modal --}}
@@ -135,14 +112,6 @@ Detail Laporan
                         @csrf
                         @method('PATCH')
                           <div class="modal-body">
-                            {{-- <div class="col-sm-12">
-                              <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
-                              @error('processEstimationDate')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                              @enderror
-                            </div> --}}
-
-                            {{-- <br> --}}
                             
                             <div class="col-sm-12">
                               <textarea class="form-control" style="height: 100px" required name="closedReason"></textarea>
@@ -179,14 +148,6 @@ Detail Laporan
                           @csrf
                           @method('PATCH')
                             <div class="modal-body">
-                              {{-- <div class="col-sm-12">
-                                <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
-                                @error('processEstimationDate')
-                                  <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                              </div> --}}
-
-                              {{-- <br> --}}
                               
                               <div class="col-sm-12">
                                 <select class="form-select" aria-label="Default select example" required name="priority">
@@ -229,11 +190,6 @@ Detail Laporan
             </div>
         @elseif ($report->status == "Monitoring process")
           <div class="col-3 col-md-11" align="end">
-              {{-- <form action="{{ route('finishReport', $report->id) }}" method="POST">
-              @csrf
-              @method('PATCH')
-                  <button type="submit" class="btn btn-success">Selesaikan</button>
-              </form> --}}
 
               <button type="submit" class="btn btn-success" data-bs-toggle="modal" data-bs-target="{{"#completeReportModal_" . $report->id}}">Selesaikan</button>
               {{-- Modal --}}
@@ -303,14 +259,6 @@ Detail Laporan
                       @csrf
                       @method('PATCH')
                         <div class="modal-body">
-                          {{-- <div class="col-sm-12">
-                            <input type="date" class="form-control @error('processEstimationDate') is-invalid @enderror" name="processEstimationDate" required>
-                            @error('processEstimationDate')
-                              <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                          </div> --}}
-
-                          {{-- <br> --}}
                           
                           <div class="col-sm-12">
                             <textarea class="form-control" style="height: 100px" required name="rejectReason"></textarea>
@@ -380,10 +328,6 @@ Detail Laporan
                               <!-- Display image -->
                               <img style="max-width: 100%; margin-top: 20px" src="{{ asset('storage/'.$evidence->image) }}" alt="{{ $evidence->name }}">
                           @elseif (strpos($evidence->video, 'ListVideo') === 0)
-                              {{-- @php
-                                  dd($evidence->video);
-                              @endphp --}}
-                              <!-- Display video -->
                               <video style="max-width: 100%; margin-top: 20px" controls>
                                   <source src="{{ asset('storage/'.$evidence->video) }}" type="{{ getVideoMimeType($evidence->video) }}">
                                   Your browser does not support the video tag.
@@ -416,7 +360,6 @@ Detail Laporan
       <br>
       <p><strong>Alasan penutupan:</strong> <br> <span>{{ $report->closedReason }}</span></p>
     @else 
-      {{-- Laporan di terima (Progress Bar) --}}
       <div class="progress-bar">
         <ul class="ul-progress-bar">
   
@@ -514,11 +457,6 @@ Detail Laporan
 
     @if ($report->status == "Freshly submitted")
       <div class="row justify-content-end">
-        {{-- <div class="col-3 col-md-1" align="end">
-          <a href="{{ route('student.updateReportForm', $report->id) }}">
-            <button type="button" class="btn btn-success">Ralat</button>
-          </a>
-        </div> --}}
         <div class="col-3 col-md-1" align="end">
             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{"#cancelReportModal_" . $report->id}}" style="display: inline; margin: 0;">
               Batal
@@ -582,13 +520,8 @@ Detail Laporan
                   @else
                       @foreach($evidences as $evidence)
                           @if (strpos($evidence->image, 'ListImage') === 0)
-                              <!-- Display image -->
                               <img style="max-width: 100%; margin-top: 20px" src="{{ asset('storage/'.$evidence->image) }}" alt="{{ $evidence->name }}">
                           @elseif (strpos($evidence->video, 'ListVideo') === 0)
-                              {{-- @php
-                                  dd($evidence->video);
-                              @endphp --}}
-                              <!-- Display video -->
                               <video style="max-width: 100%; margin-top: 20px" controls>
                                   <source src="{{ asset('storage/'.$evidence->video) }}" type="{{ getVideoMimeType($evidence->video) }}">
                                   Your browser does not support the video tag.

@@ -31,10 +31,8 @@ class DeleteAspiration extends Command
     {
         $twoYearsAgo = Carbon::now()->subYears(2);
 
-        // Delete aspirations that are older than 2 years
         $deletedCount = Aspiration::where('created_at', '<', $twoYearsAgo)->delete();
 
-        // Provide feedback to the user
         $this->info("Deleted {$deletedCount} old aspirations.");
 
         return Command::SUCCESS;
