@@ -84,7 +84,6 @@
           <div class="col-lg-12">
               <div class="card">
                   <div class="card-body" style="margin-top: 24px">
-                      <!-- Table with stripped rows -->
                       <table class="table">
                           <tbody style="border: white">
                             <div class="d-grid gap-2 d-md-block d-flex filterConsultation" style="margin-left: 8px; margin-bottom: 20px; overflow-x: auto; white-space: nowrap;">
@@ -141,7 +140,6 @@
                               @endif
                           </tbody>
                       </table>
-                      <!-- End Table with stripped rows -->
                       @if ($consultations->hasPages())
                       <div class="row mt-5">
                           <div class="d-flex justify-content-end">

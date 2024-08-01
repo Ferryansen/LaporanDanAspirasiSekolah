@@ -22,7 +22,7 @@
     }
 
     .container {
-        text-align: center; /* Center the text within the td */
+        text-align: center;
         color: dimgray;
     }
 
@@ -69,7 +69,7 @@
             <li class="breadcrumb-item active">Kelola Pengguna</li>
             </ol>
         </nav>
-    </div><!-- End Page Title -->
+    </div>
 @endsection
 
 @section('sectionPage')
@@ -127,7 +127,6 @@
                         <br>
 
                         <div class="table-container">
-                            <!-- Default Table -->
                             <table class="table" style="vertical-align: middle;">
                                 <thead>
                                 <tr>

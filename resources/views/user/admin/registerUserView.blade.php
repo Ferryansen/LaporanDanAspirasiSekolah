@@ -14,12 +14,11 @@
             <li class="breadcrumb-item active">Tambah Pengguna Baru</li>
             </ol>
         </nav>
-    </div><!-- End Page Title -->
+    </div>
 @endsection
 
 @section('sectionPage')
 <section class="section">
-  <!-- General Form Elements -->
   <form id="user-form" action="{{ route('manage.users.register.submit') }}" enctype="multipart/form-data" method="POST" novalidate>
     @csrf
     <div class="row mb-3">
@@ -131,7 +130,7 @@
       </div>
     </div>
 
-  </form><!-- End General Form Elements -->
+  </form>
 </section>
 @endsection
 

@@ -26,7 +26,6 @@
           <h5 class="card-title">Laporan</h5>
 
           @if ($searchParams['data'] == "reports")
-            <!-- Table with stripped rows -->
             <div class="report-container">
                 <table class="table">
                     <colgroup>
@@ -100,7 +99,6 @@
                     </tbody>
                 </table>
             </div>
-            <!-- End Table with stripped rows -->
 
             @if ($reports->hasPages())
                 <div class="row mt-5">
@@ -112,7 +110,6 @@
 
           @elseif ($searchParams['data'] == "1")
             @if ($reports->count() != 0)
-                <!-- Table with stripped rows -->
                 <div class="report-container">
                     <table class="table">
                         <colgroup>
@@ -186,7 +183,6 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- End Table with stripped rows -->
                 @if ($reports->hasPages())
                     <div class="row mt-5">
                         <div class="d-flex justify-content-end">
@@ -268,7 +264,6 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- End Table with stripped rows -->
 
                 @if ($reports->hasPages())
                     <div class="row mt-5">
@@ -312,7 +307,6 @@
 
                 <h5 class="card-title" style="margin: 0;">Aspirasi</h5>
                 <br>
-              <!-- Table with stripped rows -->
               <table class="table">
                   <tbody>
                     @if ($aspirations->count() == 0)
@@ -407,9 +401,7 @@
                                           <span style="color: dimgray">Belum ada komentar</span>
                                       </div>
                                       @endif
-                                        <!-- Comment content will be displayed here -->
                                         @foreach ($aspiration->comments as $comment)
-                                            {{-- Display only standalone comments --}}
                                             @if ($comment->parent_id === null)
                                                 <div class="comment-container">
                                                     <div class="comment">
@@ -436,7 +428,7 @@
                                                             </form>
                                                         </div>
                                                     </div>
-                                                    {{-- Display replies --}}
+
                                                     <div class="replies-wrapper">
                                                         @foreach ($comment->replies as $reply)
                                                             <div class="reply">
@@ -461,7 +453,6 @@
                                             @endif
                                         @endforeach
 
-                                        {{-- Form to add a new standalone comment --}}
                                         <div class="comment-form">
                                           <form action="{{ route('comments.store', $aspiration) }}" method="POST">
                                               @csrf
@@ -473,8 +464,6 @@
                                     </div>
                                 </div>
 
-
-                                <!-- Button to trigger the popup -->
                                 <a style="margin-left: -7px;" href="#" class="comment-button" data-aspiration-id="{{ $aspiration->id }}">
                                     <i class="bi bi-chat-left"><span>  {{$aspiration->comments()->count()}}</span></i>
                                 </a>
@@ -484,10 +473,7 @@
                                     <i style="font-size: medium; cursor: default" class="bi bi-exclamation-triangle-fill text-danger"><span style="font-size:smaller"> Reported</span></i>
                                   @else
                                     
-                                  {{-- Report Section --}}
-                                    <!-- <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#reportAspirationModal">
-                                      Report Aspiration
-                                    </button> -->
+
                                     <a href="#" data-bs-toggle="modal" data-bs-target="{{ "#reportAspirationModal_". $aspiration->id }}">
                                         <i style="font-size: medium" class="bi bi-exclamation-triangle"></i>
                                     </a>
@@ -614,9 +600,7 @@
                                           <span style="color: dimgray">Belum ada komentar</span>
                                       </div>
                                       @endif
-                                        <!-- Comment content will be displayed here -->
                                         @foreach ($aspiration->comments as $comment)
-                                            {{-- Display only standalone comments --}}
                                             @if ($comment->parent_id === null)
                                                 <div class="comment-container">
                                                     <div class="comment">
@@ -643,7 +627,6 @@
                                                             </form>
                                                         </div>
                                                     </div>
-                                                    {{-- Display replies --}}
                                                     <div class="replies-wrapper">
                                                         @foreach ($comment->replies as $reply)
                                                             <div class="reply">
@@ -668,7 +651,6 @@
                                             @endif
                                         @endforeach
 
-                                        {{-- Form to add a new standalone comment --}}
                                         <div class="comment-form">
                                           <form action="{{ route('comments.store', $aspiration) }}" method="POST">
                                               @csrf
@@ -681,7 +663,6 @@
                                 </div>
 
 
-                                <!-- Button to trigger the popup -->
                                 <a style="margin-left: -7px;" href="#" class="comment-button" data-aspiration-id="{{ $aspiration->id }}">
                                     <i class="bi bi-chat-left"><span>  {{$aspiration->comments()->count()}}</span></i>
                                 </a>
@@ -691,10 +672,6 @@
                                     <i style="font-size: medium; cursor: default" class="bi bi-exclamation-triangle-fill text-danger"><span style="font-size:smaller"> Reported</span></i>
                                   @else
                                     
-                                  {{-- Report Section --}}
-                                    <!-- <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#reportAspirationModal">
-                                      Report Aspiration
-                                    </button> -->
                                     <a href="#" data-bs-toggle="modal" data-bs-target="{{ "#reportAspirationModal_". $aspiration->id }}">
                                         <i style="font-size: medium" class="bi bi-exclamation-triangle"></i>
                                     </a>
@@ -738,8 +715,6 @@
                   @endforeach
                   </tbody>
                 </table>
-                <!-- End Table with stripped rows -->
-
 
 
                 @if ($aspirations->hasPages())
@@ -812,7 +787,6 @@
         font-style: normal;
         
         padding: 5px 10px 5px 0px;
-        /* background-color: grey; */
         color: grey;
         border: none;
         border-radius: 5px;
@@ -831,10 +805,10 @@
         background-color: white;
         border: 1px solid #ccc;
         padding: 20px;
-        z-index: 100000; /* Ensure popup appears above other content */
-        width: 100%; /* Adjust width as needed */
-        height: 100vh; /* Full height of viewport */
-        overflow-y: auto; /* Enable vertical scrolling if content exceeds height */
+        z-index: 100000;
+        width: 100%;
+        height: 100vh;
+        overflow-y: auto;
     }
 
     .close-btn {
@@ -848,8 +822,8 @@
     }
 
     .comment-content {
-        height: auto; /* Full height of viewport */
-        overflow-y: auto; /* Enable scrolling if content exceeds max-height */
+        height: auto;
+        overflow-y: auto;
         padding-bottom: 50px;
         padding-top:60px;
         font-family: "Nunito", sans-serif;
@@ -862,8 +836,8 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-        z-index: 9998; /* Ensure overlay appears below popup */
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9998;
     }
 
     .hidden{
@@ -881,7 +855,7 @@
     }
 
     .reply-form textarea {
-        width: calc(100% - 90px); /* Adjust the width of the textarea */
+        width: calc(100% - 90px);
         vertical-align: middle;
 
     }
@@ -893,39 +867,39 @@
     }
 
     .reply {
-        margin-left: 30px; /* Shift all replies to the right */
+        margin-left: 30px;
     }
 
     .replies-wrapper {
-        margin-left: 30px; /* Shift the container of replies to the right */
+        margin-left: 30px;
     }
 
     .comment-form {
-        position: fixed; /* Position the form absolute */
-        bottom: 0; /* Align the form to the bottom */
+        position: fixed;
+        bottom: 0;
         right: 0;
         width: 100%;
-        padding: 20px; /* Add padding for better spacing */
-        background-color: #f6f9ff; /* Optional: add background color for better visibility */
+        padding: 20px;
+        background-color: #f6f9ff;
     }
 
     .comment-form textarea {
-        width: calc(100% - 40px); /* Adjust the width of the textarea */
+        width: calc(100% - 40px);
         vertical-align: middle;
     }
 
     .comment-form button {
-        margin-left: 10px; /* Add some space between textarea and button */
+        margin-left: 10px;
         vertical-align: middle;
     }
 
     .top-content{
-        position: fixed; /* Position the form absolute */
+        position: fixed;
         height: 60px;
-        top: 0; /* Align the form to the bottom */
+        top: 0;
         right: 0;
         width: 100%;
-        padding: 20px; /* Add padding for better spacing */
+        padding: 20px;
         background-color: #f6f9ff;
         z-index:100;
     }
@@ -936,7 +910,7 @@
         padding: 0;
         font-size: smaller;
         color: dimgray;
-        cursor: pointer; /* Add cursor to indicate it's clickable */
+        cursor: pointer;
     }
 
     .show-reply-form:hover {
@@ -1038,31 +1012,27 @@
              var overlay = document.getElementById('overlay-' + aspirationId);
  
              popup.style.display = 'block';
-             overlay.style.display = 'block'; // Show the overlay
-             document.body.style.overflow = 'hidden'; // Disable scrolling on the body
+             overlay.style.display = 'block';
+             document.body.style.overflow = 'hidden';
  
              var closeBtn = popup.querySelector('.close-btn');
              closeBtn.addEventListener('click', function () {
                  popup.style.display = 'none';
-                 overlay.style.display = 'none'; // Hide the overlay
-                 document.body.style.overflow = ''; // Enable scrolling on the body
+                 overlay.style.display = 'none';
+                 document.body.style.overflow = '';
              });
  
              overlay.addEventListener('click', function () {
                  popup.style.display = 'none';
-                 overlay.style.display = 'none'; // Hide the overlay
-                 document.body.style.overflow = ''; // Enable scrolling on the body
+                 overlay.style.display = 'none';
+                 document.body.style.overflow = '';
              });
          });
      });
  
-     // Check session data and display popup if set
      var aspirationId = <?php echo json_encode(session('aspiration_id', null)); ?>;
  
- // Check if the comment popup should be open and if aspirationId is not null
- // Check if the comment popup should be open and if aspirationId is not null
  if (aspirationId && <?php echo json_encode(session('comment_popup_open', false)); ?>) {
-     // Select the popup and overlay elements based on the aspiration ID
      var currentlyOpenPopup = document.getElementById('popup-' + aspirationId);
      var currentlyOpenOverlay = document.getElementById('overlay-' + aspirationId);
  
@@ -1075,28 +1045,21 @@
      }
  
  
-     // Select the close button and overlay within the context of currentlyOpenPopup
      var closeBtn = currentlyOpenPopup.querySelector('.close-btn');
      var overlay = currentlyOpenOverlay;
  
-     // Add event listeners to the close button and overlay
      closeBtn.addEventListener('click', function () {
          currentlyOpenPopup.style.display = 'none';
-         currentlyOpenOverlay.style.display = 'none'; // Hide the overlay
-         document.body.style.overflow = ''; // Enable scrolling on the body
+         currentlyOpenOverlay.style.display = 'none';
+         document.body.style.overflow = '';
          window.location.href = "{{ route('clear-session-data') }}";
- 
-         // Send AJAX request to delete session data
-         
      });
  
      overlay.addEventListener('click', function () {
          currentlyOpenPopup.style.display = 'none';
-         currentlyOpenOverlay.style.display = 'none'; // Hide the overlay
-         document.body.style.overflow = ''; // Enable scrolling on the body
+         currentlyOpenOverlay.style.display = 'none';
+         document.body.style.overflow = '';
          window.location.href = "{{ route('clear-session-data') }}";
- 
-       
      });
  }
  });

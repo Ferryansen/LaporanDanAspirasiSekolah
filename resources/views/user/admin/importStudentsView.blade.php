@@ -14,7 +14,7 @@
             <li class="breadcrumb-item active">Import murid</li>
             </ol>
         </nav>
-    </div><!-- End Page Title -->
+    </div>
 @endsection
 
 @section('sectionPage')
@@ -25,7 +25,6 @@
     </div>
   </div>
   <br>
-  <!-- General Form Elements -->
   <form id="user-form" action="{{ route('manage.users.importstudents.submit') }}" enctype="multipart/form-data" method="POST" novalidate>
     @csrf
     
@@ -50,7 +49,7 @@
       </div>
     </div>
 
-  </form><!-- End General Form Elements -->
+  </form>
 </section>
 @endsection
 

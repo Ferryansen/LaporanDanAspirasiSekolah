@@ -50,7 +50,7 @@
         .post-footer {
             position: absolute;
             top: 50%;
-            right: 20px; /* Adjust as necessary */
+            right: 20px;
             transform: translateY(-50%);
         }
 
@@ -81,7 +81,6 @@
           <div class="col-lg-12">
               <div class="card">
                   <div class="card-body" style="margin-top: 24px">
-                      <!-- Table with stripped rows -->
                       <table class="table">
                           <tbody  style="border: white;">
                             <div class="col-md-3" style="margin-left: 8px">
@@ -123,7 +122,6 @@
                                                     <div class="desc"><i class="bi bi-calendar" style="padding-right: 5px"></i> {{$formattedDate}}</div>
                                                     <div class="desc"><i class="bi bi-clock" style="padding-right: 5px"></i> {{$formattedTimeStart}} - {{$formattedTimeEnd}}</div>
                                                     <div class="desc"><i class="bi bi-person" style="padding-right: 5px"></i> {{ $consultation->is_confirmed == true ? $consultation->consultBy->name : 'Belum terkonfirmasi' }}</div>
-                                                    {{-- <div class="desc"><i class="bi bi-person" style="padding-right: 5px"></i> {{$consultation->consultBy->name}}</div> --}}
                                                     @if(in_array(Auth::id(), $consultation->attendees))
                                                     <div class="warn">Anda sudah terdaftar dalam sesi ini.</div>
                                                     @endif
@@ -151,7 +149,6 @@
                             @endif
                           </tbody>
                       </table>
-                      <!-- End Table with stripped rows -->
                       @if ($consultations->hasPages())
                       <div class="row mt-5">
                           <div class="d-flex justify-content-end">
@@ -178,7 +175,6 @@
             }
         });
 
-        // Pre-fill the datepicker with the selected date if present
         const selectedDate = "{{ request('date') }}";
         if (selectedDate) {
             $("#datepicker").datepicker("setDate", selectedDate);

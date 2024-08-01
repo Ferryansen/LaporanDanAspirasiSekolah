@@ -14,7 +14,7 @@
             <li class="breadcrumb-item active">Buat Konsultasi Baru</li>
             </ol>
         </nav>
-    </div><!-- End Page Title -->
+    </div>
 @endsection
 
 @section('sectionPage')
