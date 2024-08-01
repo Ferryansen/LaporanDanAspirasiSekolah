@@ -17,14 +17,26 @@ use App\Models\ConsultationEvent;
 use App\Models\Faq;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
 Route::get('/', function () {
     return redirect('/login');
-});
+})->name('home');
 
 
 // Auths
 Route::get('/login', [UserController::class, 'showLoginForm'])->name('login.form');
 Route::post('/login', [UserController::class, 'login'])->name('login');
+
 
 // UrgentAccess
 Route::get('/urgentAccess/{urgentAccess}', [ReportController::class, 'urgentAccessForm'])->name('urgent.accessForm');
@@ -52,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/clear-session-data', [CommentController::class, 'clearSessionData'])->name('clear-session-data');
     Route::get('/clear-loading', [CommentController::class, 'clearLoading'])->name('clear-loading');
     Route::post('/openChat', [ReportController::class, 'openChatNotification'])->name('openChat.notif');
+    Route::post('/report/create', [ReportController::class, 'createReport'])->name('student.createReport');
 });
 
 Route::middleware(['isschool'])->group(function () {
@@ -94,6 +107,8 @@ Route::middleware(['isschool'])->group(function () {
 Route::middleware(['isheadandstaff'])->group(function () {
     Route::prefix('/aspirations')->group(function(){
         Route::post('/{id}/update-status', [AspirationController::class, 'updateStatus'])->name('aspirations.updateStatus');
+        // Route::get('/pdf/convert', [PDFController::class, 'pdfGenerationAllAspirations'])->name('aspirations.pdf.convertAspiration');
+        // Route::get('/pdf/convert/{category_id}', [PDFController::class, 'pdfGenerationAspirationsByCategory'])->name('aspirations.pdf.convertCategoryAspiration');
         Route::patch('/requestApproval/{id}', [AspirationController::class, 'requestApprovalAspiration'])->name('staff.requestApprovalAspiration');
         Route::patch('/staffReject/{id}', [AspirationController::class, 'rejectAspiration'])->name('staff.rejectAspiration');
         Route::patch('/staffClose/{id}', [AspirationController::class, 'closeAspiration'])->name('staff.closeAspiration');
@@ -114,6 +129,7 @@ Route::middleware(['isheadandstaff'])->group(function () {
     
     Route::prefix('/report')->group(function(){
         Route::patch('/requestApproval/{id}', [ReportController::class, 'requestApprovalReport'])->name('staff.requestApprovalReport');
+        // Route::patch('/staffApprove/{id}', [ReportController::class, 'approveReport'])->name('staff.approveReport');
         Route::patch('/staffReject/{id}', [ReportController::class, 'rejectReport'])->name('staff.rejectReport');
         Route::patch('/staffClose/{id}', [ReportController::class, 'closeReport'])->name('staff.closeReport');
         Route::patch('/headApprove/{id}', [ReportController::class, 'approveReport'])->name('headmaster.approveReport');
@@ -221,16 +237,19 @@ Route::middleware(['isstudent'])->group(function () {
         Route::patch('/upvote/{id}', [AspirationController::class, 'upvote'])->name('upvote');
         Route::patch('/unUpvote/{id}', [AspirationController::class, 'unUpvote'])->name('unUpvote');
     });
+    
 
     Route::prefix('/report')->group(function(){
         Route::get('/myReport', [ReportController::class, 'myReport'])->name('report.student.myReport');
         Route::get('/createForm', [ReportController::class, 'createReportForm'])->name('student.createReportForm');
         Route::get('/urgent', [ReportController::class, 'urgentReportPage'])->name('student.urgentReportPage');
-        Route::post('/create', [ReportController::class, 'createReport'])->name('student.createReport');
+        // Route::post('/create', [ReportController::class, 'createReport'])->name('student.createReport');
         Route::post('/createUrgent', [ReportController::class, 'createReportUrgent'])->name('student.createReportUrgent');
         Route::get('/sirine', function () {
             return view('report.student.urgentSirine');
         });
+        // Route::get('/updateForm/{id}', [ReportController::class, 'updateReportForm'])->name('student.updateReportForm');
+        // Route::patch('/update/{id}', [ReportController::class, 'updateReport'])->name('student.updateReport');
         Route::patch('/cancel/{id}', [ReportController::class, 'cancelReport'])->name('student.cancelReport');
     });
 

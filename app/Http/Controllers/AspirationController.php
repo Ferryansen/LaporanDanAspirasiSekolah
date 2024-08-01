@@ -7,10 +7,8 @@ use App\Mail\CompleteAspirationStudentNotificationEmail;
 use App\Mail\RequestAspirationHeadmasterNotificationEmail;
 use App\Models\Aspiration;
 use App\Models\Category;
-// use App\Models\UserUpvoteAspiration;
 use App\Models\User;
 use Exception;
-use App\Models\UserReportAspiration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -56,7 +54,6 @@ class AspirationController extends Controller
             return view('aspiration.all.listAspiration', compact('message'));
         }
 
-        // $userUpvotes = UserUpvoteAspiration::all();
         $categories = Category::all();
         $statuses = [
             'Freshly submitted',
@@ -93,7 +90,6 @@ class AspirationController extends Controller
             return view('aspiration.all.listAspiration', compact('message'));
         }
 
-        // $userUpvotes = UserUpvoteAspiration::all();
         $categories = Category::all();
         $statuses = [
             'Freshly submitted',
@@ -106,7 +102,6 @@ class AspirationController extends Controller
             'Closed',
         ];
         $filterTitle = null;
-        // $aspirations = Aspiration::orderByDesc('upvote') // Sort in descending order based on upvote count
         if($typeSorting == 'Paling Disukai') {
             $aspirations = Aspiration::withCount(['reactions' => function ($query) {
                 $query->where('reaction', 'like');
@@ -130,7 +125,6 @@ class AspirationController extends Controller
         $allUser = User::all();
         $selectedCategoryId = '';
 
-        // Fetch users with the same staff_id as the current user
         $users = User::where('staffType_id', $currentUser->staffType_id)->get();
 
         $categories = Category::all();
@@ -143,10 +137,8 @@ class AspirationController extends Controller
         }
 
         if ($currentUser->role == 'headmaster') {
-            // Fetch all aspirations if the user is a headmaster
             $aspirations = Aspiration::all();
         } else {
-            // Fetch aspirations where the category's staffType_id matches the current user's staffType_id
             $aspirations = Aspiration::where(function($query) use ($currentUser, $idx) {
                 $query->whereHas('category', function ($query) use ($currentUser) {
                     $query->whereHas('staffType', function ($query) use ($currentUser) {
@@ -157,7 +149,6 @@ class AspirationController extends Controller
         }
         Session::put('selected_category', "Semua kategori");
 
-        // Pass the users and aspirations to the view
         return view('aspiration.staffHeadmaster.manageAspiration', compact('users', 'aspirations', 'allUser', 'categories', 'selectedCategoryId'));
     }
 
@@ -166,13 +157,11 @@ class AspirationController extends Controller
         try {
             DB::beginTransaction();
     
-            // Validate the request
             $request->validate([
                 'status' => 'required',
                 'aspiration_id' => 'required|exists:aspirations,id',
             ]);
             
-            // Find the aspiration
             $aspiration = Aspiration::find($request->aspiration_id);
             $headmasters = User::where('role', 'headmaster')->get();
             
@@ -193,63 +182,50 @@ class AspirationController extends Controller
                 $aspiration->approvedBy = Auth::user()->id;
             }
 
-            // Update the status field
             $aspiration->status = $request->status;
             $aspiration->save();
 
             DB::commit();
     
-            // Redirect back with a success message
             return redirect()->back()->with('successMessage', 'Status aspirasi telah diubah');
         } catch (Exception $e) {
             DB::rollBack();
     
-            // Log the error
             Log::error('Error updating status aspiration: ' . $e->getMessage());
     
-            // Return back with error message
             return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam perubahan status. Silakan coba lagi.');
         }
     }
 
     public function assign(Request $request)
     {
-        // Validate the request
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'aspiration_id' => 'required|exists:aspirations,id',
         ]);
 
-        // Find the aspiration
         $aspiration = Aspiration::find($request->aspiration_id);
 
-        // Find the user
         $user = User::find($request->user_id);
 
-        // Update the processedBy field
         $aspiration->processedBy = $user->id;
         $aspiration->save();
 
-        // Redirect back with a success message
         return redirect()->back()->with('success', 'Penanggung jawab telah diubah');
     }
 
     public function updateProcessedBy(Request $request)
     {
-        // Validate the request
         $request->validate([
             'aspiration_id' => 'required|exists:aspirations,id',
         ]);
 
-        // Find the aspiration
         $aspiration = Aspiration::find($request->aspiration_id);
 
-        // Set the processedBy field to the current user's name
         $aspiration->processedBy = Auth::user()->id;
         $aspiration->status = "In review";
         $aspiration->save();
 
-        // Redirect back with a success message
         return redirect()->route('aspirations.manageAspiration');
     }
     
@@ -257,9 +233,7 @@ class AspirationController extends Controller
     public function publicAspirationFilterCategory($category_id)
     {
         $selectedCategoryId = $category_id;
-        // $userUpvotes = UserUpvoteAspiration::all();
         $category = Category::findOrFail($category_id);
-        // $aspirations = Aspiration::where("category_id", "like", $category_id)->orderByDesc('upvote')->paginate(10)->withQueryString();
         $aspirations = Aspiration::where("category_id", "like", $category_id)->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
         $pinnedAspirations = Aspiration::where('isPinned', true)
                                             ->where('category_id',              $category_id)
@@ -302,7 +276,6 @@ class AspirationController extends Controller
         $allUser = User::all();
 
         $selectedCategoryId = $category_id;
-        // Fetch users with the same staff_id as the current user
         $users = User::where('staffType_id', $currentUser->staffType_id)->get();
 
         $categories = Category::all();
@@ -315,7 +288,6 @@ class AspirationController extends Controller
     
     public function manageAspirationFilterStatus($status)
     {
-        // Retrieve the category IDs from the manageAspiration function
         $currUser = Auth::user();
         
         if (Auth::user()->role == "admin" || Auth::user()->role == "headmaster"){
@@ -325,10 +297,8 @@ class AspirationController extends Controller
             $staffTypeId = $currUser->staffType_id;
             $categoryIds = Category::where('staffType_id', $staffTypeId)->pluck('id');
     
-            // Use whereIn to filter aspirations by category_id and status
             $aspirations = Aspiration::whereIn('category_id', $categoryIds)
                 ->where('status', $status)
-                // ->orderByDesc('upvote')
                 ->paginate(10)
                 ->withQueryString();
         }
@@ -371,16 +341,7 @@ class AspirationController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // if ($request->aspirationEvidence != null){
-        //     $file = $request->file('aspirationEvidence');
-        //     $name = $file->getClientOriginalName();
-        //     $filename = now()->timestamp.'_'.$name;
-    
-        //     $evidenceUrl = Storage::disk('public')->putFileAs('ListEvidence', $file, $filename);
-        // }
-        // else{
-        //     $evidenceUrl = null;
-        // }
+       
         
         $currentYear = now()->year;
             $latestAspiration = Aspiration::whereYear('created_at', $currentYear)->latest('created_at')->first();
@@ -400,11 +361,8 @@ class AspirationController extends Controller
             'name' => $request->aspirationName,
             'description' => $request->aspirationDescription,
             'processDate' => null,
-            // 'processEstimationDate' => null,
             'processedBy' => null,
             'status' => 'Freshly submitted',
-            // 'evidence' => $evidenceUrl,
-            // 'upvote' => null,
             'countProblematicAspiration' => null,
             'isPinned' => false,
             'rejectReason' => null,
@@ -601,9 +559,7 @@ class AspirationController extends Controller
         $typeSorting = "";
         $failMessage = "";
 
-        // Check if there are already 5 pinned aspirations
         if ($pinnedCount >= 5) {
-            // If there are 5 or more pinned aspirations, return with fail message
             $aspirations = Aspiration::orderBy('created_at', 'desc')->paginate(10)->withQueryString();
             $categories = Category::all();
             $filterTitle = null;

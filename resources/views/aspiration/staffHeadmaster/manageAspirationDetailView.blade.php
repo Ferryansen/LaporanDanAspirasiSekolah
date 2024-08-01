@@ -180,6 +180,7 @@
                                 @if (strpos($evidence->image, 'ListImage') === 0)
                                     <img style="max-width: 100%; margin-top: 20px" src="{{ asset('storage/'.$evidence->image) }}" alt="{{ $evidence->name }}">
                                 @elseif (strpos($evidence->video, 'ListVideo') === 0)
+
                                 <div style="max-width: 100%;">
                                     <video style="max-width: 100%; margin-top: 20px" controls>
                                         <source src="{{ asset('storage/'.$evidence->video) }}" type="{{ getVideoMimeType($evidence->video) }}">
