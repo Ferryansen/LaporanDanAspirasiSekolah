@@ -33,7 +33,7 @@
     </button>
 
     <audio id="siren-sound" loop>
-        <source src="{{ asset('template_assets/sounds/sirine.mp3') }}" type="audio/mpeg">
+        <source src="{{ asset('web_assets/sounds/sirine.mp3') }}" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
 

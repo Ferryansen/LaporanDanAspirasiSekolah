@@ -141,7 +141,7 @@ Detail Laporan
                     <div class="modal-dialog modal-dialog-centered">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" style="font-weight: 700">Masukkan tanggal estimasi dan prioritas</h5>
+                          <h5 class="modal-title" style="font-weight: 700">Masukkan Prioritas</h5>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form id="proof-form" action="{{ route('processReport', $report->id) }}" method="POST">
@@ -323,17 +323,20 @@ Detail Laporan
                 @if ($evidences->isEmpty())
                     Tidak ada bukti
                 @else
-                      @foreach($evidences as $evidence)
-                          @if (strpos($evidence->image, 'ListImage') === 0)
-                              <!-- Display image -->
-                              <img style="max-width: 100%; margin-top: 20px" src="{{ asset('storage/'.$evidence->image) }}" alt="{{ $evidence->name }}">
-                          @elseif (strpos($evidence->video, 'ListVideo') === 0)
-                              <video style="max-width: 100%; margin-top: 20px" controls>
-                                  <source src="{{ asset('storage/'.$evidence->video) }}" type="{{ getVideoMimeType($evidence->video) }}">
-                                  Your browser does not support the video tag.
-                              </video>
-                          @endif
-                      @endforeach
+                  @foreach($evidences as $evidence)
+                    @if (strpos($evidence->image, 'ListImage') === 0)
+                        <!-- Display image -->
+                        <img style="max-width: 100%; margin-top: 20px" src="{{ asset('storage/'.$evidence->image) }}" alt="{{ $evidence->name }}">
+                    @elseif (strpos($evidence->video, 'ListVideo') === 0)
+                        <div style="max-width: 100%;">
+                            <video style="max-width: 100%; margin-top: 20px" controls>
+                                <source src="{{ asset('storage/'.$evidence->video) }}" type="{{ getVideoMimeType($evidence->video) }}">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    @endif
+                  @endforeach
+            
                 @endif
                 <br>
             </div>
@@ -518,16 +521,19 @@ Detail Laporan
                   @if ($evidences->isEmpty())
                     Tidak ada bukti
                   @else
-                      @foreach($evidences as $evidence)
-                          @if (strpos($evidence->image, 'ListImage') === 0)
-                              <img style="max-width: 100%; margin-top: 20px" src="{{ asset('storage/'.$evidence->image) }}" alt="{{ $evidence->name }}">
-                          @elseif (strpos($evidence->video, 'ListVideo') === 0)
+                    @foreach($evidences as $evidence)
+                      @if (strpos($evidence->image, 'ListImage') === 0)
+                          <!-- Display image -->
+                          <img style="max-width: 100%; margin-top: 20px" src="{{ asset('storage/'.$evidence->image) }}" alt="{{ $evidence->name }}">
+                      @elseif (strpos($evidence->video, 'ListVideo') === 0)
+                          <div style="max-width: 100%;">
                               <video style="max-width: 100%; margin-top: 20px" controls>
                                   <source src="{{ asset('storage/'.$evidence->video) }}" type="{{ getVideoMimeType($evidence->video) }}">
                                   Your browser does not support the video tag.
                               </video>
-                          @endif
-                      @endforeach
+                          </div>
+                      @endif
+                    @endforeach
                   @endif
               </div>
           </div>
@@ -545,12 +551,14 @@ Detail Laporan
             <h5 class="card-title">Bukti Penyelesaian</h5>
             @foreach($completionProofs as $proof)
                 @if (strpos($proof->image, 'ListImage') === 0)
-                    <img style="max-width: 100%;" src="{{ asset('storage/'.$proof->image) }}" alt="{{ $proof->name }}">
+                    <img style="max-width: 100%; margin-top: 20px" src="{{ asset('storage/'.$proof->image) }}" alt="{{ $proof->name }}">
                 @elseif (strpos($proof->video, 'ListVideo') === 0)
-                    <video style="max-width: 100%;" controls>
-                        <source src="{{ asset('storage/'.$proof->video) }}" type="{{ getVideoMimeType($proof->video) }}">
-                        Your browser does not support the video tag.
-                    </video>
+                    <div tyle="max-width: 100%;" controls>
+                      <video style="max-width: 100%; margin-top: 20px" controls>
+                          <source src="{{ asset('storage/'.$proof->video) }}" type="{{ getVideoMimeType($proof->video) }}">
+                          Your browser does not support the video tag.
+                      </video>
+                    </div>
                 @endif
             @endforeach
         </div>

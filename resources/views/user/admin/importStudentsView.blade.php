@@ -21,7 +21,7 @@
 <section class="section">
   <div class="row mb-3">
     <div class="col-sm-12">
-        <a href="{{ asset('template_assets/import/TemplateImport.xlsx') }}" class="btn btn-success">Download Template</a>
+        <a href="{{ asset('web_assets/import/TemplateImport.xlsx') }}" class="btn btn-success">Download Template</a>
     </div>
   </div>
   <br>
