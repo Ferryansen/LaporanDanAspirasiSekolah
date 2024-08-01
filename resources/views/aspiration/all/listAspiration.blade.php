@@ -341,7 +341,6 @@
               </div>
     <br>
               
-              <!-- Table with stripped rows -->
               <table class="table">
                   <tbody>
                     <div class="d-grid gap-2 d-md-block d-flex" style="margin-bottom: 20px">
@@ -452,7 +451,6 @@
                                                   <span style="color: dimgray">Belum ada komentar</span>
                                               </div>
                                               @endif
-                                                <!-- Comment content will be displayed here -->
                                                 @foreach ($aspiration->comments as $comment)
                                                     {{-- Display only standalone comments --}}
                                                     @if ($comment->parent_id === null)
@@ -518,8 +516,6 @@
                                             </div>
                                         </div>
         
-        
-                                        <!-- Button to trigger the popup -->
                                         <a style="margin-left: -7px;" href="#" class="comment-button" data-aspiration-id="{{ $aspiration->id }}">
                                             <i class="bi bi-chat-left"><span>  {{$aspiration->comments()->count()}}</span></i>
                                         </a>
@@ -528,18 +524,12 @@
                                           @if ( $aspiration->isReportedByCurrentUser() )
                                             <i style="font-size: medium; cursor: default" class="bi bi-exclamation-triangle-fill text-danger"><span style="font-size:smaller"> Reported</span></i>
                                           @else
-                                            
-                                          {{-- Report Section --}}
-                                            <!-- <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#reportAspirationModal">
-                                              Report Aspiration
-                                            </button> -->
                                             <a href="#" data-bs-toggle="modal" data-bs-target="{{ "#reportAspirationModal_". $aspiration->id }}">
                                                 <i style="font-size: medium" class="bi bi-exclamation-triangle"></i>
                                             </a>
                                             
                                             <br>
         
-                                            <!-- Modal -->
                                             <div class="modal fade" id="{{ "reportAspirationModal_". $aspiration->id }}" tabindex="-1" role="dialog" aria-labelledby="reportAspirationModalLabel" aria-hidden="true">
                                               <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
@@ -550,7 +540,6 @@
                                                     </button>
                                                   </div>
                                                   <div class="modal-body">
-                                                    <!-- Report Aspiration Form -->
                                                     <form action="{{ route('aspirations.reported.create', ['aspirationId' => $aspiration->id]) }}" method="POST">
                                                       @csrf
                                                       <div class="form-group">
@@ -665,7 +654,6 @@
                                           <span style="color: dimgray">Belum ada komentar</span>
                                       </div>
                                       @endif
-                                        <!-- Comment content will be displayed here -->
                                         @foreach ($aspiration->comments as $comment)
                                             {{-- Display only standalone comments --}}
                                             @if ($comment->parent_id === null)
@@ -730,9 +718,6 @@
                                         
                                     </div>
                                 </div>
-
-
-                                <!-- Button to trigger the popup -->
                                 <a style="margin-left: -7px;" href="#" class="comment-button" data-aspiration-id="{{ $aspiration->id }}">
                                     <i class="bi bi-chat-left"><span>  {{$aspiration->comments()->count()}}</span></i>
                                 </a>
@@ -743,16 +728,11 @@
                                   @else
                                     
                                   {{-- Report Section --}}
-                                    <!-- <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#reportAspirationModal">
-                                      Report Aspiration
-                                    </button> -->
                                     <a href="#" data-bs-toggle="modal" data-bs-target="{{ "#reportAspirationModal_". $aspiration->id }}">
                                         <i style="font-size: medium" class="bi bi-exclamation-triangle"></i>
                                     </a>
                                     
                                     <br>
-
-                                    <!-- Modal -->
                                     <div class="modal fade" id="{{ "reportAspirationModal_". $aspiration->id }}" tabindex="-1" role="dialog" aria-labelledby="reportAspirationModalLabel" aria-hidden="true">
                                       <div class="modal-dialog" role="document">
                                         <div class="modal-content">
@@ -763,7 +743,6 @@
                                             </button>
                                           </div>
                                           <div class="modal-body">
-                                            <!-- Report Aspiration Form -->
                                             <form action="{{ route('aspirations.reported.create', ['aspirationId' => $aspiration->id]) }}" method="POST">
                                               @csrf
                                               <div class="form-group">
@@ -789,10 +768,6 @@
                   @endforeach
                   </tbody>
                 </table>
-                <!-- End Table with stripped rows -->
-
-
-
                 @if ($aspirations->hasPages())
                   <div class="row mt-5">
                     <div class="d-flex justify-content-end">

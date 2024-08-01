@@ -19,7 +19,6 @@
 
 @section('sectionPage')
 <section class="section">
-  <!-- General Form Elements -->
   <form id="aspiration-form" action="{{ route('aspirations.update', $aspiration->id) }}" enctype="multipart/form-data" method="POST">
     @csrf
     @method('PATCH')
@@ -75,7 +74,7 @@
       </div>
     </div>
 
-  </form><!-- End General Form Elements -->
+  </form>
 </section>
 @endsection
 

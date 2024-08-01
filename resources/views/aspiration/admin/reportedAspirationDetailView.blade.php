@@ -74,7 +74,6 @@ Detail Aspirasi Bermasalah
           Suspend Pengguna Terkait
         </button>
         
-        <!-- Modal -->
         <div class="modal fade" id="suspendRelatedUserModal" tabindex="-1" role="dialog" aria-labelledby="reportAspirationModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
               <div class="modal-content">
@@ -83,7 +82,6 @@ Detail Aspirasi Bermasalah
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                  <!-- Report Aspiration Form -->
                   <form action="{{ route('manage.users.suspend', $aspiration->user->id) }}" enctype="multipart/form-data" method="POST">
                       @csrf
                       @method('PATCH')
