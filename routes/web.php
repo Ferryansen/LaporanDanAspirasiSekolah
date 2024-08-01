@@ -37,6 +37,7 @@ Route::get('/', function () {
 Route::get('/login', [UserController::class, 'showLoginForm'])->name('login.form');
 Route::post('/login', [UserController::class, 'login'])->name('login');
 
+
 // UrgentAccess
 Route::get('/urgentAccess/{urgentAccess}', [ReportController::class, 'urgentAccessForm'])->name('urgent.accessForm');
 Route::post('/urgentAccess/{urgentAccess}', [ReportController::class, 'urgentAccessCheck'])->name('urgent.accessCheck');
@@ -63,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/clear-session-data', [CommentController::class, 'clearSessionData'])->name('clear-session-data');
     Route::get('/clear-loading', [CommentController::class, 'clearLoading'])->name('clear-loading');
     Route::post('/openChat', [ReportController::class, 'openChatNotification'])->name('openChat.notif');
+    Route::post('/report/create', [ReportController::class, 'createReport'])->name('student.createReport');
 });
 
 Route::middleware(['isschool'])->group(function () {
@@ -235,12 +237,13 @@ Route::middleware(['isstudent'])->group(function () {
         Route::patch('/upvote/{id}', [AspirationController::class, 'upvote'])->name('upvote');
         Route::patch('/unUpvote/{id}', [AspirationController::class, 'unUpvote'])->name('unUpvote');
     });
+    
 
     Route::prefix('/report')->group(function(){
         Route::get('/myReport', [ReportController::class, 'myReport'])->name('report.student.myReport');
         Route::get('/createForm', [ReportController::class, 'createReportForm'])->name('student.createReportForm');
         Route::get('/urgent', [ReportController::class, 'urgentReportPage'])->name('student.urgentReportPage');
-        Route::post('/create', [ReportController::class, 'createReport'])->name('student.createReport');
+        // Route::post('/create', [ReportController::class, 'createReport'])->name('student.createReport');
         Route::post('/createUrgent', [ReportController::class, 'createReportUrgent'])->name('student.createReportUrgent');
         Route::get('/sirine', function () {
             return view('report.student.urgentSirine');
