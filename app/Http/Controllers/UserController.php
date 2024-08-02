@@ -661,12 +661,13 @@ class UserController extends Controller
             return redirect()->back()->withErrors($validator);
         }
 
-        if (Hash::check($request->current_password, $user->password)) {
-            $user->update([
-                'password' => Hash::make($request->new_password),
-            ]);
+        if (!Hash::check($request->current_password, $user->password)) {
+            return redirect()->back()->withErrors(['current_password' => 'Password lamanya kurang tepat nih']);
         }
-
+        
+        $user->update([
+            'password' => Hash::make($request->new_password),
+        ]);
         return redirect()->back()->with('changePassSuccessMessage', 'Password berhasil diperbarui');
     }
 
