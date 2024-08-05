@@ -23,6 +23,8 @@
           <div class="row">
 
           @if($currUserRole == 'headmaster')
+
+          {{-- ini laporan --}}
           <div class="col-xxl-6 col-md-6">
               <div class="card info-card sales-card">
 
@@ -56,6 +58,8 @@
 
               </div>
             </div>
+
+          {{-- ini aspirasi --}}
 
             <div class="col-xxl-6 col-md-6">
               <div class="card info-card revenue-card">
@@ -91,6 +95,9 @@
               </div>
             </div>
           @else
+
+          {{-- ini laporan --}}
+
               <div class="col-xxl-4 col-md-6">
               <div class="card info-card sales-card">
 
@@ -125,6 +132,8 @@
               </div>
             </div>
 
+          {{-- ini aspirasi --}}
+
             <div class="col-xxl-4 col-md-6">
               <div class="card info-card revenue-card">
 
@@ -158,6 +167,8 @@
 
               </div>
             </div>
+
+          {{-- ini konsultasi --}}
 
             <div class="col-xxl-4 col-xl-12">
 
@@ -194,6 +205,9 @@
 
             </div>
           @endif
+
+          {{-- ini status --}}
+
             <div class="col-lg-12">
               <div class="card">
               <div class="filter">
@@ -217,6 +231,7 @@
             </div>
           </div>
 
+          {{-- xxxxxxxxxxxxxxxxxxxxxxxxxxx --}}
                         <script>
                             document.addEventListener("DOMContentLoaded", () => {
                                 var labels = @json($categories->pluck('name')->toArray());
@@ -310,6 +325,10 @@
                                 });
                             });
                         </script>
+
+          {{-- xxxxxxxxxxxxxxxxxxxxxxxxxxx --}}
+
+          {{-- ini laporan terbaru --}}
                      
             <div class="col-12">
               <div class="card top-selling overflow-auto">
@@ -364,7 +383,11 @@
           </div>
         </div>
 
+
+
         <div class="col-lg-4">
+
+        {{-- ini laporan per kategori --}}
 
         <div class="card">
               <div class="filter">
@@ -387,6 +410,8 @@
               </div>
             </div>
 
+        {{-- ini aspirasi per kategori --}}
+
          <div class="card">
               <div class="filter">
                 <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
@@ -407,6 +432,9 @@
                 <div id="aspirasiKategori" style="min-height: 450px; margin-bottom: -5rem;" class="echart"></div>
               </div>
             </div>
+
+        {{-- ini aspirasi disukai --}}
+
         
           <div class="card">
             <div class="card-body pb-0">
@@ -475,7 +503,8 @@
 @endsection
 
 @section('script')
-    {{-- Ini untuk line chart --}}
+
+    {{-- xxxxxxxxxxxxxx--}}
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         new ApexCharts(document.querySelector("#reportsChart"), {
@@ -529,7 +558,7 @@
       });
     </script>
 
-    {{-- Ini untuk status --}}
+    {{-- xxxxxxxxxxxxxxxxxxxxxxxxxxxx --}}
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         var staffTypes = @json($staffTypes);
@@ -624,7 +653,9 @@
                 },
                 data: pieChartData
             }]
+            
         });
+
     });
     </script>
 
@@ -689,6 +720,7 @@
     });
     </script>
 
+{{-- xxxxxxxxxxxxxxxxxxxxxxxxxxx --}}
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
@@ -755,6 +787,8 @@
     });
   });
     </script>
+
+{{-- ini untuk status --}}
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
