@@ -218,6 +218,11 @@ Route::middleware(['isstaff'])->group(function() {
         
         Route::post('/fetchAllStudents', [ConsultationEventController::class, 'fetchAllStudents'])->name('fetch.allStudents');
     });
+
+    Route::prefix('/report')->group(function() {
+        Route::get('/create/fromconsultation/{student_id}/{consultation_id}', [ReportController::class, 'createReportFromConsultationForm'])->name('report.consultationCreateForm');
+        Route::post('/create/fromconsultation',[ReportController::class, 'createReportFromConsultation'])->name('report.consultationCreate');
+    });
 });
 
 Route::middleware(['isstaffandstudent'])->group(function() {

@@ -338,7 +338,15 @@ Detail Laporan
                   @endforeach
             
                 @endif
-                <br>
+
+                @if ($report->isFromConsultation == true)
+                  <br>
+                  <br>
+                  <br>
+                  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    Laporan dibuat berdasarkan sesi konsultasi <strong>{{ $report->consultationName }}</strong> di tanggal <strong>{{ \Carbon\Carbon::parse($report->consultationDate)->translatedFormat('d F Y') }}</strong>
+                  </div>
+                @endif
             </div>
         </div>
       </div>
@@ -534,6 +542,15 @@ Detail Laporan
                           </div>
                       @endif
                     @endforeach
+                  @endif
+
+                  @if ($report->isFromConsultation == true)
+                    <br>
+                    <br>
+                    <br>
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                      Laporan dibuat berdasarkan sesi konsultasi <strong>{{ $report->consultationName }}</strong> di tanggal <strong>{{ \Carbon\Carbon::parse($report->consultationDate)->translatedFormat('d F Y') }}</strong>
+                    </div>
                   @endif
               </div>
           </div>

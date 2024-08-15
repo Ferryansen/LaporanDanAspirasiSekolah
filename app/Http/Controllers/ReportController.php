@@ -14,6 +14,7 @@ use App\Mail\CloseReportManualStudentNotificationEmail;
 use App\Mail\RequestReportHeadmasterNotificationEmail;
 use App\Models\Report;
 use App\Models\Category;
+use App\Models\ConsultationEvent;
 use App\Models\UrgentAccess;
 use App\Models\User;
 use App\Services\SmsService;
@@ -215,6 +216,7 @@ class ReportController extends Controller
             'description' => $request->reportDescription,
             'priority' => 4,
             'isUrgent' => false,
+            'isFromConsultation' => false,
             'isChatOpened' => false,
             'processDate' => null,
             'processEstimationDate' => null,
@@ -275,6 +277,125 @@ class ReportController extends Controller
             Log::error('Error creating report: ' . $e->getMessage());
     
             return redirect()->route('report.student.myReport')->with('errorMessage', 'Terjadi kesalahan dalam pembuatan laporan. Silakan coba lagi.');
+        }
+    }
+
+    public function createReportFromConsultationForm($student_id, $consultation_id) {
+        $categories = Category::all();
+        $relatedStudent = User::findOrFail($student_id);
+        $consultation = ConsultationEvent::findOrFail($consultation_id);
+
+        $data = [
+            'categories' => $categories,
+            'relatedStudent' => $relatedStudent,
+            'consultation' => $consultation
+        ];
+
+        return view('consultation.staff.createReportFromConsultation', $data);
+    }
+
+    public function createReportFromConsultation(Request $request) {
+        try {
+            DB::beginTransaction();
+    
+            $relatedStudent = User::findOrFail($request->studentID);
+            $relatedConsultation = ConsultationEvent::findOrFail($request->consultationID);
+            
+            $request->validate([
+                'reportName' => 'required',
+                'reportDescription' => 'required|max:200',
+                'reportCategory' => 'required',
+                'reportEvidences.*' => 'file|mimes:png,jpg,jpeg,webp',
+                'reportEvidenceVideo.*' => 'required_without:reportEvidences|file|mimes:mp4,avi,quicktime|max:40960',
+                'reportEvidences' => [
+                    'required_without:reportEvidenceVideo',
+                    'array',
+                    'max:5'
+                ],
+            ]);
+            
+            $currentYear = now()->year;
+            $latestReport = Report::whereYear('created_at', $currentYear)->latest('created_at')->first();
+            if(!$latestReport){
+                $numberReport = 1;
+            }
+            else{
+                $numberReport = intval(substr($latestReport->reportNo, 0, 3)) + 1;
+            }
+            
+            $report_no = sprintf('%03d/REP/%d', $numberReport, $currentYear);
+        
+            $report = Report::create([
+                'reportNo' => $report_no,
+                'user_id' => $relatedStudent->id,
+                'name' => $request->reportName,
+                'category_id' => $request->reportCategory,
+                'description' => $request->reportDescription,
+                'priority' => 4,
+                'isUrgent' => false,
+                'isFromConsultation' => true,
+                'consultationName' => $relatedConsultation->title,
+                'consultationDate' => Carbon::parse($relatedConsultation->end)->toDateString(),
+                'isChatOpened' => false,
+                'processDate' => null,
+                'processEstimationDate' => null,
+                'approvalBy'=> null,
+                'lastUpdatedBy'=> null,
+                'status' => "Freshly submitted",
+                'rejectReason' => null,
+                'closedReason' => null,
+                'deletedBy' => null,
+                'deleteReason' => null,
+            ]);
+        
+            if ($request->hasFile('reportEvidences')) {
+                foreach ($request->file('reportEvidences') as $file) {
+                    $name = $file->getClientOriginalName();
+                    $filename = now()->timestamp . '_' . $name;
+
+                    $imageUrl = Storage::disk('public')->putFileAs('ListImage', $file, $filename);
+                    $report->evidences()->create([
+                        'image' => $imageUrl,
+                        'name' => $name,
+                        'context' => 'reporting',
+                    ]);
+                }
+            }
+
+            if ($request->hasFile('reportEvidenceVideo')) {
+                $name = $request->file('reportEvidenceVideo')->getClientOriginalName();
+                $filename = now()->timestamp . '_' . $name;
+
+                
+                $videoUrl = Storage::disk('public')->putFileAs('ListVideo', $request->file('reportEvidenceVideo'), $filename);
+                $report->evidences()->create([
+                    'video' => $videoUrl,
+                    'name' => $name,
+                    'context' => 'reporting',
+                ]);
+            }
+
+            $reportData = [
+                'reportID' => $report->id,
+                'reportNo' => $report_no,
+                'title' => $request->reportName,
+                'date' => Carbon::now()->format('d/m/Y'),
+            ];
+
+            
+            Mail::to($relatedStudent->email)->send(new CreateReportStudentNotificationEmail($relatedStudent->name, $reportData));
+            $relatedStaffs = $report->category->staffType->users;
+            foreach ($relatedStaffs as $staff) {
+                Mail::to($staff->email)->send(new CreateReportStaffNotificationEmail($staff->name, $reportData));
+            }
+            
+            DB::commit();
+            return redirect()->route('consultation.detail', $relatedConsultation->id)->with('successMessage', 'Laporan murid berhasil dibuat');
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Error creating report: ' . $e->getMessage());
+    
+            return redirect()->route('consultation.detail', $relatedConsultation->id)->with('errorMessage', 'Terjadi kesalahan dalam pembuatan laporan. Silakan coba lagi.');
         }
     }
 
@@ -776,7 +897,6 @@ class ReportController extends Controller
             return redirect()->back()->with('errorMessage', 'Terjadi kesalahan dalam penyelesaian tindak lanjut laporan. Silakan coba lagi.');
         }
     }
-
 
     public function deleteReportAdmin(Request $request){
         $report = Report::find($request->id);
