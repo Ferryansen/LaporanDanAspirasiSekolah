@@ -20,6 +20,9 @@ return new class extends Migration
             $table->string('description', 255);
             $table->integer('priority');
             $table->boolean('isUrgent');
+            $table->boolean('isFromConsultation');
+            $table->string('consultationName', 255)->nullable();
+            $table->date('consultationDate')->nullable();
             $table->boolean('isChatOpened');
             $table->dateTime('processDate')->nullable();
             $table->date('processEstimationDate')->nullable();

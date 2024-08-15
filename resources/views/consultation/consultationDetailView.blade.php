@@ -195,7 +195,13 @@
                             @else
                                 <ol class="list-group list-group-numbered">
                                     @foreach ($attendees as $attendee)
-                                        <li class="list-group-item">{{ $attendee->name }}</li>
+                                        <li class="list-group-item d-flex align-items-center">
+                                            <div style="margin-left: 8px">{{ $attendee->name }}</div>
+
+                                            @if ($event->status == 'Selesai')
+                                                <a href="{{ route('report.consultationCreateForm', [$attendee->id, $event->id]) }}" class="btn btn-primary ms-auto"><i class="fa-solid fa-plus" style="margin-right: 8px;"></i>Laporan</a>
+                                            @endif
+                                        </li>
                                     @endforeach
                                 </ol>
                             @endif

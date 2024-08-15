@@ -164,10 +164,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
       @endif
 
       <li class="nav-item">
-        <a class="nav-link {{ request()->is('report/*') ? '' : 'collapsed'}}" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
+        <a class="nav-link {{ request()->is('report/*') && !request()->is('report/create/fromconsultation/*') ? '' : 'collapsed'}}" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
           <i class="fa-regular fa-file-lines" style="margin-left: 3px"></i><span style="margin-left: 5px">Laporan</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="report-nav" class="nav-content collapse {{ request()->is('report/*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
+        <ul id="report-nav" class="nav-content collapse {{ request()->is('report/*') && !request()->is('report/create/fromconsultation/*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
           @if (Auth::user()->role == "student")
             <li>
               <a href="{{ route('report.student.myReport') }}" class="{{ request()->is('report/*') ? 'active' : ''}}">
@@ -176,7 +176,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
             </li>
           @else
             <li>
-              <a href="{{ route('report.adminHeadmasterStaff.manageReport') }}" class="{{ request()->is('report/*') ? 'active' : ''}}">
+              <a href="{{ route('report.adminHeadmasterStaff.manageReport') }}" class="{{ request()->is('report/*') && !request()->is('report/create/fromconsultation/*') ? 'active' : ''}}">
                 <i class="bi bi-circle"></i><span>Kelola Laporan</span>
               </a>
             </li>
@@ -259,10 +259,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
       @if(Auth::user()->role == "staff" || Auth::user()->role == "headmaster" || Auth::user()->role == "student")
       <li class="nav-item">
-        <a class="nav-link {{ request()->is('consultation/sessionList*') || request()->is('consultation/mySession*') || request()->is('consultation/manage*') || request()->is('consultation/detail*') ? '' : 'collapsed'}}" data-bs-target="#konsultasi-nav" data-bs-toggle="collapse" href="#">
+        <a class="nav-link {{ request()->is('consultation/sessionList*') || request()->is('consultation/mySession*') || request()->is('consultation/manage*') || request()->is('consultation/detail*') || request()->is('report/create/fromconsultation/*') ? '' : 'collapsed'}}" data-bs-target="#konsultasi-nav" data-bs-toggle="collapse" href="#">
           <i class="fa-regular fa-comments"></i><span>Konsultasi</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="konsultasi-nav" class="nav-content collapse {{ request()->is('consultation/sessionList*') || request()->is('consultation/mySession*') || request()->is('consultation/manage*') || request()->is('consultation/detail*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
+        <ul id="konsultasi-nav" class="nav-content collapse {{ request()->is('consultation/sessionList*') || request()->is('consultation/mySession*') || request()->is('consultation/manage*') || request()->is('consultation/detail*') || request()->is('report/create/fromconsultation/*') ? 'show' : ''}}" data-bs-parent="#sidebar-nav">
           @if (Auth::user()->role == 'student')
             <li>
               <a href="{{ route('consultation.sessionList') }}" class="{{ request()->is('consultation/sessionList*') ? 'active' : ''}}">
